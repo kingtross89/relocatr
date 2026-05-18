@@ -517,6 +517,14 @@ const QUIZ_QUESTIONS = [
    options:[{label:"💸 Low cost of living",value:"cost"},{label:"🛡 Safety & stability",value:"safety"},{label:"🚀 Career opportunities",value:"career"},{label:"🏖 Lifestyle & quality of life",value:"lifestyle"},{label:"🏥 World-class healthcare",value:"healthcare"}]},
   {id:"family",question:"Who is moving with you?",icon:"👨‍👩‍👧",
    options:[{label:"🧍 Just me",value:"solo"},{label:"💑 Me and my partner",value:"couple"},{label:"👨‍👩‍👧 Family with children",value:"family"}]},
+  {id:"visa",question:"How quickly do you want to move?",icon:"✈️",
+   options:[{label:"ASAP (Need an easy/fast visa)",value:"easy"},{label:"In 1-2 Years (Willing to wait)",value:"wait"},{label:"I already have dual citizenship",value:"citizen"}]},
+  {id:"vibe",question:"What kind of vibe are you looking for?",icon:"🏙",
+   options:[{label:"Fast-paced & ambitious",value:"fast"},{label:"Relaxed & laid back",value:"relaxed"},{label:"A balanced mix of both",value:"mixed"}]},
+  {id:"healthcare_pref",question:"What is your healthcare preference?",icon:"🩺",
+   options:[{label:"Universal public healthcare",value:"public"},{label:"Private & fast (I'll buy insurance)",value:"private"},{label:"No preference",value:"any"}]},
+  {id:"transit",question:"How do you want to get around?",icon:"🚇",
+   options:[{label:"Excellent public transit",value:"transit"},{label:"I plan to own a car",value:"drive"},{label:"Walkable & cycling-friendly",value:"walk"}]}
 ];
 
 const COUNTRY_PROFILES = {

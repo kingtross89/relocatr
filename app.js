@@ -845,11 +845,11 @@ function closeQuiz() {
 function renderQuizStep() {
   const q = QUIZ_QUESTIONS[quizStep];
   const content = document.getElementById('quiz-content');
-  const pct = Math.round((quizStep / QUIZ_QUESTIONS.length) * 100);
+  const pct = Math.round((quizStep / 10) * 100);
   const selected = quizAnswers[q.id];
   content.innerHTML = `
     <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
-    <div class="quiz-step-label">Question ${quizStep+1} of ${QUIZ_QUESTIONS.length}</div>
+    <div class="quiz-step-label">Question ${quizStep+1} of 10</div>
     <div class="quiz-q-icon">${q.icon}</div>
     <div class="quiz-question">${q.question}</div>
     <div class="quiz-options">
@@ -861,7 +861,7 @@ function renderQuizStep() {
     <div class="quiz-nav">
       <button class="quiz-back-btn" onclick="quizBack()" ${quizStep===0?'style="visibility:hidden"':''}>← Back</button>
       <button class="quiz-next-btn" id="quiz-next" onclick="quizNext()" ${!selected?'disabled':''}>
-        ${quizStep === QUIZ_QUESTIONS.length-1 ? 'See My Matches 🎉' : 'Next →'}
+        ${quizStep === 9 ? 'See My Matches 🎉' : 'Next →'}
       </button>
     </div>`;
 }
@@ -872,7 +872,7 @@ function selectQuizOption(id, value) {
 }
 function quizBack() { if (quizStep > 0) { quizStep--; renderQuizStep(); } }
 function quizNext() {
-  if (quizStep < QUIZ_QUESTIONS.length - 1) { quizStep++; renderQuizStep(); }
+  if (quizStep < 9) { quizStep++; renderQuizStep(); }
   else showQuizResults();
 }
 
@@ -906,6 +906,35 @@ function scoreCountry(code, answers) {
   // Family (5pts)
   max += 5;
   if (!answers.family || answers.family !== 'family' || p.familyOk) score += 5;
+  
+  // Visa (10pts)
+  max += 10;
+  if (!answers.visa || answers.visa === 'citizen') score += 10;
+  else if (answers.visa === 'easy') score += p.visaEase === 3 ? 10 : (p.visaEase === 2 ? 5 : 0);
+  else score += 10;
+  
+  // Vibe (10pts)
+  max += 10;
+  if (!answers.vibe || answers.vibe === 'mixed') score += 10;
+  else if (answers.vibe === 'fast') score += p.careerScore >= 8 ? 10 : 3;
+  else if (answers.vibe === 'relaxed') score += p.lifestyleScore >= 8 ? 10 : 3;
+
+  // Healthcare Pref (10pts)
+  max += 10;
+  const privateHC = ['US','AE','SG','TH','CH','NL'];
+  if (!answers.healthcare_pref || answers.healthcare_pref === 'any') score += 10;
+  else if (answers.healthcare_pref === 'private' && privateHC.includes(code)) score += 10;
+  else if (answers.healthcare_pref === 'public' && !privateHC.includes(code)) score += 10;
+  else score += 4;
+
+  // Transit (10pts)
+  max += 10;
+  const driveHeavy = ['US','CA','AU','NZ','AE','MX'];
+  if (!answers.transit) score += 10;
+  else if (answers.transit === 'drive' && driveHeavy.includes(code)) score += 10;
+  else if ((answers.transit === 'transit' || answers.transit === 'walk') && !driveHeavy.includes(code)) score += 10;
+  else score += 4;
+
   return Math.round((score/max)*100);
 }
 
@@ -913,6 +942,7 @@ function getMatchReasons(code, answers) {
   const p = COUNTRY_PROFILES[code];
   if (!p) return '';
   const reasons = [];
+  const driveHeavy = ['US','CA','AU','NZ','AE','MX'];
   if (answers.priority === 'cost' && p.costScore < 1500) reasons.push('Low cost of living');
   if (answers.priority === 'safety' && p.safetyScore >= 9) reasons.push('Extremely safe');
   if (answers.priority === 'career' && p.careerScore >= 9) reasons.push('Strong job market');
@@ -921,6 +951,13 @@ function getMatchReasons(code, answers) {
   if (p.english && (answers.language === 'english_only' || answers.language === 'english_preferred')) reasons.push('English widely spoken');
   if (answers.situation === 'remote' && p.remoteOk) reasons.push('Remote-worker friendly');
   if (answers.situation === 'retired' && p.retiredOk) reasons.push('Great retirement destination');
+  if (answers.visa === 'easy' && p.visaEase === 3) reasons.push('Accessible visa options');
+  if (answers.vibe === 'relaxed' && p.lifestyleScore >= 8) reasons.push('Laid-back lifestyle');
+  if (answers.vibe === 'fast' && p.careerScore >= 8) reasons.push('Fast-paced & ambitious');
+  if (answers.transit === 'transit' && !driveHeavy.includes(code)) reasons.push('Great public transit');
+  if (answers.transit === 'walk' && !driveHeavy.includes(code)) reasons.push('Highly walkable');
+  if (answers.transit === 'drive' && driveHeavy.includes(code)) reasons.push('Car-friendly infrastructure');
+  
   return reasons.slice(0, 3).join(' · ') || 'Strong overall match';
 }
 
@@ -1815,7 +1852,7 @@ function renderCityCompare() {
 
   document.getElementById('cmp-count').textContent = `${allCities.length} cities`;
 
-  allCities.forEach(({ city, countryObj, currency }) => {
+  allCities.forEach(({ city, countryCode, countryObj, currency }) => {
     const total = (city.cost.rent||0) + (city.cost.food||0) + (city.cost.transport||0) + (city.cost.utilities||0);
     const card = document.createElement('div');
     card.className = 'city-compare-card';

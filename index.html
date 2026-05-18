@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
 
@@ -108,43 +108,6 @@
       </div>
     </section>
 
-    <!-- GUIDE -->
-    <section id="guide" class="section section-dark">
-      <div class="section-inner">
-        <div class="section-label">Step by Step</div>
-        <h2 class="section-title">From Dream City to New Home</h2>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-num">01</div>
-            <div class="step-icon">🔍</div>
-            <h3>Search Country &amp; City</h3>
-            <p>Enter where you're moving from and to. Drill into specific cities for granular cost breakdowns in your own currency.</p>
-            <a class="step-link" onclick="document.getElementById('from-input').focus();window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">Start searching →</a>
-          </div>
-          <div class="step-card">
-            <div class="step-num">02</div>
-            <div class="step-icon">📋</div>
-            <h3>Get Your Visa Guide</h3>
-            <p>Understand exactly what visa you need, how to apply, estimated timelines, and required documents.</p>
-            <a class="step-link" href="#" onclick="switchPage('explore');return false;">Browse destinations →</a>
-          </div>
-          <div class="step-card">
-            <div class="step-num">03</div>
-            <div class="step-icon">💰</div>
-            <h3>Plan Your Budget</h3>
-            <p>Compare cost of living side-by-side. Housing, food, transport, healthcare — all in one place.</p>
-            <a class="step-link" href="#" onclick="window.scrollTo({top:document.getElementById('budget-calc').offsetTop-80,behavior:'smooth'});return false;">Open budget calculator →</a>
-          </div>
-          <div class="step-card">
-            <div class="step-num">04</div>
-            <div class="step-icon">✅</div>
-            <h3>Follow Your Checklist</h3>
-            <p>Use our smart moving checklist to track every task — from notifying banks to finding schools.</p>
-            <a class="step-link" href="#" onclick="window.scrollTo({top:document.getElementById('checklist').offsetTop-80,behavior:'smooth'});return false;">Open checklist →</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </div><!-- end #page-plan -->
 
@@ -185,10 +148,10 @@
       <div class="section-inner">
         <div class="section-label">Not Sure Where to Move?</div>
         <h2 class="section-title">Find Your Perfect City &amp; Country</h2>
-        <p class="section-sub">Answer 6 quick questions and we'll match you to the exact cities that fit your budget, lifestyle, and goals — using live exchange rates.</p>
+        <p class="section-sub">Answer 10 quick questions and we'll match you to the exact cities that fit your budget, lifestyle, and goals — using live exchange rates.</p>
         <div class="quiz-start-card">
           <div class="quiz-start-icons">🌴 ❄️ 🏙️ 🌊 🏔️</div>
-          <h3>60+ Cities. 6 Questions. Your Perfect Match.</h3>
+          <h3>60+ Cities. 10 Questions. Your Perfect Match.</h3>
           <p>Takes less than 2 minutes.</p>
           <button class="quiz-start-btn" id="quiz-start-btn">Start the Quiz →</button>
         </div>
@@ -217,7 +180,7 @@
     </div>
   </footer>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
