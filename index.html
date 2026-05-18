@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relocatr — Find Your Perfect Country &amp; City to Move To</title>
+  <meta name="description" content="Plan your international move with Relocatr. Find the perfect country AND city. Get visa info, city-level cost of living, checklists, and guides for moving anywhere in the world." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="logo" onclick="switchPage('plan')" style="cursor:pointer">
+        <span class="logo-icon">🌍</span>
+        <span class="logo-text">Relocatr</span>
+      </div>
+      <div class="page-nav">
+        <button class="page-nav-btn active" id="pnav-plan" onclick="switchPage('plan')">🗺️ Plan My Move</button>
+        <button class="page-nav-btn" id="pnav-explore" onclick="switchPage('explore')">🔍 Explore</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════ PAGE: PLAN MY MOVE ═══════════════════════ -->
+  <div id="page-plan" class="page active">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-bg">
+        <img src="globe_hero.png" alt="Globe" class="hero-globe" id="hero-globe" />
+        <div class="hero-particles" id="particles"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">✈️ 195 Countries · 60+ Cities Covered</div>
+        <h1 class="hero-title">Find Your Perfect<br /><span class="gradient-text">City to Move To.</span></h1>
+        <p class="hero-subtitle">Your all-in-one relocation planner. Compare cities, understand visas, check costs in your currency, and get insider guides — for any country in the world.</p>
+        <div class="hero-search" id="hero-search">
+          <div class="search-row">
+            <div class="search-field" id="from-field">
+              <label>Moving from</label>
+              <div class="search-select-wrapper">
+                <input type="text" id="from-input" placeholder="Your current country" autocomplete="off" />
+                <div class="dropdown" id="from-dropdown"></div>
+              </div>
+            </div>
+            <button class="swap-btn" id="swap-btn" title="Swap countries">⇄</button>
+            <div class="search-field" id="to-field">
+              <label>Moving to</label>
+              <div class="search-select-wrapper">
+                <input type="text" id="to-input" placeholder="Destination country" autocomplete="off" />
+                <div class="dropdown" id="to-dropdown"></div>
+              </div>
+            </div>
+            <button class="search-btn" id="search-btn">Plan My Move →</button>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num">195</span><span class="stat-label">Countries</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">60+</span><span class="stat-label">Cities</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS PANEL -->
+    <section id="results-panel" class="hidden">
+      <div class="results-header">
+        <div class="results-route" id="results-route"></div>
+        <button class="back-btn" id="back-btn">← New Search</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="overview" id="tab-overview">Overview</button>
+        <button class="tab" data-tab="visa" id="tab-visa">Visa &amp; Immigration</button>
+        <button class="tab" data-tab="costs" id="tab-costs">Cost of Living</button>
+        <button class="tab" data-tab="checklist" id="tab-checklist">Checklist</button>
+        <button class="tab" data-tab="tips" id="tab-tips">Insider Tips</button>
+      </div>
+      <div class="tab-content" id="tab-content"></div>
+    </section>
+
+    <!-- BUDGET CALCULATOR -->
+    <section id="budget-calc" class="section section-dark">
+      <div class="section-inner">
+        <div class="section-label">Plan Your Move</div>
+        <h2 class="section-title">Move Budget Calculator</h2>
+        <p class="section-sub">Estimate your total one-time moving costs. Adjust each item to match your situation — the total updates live.</p>
+        <div class="budget-calc-wrap">
+          <div class="budget-items" id="budget-items"></div>
+          <div class="budget-summary" id="budget-summary"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHECKLIST -->
+    <section id="checklist" class="section">
+      <div class="section-inner">
+        <div class="section-label">Stay Organised</div>
+        <h2 class="section-title">Your Moving Checklist</h2>
+        <p class="section-sub">Track every step of your international move — from choosing your city to settling in on day one.</p>
+        <div class="checklist-container" id="checklist-container"></div>
+      </div>
+    </section>
+
+    <!-- GUIDE -->
+    <section id="guide" class="section section-dark">
+      <div class="section-inner">
+        <div class="section-label">Step by Step</div>
+        <h2 class="section-title">From Dream City to New Home</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <div class="step-icon">🔍</div>
+            <h3>Search Country &amp; City</h3>
+            <p>Enter where you're moving from and to. Drill into specific cities for granular cost breakdowns in your own currency.</p>
+            <a class="step-link" onclick="document.getElementById('from-input').focus();window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">Start searching →</a>
+          </div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <div class="step-icon">📋</div>
+            <h3>Get Your Visa Guide</h3>
+            <p>Understand exactly what visa you need, how to apply, estimated timelines, and required documents.</p>
+            <a class="step-link" href="#" onclick="switchPage('explore');return false;">Browse destinations →</a>
+          </div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <div class="step-icon">💰</div>
+            <h3>Plan Your Budget</h3>
+            <p>Compare cost of living side-by-side. Housing, food, transport, healthcare — all in one place.</p>
+            <a class="step-link" href="#" onclick="window.scrollTo({top:document.getElementById('budget-calc').offsetTop-80,behavior:'smooth'});return false;">Open budget calculator →</a>
+          </div>
+          <div class="step-card">
+            <div class="step-num">04</div>
+            <div class="step-icon">✅</div>
+            <h3>Follow Your Checklist</h3>
+            <p>Use our smart moving checklist to track every task — from notifying banks to finding schools.</p>
+            <a class="step-link" href="#" onclick="window.scrollTo({top:document.getElementById('checklist').offsetTop-80,behavior:'smooth'});return false;">Open checklist →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end #page-plan -->
+
+  <!-- ═══════════════════════ PAGE: EXPLORE ═══════════════════════ -->
+  <div id="page-explore" class="page">
+
+    <!-- EXPLORE HERO -->
+    <section id="explore-hero" class="section" style="padding-top:7rem;padding-bottom:2rem;text-align:center">
+      <div class="section-inner">
+        <div class="hero-badge" style="display:inline-block;margin-bottom:1rem">🔍 Discover &amp; Compare</div>
+        <h1 class="hero-title" style="font-size:clamp(2rem,5vw,3.5rem)">Explore the World<br/><span class="gradient-text">Find Where to Move.</span></h1>
+        <p class="hero-subtitle" style="max-width:600px;margin:0 auto">See where people from your country are moving, compare city costs, and take the quiz to find your perfect match.</p>
+      </div>
+    </section>
+
+    <!-- TRENDING DESTINATIONS -->
+    <section id="explore" class="section section-dark">
+      <div class="section-inner">
+        <div class="section-label">Trending Destinations</div>
+        <h2 class="section-title">Where Are People Moving?</h2>
+        <p class="section-sub">Explore the world's most popular relocation countries and cities right now — then dive into city-level costs.</p>
+        <div class="destinations-grid" id="destinations-grid"></div>
+      </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section id="compare" class="section">
+      <div class="section-inner">
+        <div class="section-label">City-Level Cost Comparison</div>
+        <h2 class="section-title">Compare Cities &amp; Countries</h2>
+        <p class="section-sub">See how far your money goes — compare costs across countries, then drill down to specific cities like NYC vs London vs Bangkok.</p>
+        <div class="compare-grid" id="compare-grid"></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz-section" class="section section-dark">
+      <div class="section-inner">
+        <div class="section-label">Not Sure Where to Move?</div>
+        <h2 class="section-title">Find Your Perfect City &amp; Country</h2>
+        <p class="section-sub">Answer 6 quick questions and we'll match you to the exact cities that fit your budget, lifestyle, and goals — using live exchange rates.</p>
+        <div class="quiz-start-card">
+          <div class="quiz-start-icons">🌴 ❄️ 🏙️ 🌊 🏔️</div>
+          <h3>60+ Cities. 6 Questions. Your Perfect Match.</h3>
+          <p>Takes less than 2 minutes.</p>
+          <button class="quiz-start-btn" id="quiz-start-btn">Start the Quiz →</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end #page-explore -->
+
+  <!-- QUIZ MODAL (global) -->
+  <div class="quiz-modal" id="quiz-modal">
+    <div class="quiz-modal-inner">
+      <button class="quiz-close" id="quiz-close">✕</button>
+      <div class="quiz-content" id="quiz-content"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">🌍</span>
+        <span class="logo-text">Relocatr</span>
+      </div>
+      <p class="footer-sub">Helping people find the perfect city to call home.</p>
+      <p class="footer-note">Information is for guidance only. Always verify visa requirements with official government sources.</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
