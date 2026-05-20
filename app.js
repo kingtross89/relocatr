@@ -22,6 +22,94 @@ window.addEventListener('scroll', () => {
 });
 
 // ── Country Search Dropdowns ────────────────────────────────────────────────
+const DETAILED_COUNTRIES = COUNTRIES.filter(c => COUNTRY_DATA[c.code]);
+
+const COUNTRY_POPULATIONS = {
+  AU: "26.2M", CA: "39.8M", DE: "83.8M", GB: "67.3M", US: "335.8M", JP: "125.1M",
+  PT: "10.4M", SG: "5.9M",  AE: "9.4M",  TH: "71.8M",  NL: "17.8M",  ES: "48.1M",
+  FR: "68.0M", MX: "128.5M", BR: "215.3M", ID: "277.5M", VN: "98.8M",  ZA: "60.4M",
+  TR: "85.3M", PH: "117.3M", KR: "51.7M",  CL: "19.6M",  CO: "52.0M",  AR: "46.2M",
+  CR: "5.2M",  CN: "1.41B",  IN: "1.43B",  EG: "112.7M", KE: "55.1M",  NG: "223.8M",
+  MA: "37.8M"
+};
+
+const CITY_POPULATIONS = {
+  // US
+  "New York, NY": "8.3M", "San Francisco, CA": "808k", "Los Angeles, CA": "3.8M",
+  "Chicago, IL": "2.6M", "Austin, TX": "964k", "Miami, FL": "449k",
+  "Seattle, WA": "749k", "Denver, CO": "713k", "Nashville, TN": "692k",
+  "Phoenix, AZ": "1.6M", "Boston, MA": "650k",
+  // GB
+  "London": "8.9M", "Manchester": "550k", "Edinburgh": "506k", "Bristol": "472k",
+  "Birmingham": "1.1M", "Leeds": "812k",
+  // DE
+  "Berlin": "3.7M", "Munich": "1.5M", "Hamburg": "1.9M", "Frankfurt": "753k",
+  "Cologne": "1.1M", "Stuttgart": "630k",
+  // CA
+  "Toronto": "2.9M", "Vancouver": "662k", "Montreal": "1.8M", "Calgary": "1.3M",
+  "Ottawa": "1.0M",
+  // AU
+  "Sydney": "5.3M", "Melbourne": "5.0M", "Brisbane": "2.6M", "Perth": "2.1M",
+  "Adelaide": "1.3M",
+  // JP
+  "Tokyo": "14.0M", "Osaka": "2.7M", "Kyoto": "1.4M", "Yokohama": "3.8M",
+  "Fukuoka": "1.6M",
+  // PT
+  "Lisbon": "545k", "Porto": "231k", "Faro": "64k",
+  // SG
+  "Singapore": "5.9M",
+  // AE
+  "Dubai": "3.6M", "Abu Dhabi": "1.5M",
+  // TH
+  "Bangkok": "8.3M", "Chiang Mai": "127k", "Phuket": "79k",
+  // NL
+  "Amsterdam": "821k", "Rotterdam": "651k", "Utrecht": "361k",
+  // ES
+  "Madrid": "3.3M", "Barcelona": "1.6M", "Valencia": "800k", "Seville": "685k",
+  // FR
+  "Paris": "2.1M", "Lyon": "522k", "Marseille": "870k", "Nice": "342k",
+  // MX
+  "Mexico City": "9.2M", "Guadalajara": "1.4M", "Monterrey": "1.1M", "Cancun": "888k",
+  // BR
+  "Sao Paulo": "12.3M", "Rio de Janeiro": "6.7M", "Brasilia": "3.0M", "Belo Horizonte": "2.5M",
+  // ID
+  "Jakarta": "10.6M", "Bali": "4.3M",
+  // VN
+  "Ho Chi Minh City": "9.0M", "Hanoi": "8.4M",
+  // ZA
+  "Cape Town": "4.8M", "Johannesburg": "4.4M", "Durban": "3.1M",
+  // TR
+  "Istanbul": "15.9M", "Ankara": "5.8M", "Izmir": "4.4M",
+  // PH
+  "Manila": "1.8M", "Cebu": "964k",
+  // KR
+  "Seoul": "9.7M", "Busan": "3.4M",
+  // CL
+  "Santiago": "6.2M", "Valparaiso": "296k",
+  // CO
+  "Bogota": "8.0M", "Medellin": "2.6M",
+  // AR
+  "Buenos Aires": "3.0M", "Cordoba": "1.3M",
+  // CR
+  "San Jose": "340k",
+  // CN
+  "Shanghai": "26.3M", "Beijing": "21.9M", "Shenzhen": "17.6M", "Guangzhou": "18.7M",
+  // IN
+  "Mumbai": "12.5M", "Delhi": "16.8M", "Bangalore": "8.4M", "Hyderabad": "6.9M",
+  "Chennai": "4.6M",
+  // EG
+  "Cairo": "9.5M", "Alexandria": "5.2M",
+  // KE
+  "Nairobi": "4.4M", "Mombasa": "1.2M",
+  // NG
+  "Lagos": "15.3M", "Abuja": "1.2M",
+  // MA
+  "Casablanca": "3.4M", "Marrakech": "928k", "Rabat": "577k"
+};
+
+window.COUNTRY_POPULATIONS = COUNTRY_POPULATIONS;
+window.CITY_POPULATIONS = CITY_POPULATIONS;
+
 function buildDropdown(inputId, dropdownId, onSelect) {
   const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
@@ -29,22 +117,69 @@ function buildDropdown(inputId, dropdownId, onSelect) {
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     dropdown.innerHTML = '';
-    if (!q) { dropdown.classList.remove('open'); return; }
-    const matches = COUNTRIES.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
-    if (!matches.length) { dropdown.classList.remove('open'); return; }
-    matches.forEach(c => {
+    if (!q) {
+      dropdown.classList.remove('open');
+      if (inputId === 'from-input') fromCountry = null;
+      if (inputId === 'to-input') toCountry = null;
+      return;
+    }
+
+    // 1. Search countries
+    const countryMatches = DETAILED_COUNTRIES.filter(c => c.name.toLowerCase().includes(q)).slice(0, 5);
+
+    // 2. Search cities
+    const cityMatches = [];
+    Object.entries(CITY_DATA).forEach(([countryCode, cities]) => {
+      const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
+      if (!country) return;
+      cities.forEach((city, idx) => {
+        if (city.name.toLowerCase().includes(q)) {
+          cityMatches.push({
+            type: 'city',
+            name: city.name,
+            countryCode: countryCode,
+            countryName: country.name,
+            flag: country.flag,
+            cityIndex: idx,
+            region: country.region
+          });
+        }
+      });
+    });
+    const slicedCityMatches = cityMatches.slice(0, 5);
+
+    if (!countryMatches.length && !slicedCityMatches.length) { dropdown.classList.remove('open'); return; }
+
+    // Render countries
+    countryMatches.forEach(c => {
       const item = document.createElement('div');
       item.className = 'dropdown-item';
-      item.innerHTML = `<span class="flag">${c.flag}</span><span>${c.name}</span>`;
+      item.innerHTML = `<span class="flag">${c.flag}</span><span>${c.name} <span style="opacity:0.6;font-size:0.8rem">[Country]</span></span>`;
       item.addEventListener('mousedown', e => {
         e.preventDefault();
         input.value = c.name;
         input.dataset.code = c.code;
         dropdown.classList.remove('open');
-        onSelect(c);
+        onSelect({ type: 'country', code: c.code, name: c.name, flag: c.flag, region: c.region });
       });
       dropdown.appendChild(item);
     });
+
+    // Render cities
+    slicedCityMatches.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'dropdown-item';
+      item.innerHTML = `<span class="flag">${c.flag}</span><span>${c.name} (${c.countryName}) <span style="opacity:0.6;font-size:0.8rem">[City]</span></span>`;
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        input.value = c.name;
+        input.dataset.code = c.countryCode;
+        dropdown.classList.remove('open');
+        onSelect({ type: 'city', code: c.countryCode, name: c.countryName, flag: c.flag, cityName: c.name, cityIndex: c.cityIndex, region: c.region });
+      });
+      dropdown.appendChild(item);
+    });
+
     dropdown.classList.add('open');
   });
 
@@ -74,63 +209,116 @@ if (navBtn) navBtn.addEventListener('click', () => {
 });
 
 function doSearch() {
+  const fi = document.getElementById('from-input');
+  const ti = document.getElementById('to-input');
+  
+  const resolveTerm = (val) => {
+    if (!val) return null;
+    const term = val.trim().toLowerCase();
+    if (!term) return null;
+    
+    // 1. Try to find exact country match
+    const cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase() === term || c.code.toLowerCase() === term);
+    if (cMatch) {
+      return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
+    }
+    
+    // 2. Try to find city match
+    let cityMatch = null;
+    for (const [countryCode, cities] of Object.entries(CITY_DATA)) {
+      const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
+      if (!country) continue;
+      const idx = cities.findIndex(city => city.name.toLowerCase() === term);
+      if (idx >= 0) {
+        const city = cities[idx];
+        cityMatch = { type: 'city', code: countryCode, name: country.name, flag: country.flag, cityName: city.name, cityIndex: idx, region: country.region };
+        break;
+      }
+    }
+    return cityMatch;
+  };
+
+  if (!fromCountry && fi) {
+    fromCountry = resolveTerm(fi.value);
+    if (fromCountry) {
+      fi.value = fromCountry.type === 'city' ? fromCountry.cityName : fromCountry.name;
+    }
+  }
+  if (!toCountry && ti) {
+    toCountry = resolveTerm(ti.value);
+    if (toCountry) {
+      ti.value = toCountry.type === 'city' ? toCountry.cityName : toCountry.name;
+    }
+  }
+
   if (!fromCountry || !toCountry) {
     const missing = !fromCountry ? 'from-input' : 'to-input';
     const el = document.getElementById(missing);
-    el.style.borderColor = '#ef4444';
-    el.focus();
-    setTimeout(() => el.style.borderColor = '', 2000);
+    if (el) {
+      el.style.borderColor = '#ef4444';
+      el.focus();
+      setTimeout(() => el.style.borderColor = '', 2000);
+    }
     return;
   }
-  showResults(fromCountry, toCountry);
+  try {
+    showResults(fromCountry, toCountry);
+  } catch (err) {
+    console.error("Error in showResults:", err);
+  }
 }
 
 // ── Show Results ────────────────────────────────────────────────────────────
 function showResults(from, to) {
-  _currentFrom = from; _currentTo = to;
-  document.getElementById('results-panel').classList.remove('hidden');
-  document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  const routeEl = document.getElementById('results-route');
-  routeEl.innerHTML = `${from.flag} ${from.name} <span style="color:var(--accent);margin:0 0.5rem">→</span> ${to.flag} ${to.name}`;
-
-  // Default to overview tab
-  setTab('overview', from, to);
-
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      setTab(t.dataset.tab, from, to);
-    });
-  });
+  if (window.showResults) {
+    window.showResults(from, to);
+  } else {
+    console.error("window.showResults is not defined!");
+  }
 }
 
-document.getElementById('back-btn').addEventListener('click', () => {
-  document.getElementById('results-panel').classList.add('hidden');
+function goHome() {
+  switchPage('plan');
+  document.body.classList.remove('results-active');
+  const planPage = document.getElementById('page-plan');
+  if (planPage) planPage.classList.remove('results-active');
+  const resultsPanel = document.getElementById('results-panel');
+  if (resultsPanel) resultsPanel.classList.add('hidden');
+  
+  const fromInput = document.getElementById('from-input');
+  const toInput = document.getElementById('to-input');
+  if (fromInput) { fromInput.value = ''; delete fromInput.dataset.code; }
+  if (toInput) { toInput.value = ''; delete toInput.dataset.code; }
+  fromCountry = null;
+  toCountry = null;
+  
   window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+}
+window.goHome = goHome;
+
+const backBtn = document.getElementById('back-btn');
+if (backBtn) backBtn.addEventListener('click', goHome);
 
 function setTab(tab, from, to) {
-  const content = document.getElementById('tab-content');
-  const toData = COUNTRY_DATA[to.code];
-  const fromData = COUNTRY_DATA[from.code];
-
-  if (tab === 'overview') content.innerHTML = renderOverview(from, to, toData);
-  else if (tab === 'visa') content.innerHTML = renderVisa(from, to, toData);
-  else if (tab === 'costs') content.innerHTML = renderCosts(from, to, fromData, toData);
-  else if (tab === 'checklist') content.innerHTML = renderChecklist();
-  else if (tab === 'tips') content.innerHTML = renderTips(to, toData);
-
-  if (tab === 'costs') animateBars();
-  if (tab === 'checklist') initChecklist();
+  if (window.setTab) {
+    window.setTab(tab, from, to);
+  } else {
+    console.error("window.setTab is not defined!");
+  }
 }
 
 // ── Overview ────────────────────────────────────────────────────────────────
 function renderOverview(from, to, d) {
   if (!d) return genericOverview(from, to);
+  const citiesList = CITY_DATA[to.code] || [];
+  const selectedCity = (to.type === 'city' && citiesList[to.cityIndex]) ? citiesList[to.cityIndex] : null;
+  const cost = selectedCity ? selectedCity.cost : d.cost;
   const diff = d.visaDifficulty;
   const badgeClass = diff === 'Easy' ? 'badge-green' : diff === 'Medium' ? 'badge-yellow' : 'badge-red';
+  
+  const popVal = selectedCity ? (CITY_POPULATIONS[selectedCity.name] || 'N/A') : (COUNTRY_POPULATIONS[to.code] || 'N/A');
+  const popLabel = selectedCity ? `Population (${selectedCity.name.split(',')[0]})` : `Population (${to.name})`;
+
   return `
     <div class="overview-hero">
       <div class="overview-flags">${from.flag}<span class="overview-arrow">→</span>${to.flag}</div>
@@ -140,6 +328,12 @@ function renderOverview(from, to, d) {
       </div>
     </div>
     <div class="info-grid">
+      <div class="info-card">
+        <div class="card-icon">👥</div>
+        <div class="card-label">${popLabel}</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${popVal}</div>
+        <div class="card-sub">${selectedCity ? 'City population' : 'Country population'}</div>
+      </div>
       <div class="info-card">
         <div class="card-icon">🛂</div>
         <div class="card-label">Visa Difficulty</div>
@@ -155,7 +349,7 @@ function renderOverview(from, to, d) {
       <div class="info-card">
         <div class="card-icon">💰</div>
         <div class="card-label">Est. Monthly Cost</div>
-        <div class="card-value">${d.currency} ${(d.cost.rent+d.cost.food+d.cost.transport+d.cost.utilities).toLocaleString()}</div>
+        <div class="card-value">${d.currency} ${(cost.rent+cost.food+cost.transport+cost.utilities).toLocaleString()}</div>
         <div class="card-sub">Rent + food + transport + utilities</div>
       </div>
       <div class="info-card">
@@ -189,6 +383,8 @@ function renderOverview(from, to, d) {
 }
 
 function genericOverview(from, to) {
+  const toCountryObj = COUNTRIES.find(c => c.code === to.code);
+  const region = (toCountryObj && toCountryObj.region) || to.region || 'Global';
   return `
     <div class="overview-hero">
       <div class="overview-flags">${from.flag}<span class="overview-arrow">→</span>${to.flag}</div>
@@ -199,7 +395,7 @@ function genericOverview(from, to) {
     </div>
     <div class="info-grid">
       <div class="info-card"><div class="card-icon">🛂</div><div class="card-label">First Step</div><div class="card-value" style="font-size:0.95rem">Check ${to.name}'s official immigration website</div></div>
-      <div class="info-card"><div class="card-icon">🌐</div><div class="card-label">Region</div><div class="card-value">${to.region}</div></div>
+      <div class="info-card"><div class="card-icon">🌐</div><div class="card-label">Region</div><div class="card-value">${region}</div></div>
       <div class="info-card"><div class="card-icon">📋</div><div class="card-label">Key Action</div><div class="card-value" style="font-size:0.95rem">Use the Checklist tab to plan your move</div></div>
       <div class="info-card"><div class="card-icon">💡</div><div class="card-label">Tip</div><div class="card-value" style="font-size:0.9rem">Join expat forums specific to ${to.name} for on-the-ground advice</div></div>
     </div>
@@ -281,17 +477,21 @@ function renderCosts(from, to, fromData, toData) {
   const td = toData || { cost:{rent:1000,food:250,transport:80,utilities:100,dining:150}, currency:'USD' };
   const cities = CITY_DATA[to.code] || [];
   const fromCities = CITY_DATA[from.code] || [];
+  
+  const initialToIdx = (to && to.type === 'city') ? to.cityIndex : -1;
+  const initialFromIdx = (from && from.type === 'city') ? from.cityIndex : -1;
+
   const citySelector = cities.length ? `
     <div class="city-selector-bar">
       <label>📍 Show costs for</label>
-      <select class="city-select" id="to-city-select">
-        <option value="-1">${to.name} (national average)</option>
-        ${cities.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')}
-      </select>
-      <label style="margin-left:1rem">vs.</label>
       <select class="city-select" id="from-city-select">
-        <option value="-1">${from.name} (national average)</option>
-        ${fromCities.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')}
+        <option value="-1" ${initialFromIdx===-1?'selected':''}>${from.name} (national average)</option>
+        ${fromCities.map((c,i)=>`<option value="${i}" ${initialFromIdx===i?'selected':''}>${c.name}</option>`).join('')}
+      </select>
+      <label style="margin-left:1rem">➔</label>
+      <select class="city-select" id="to-city-select">
+        <option value="-1" ${initialToIdx===-1?'selected':''}>${to.name} (national average)</option>
+        ${cities.map((c,i)=>`<option value="${i}" ${initialToIdx===i?'selected':''}>${c.name}</option>`).join('')}
       </select>
       <span class="city-note">💡 Costs vary significantly by city</span>
     </div>` : `<div class="city-selector-bar"><span class="city-note">💡 National average shown. City-level data not yet available for ${to.name}.</span></div>`;
@@ -305,19 +505,26 @@ function renderCosts(from, to, fromData, toData) {
   ];
 
   // Use city data if available, fall back to national
-  let activeFd = fd, activeTd = td;
+  let activeFd = (initialFromIdx >= 0 && fromCities[initialFromIdx]) ? fromCities[initialFromIdx] : fd;
+  let activeTd = (initialToIdx >= 0 && cities[initialToIdx]) ? cities[initialToIdx] : td;
 
-  const maxVal = Math.max(...categories.map(c => Math.max(activeFd.cost[c.key], activeTd.cost[c.key])));
+  const maxUSDVal = Math.max(...categories.map(c => {
+    const fvUSD = toUSD(activeFd.cost[c.key] || 0, fd.currency);
+    const tvUSD = toUSD(activeTd.cost[c.key] || 0, td.currency);
+    return Math.max(fvUSD, tvUSD);
+  }));
 
   let rows = categories.map(c => {
     const fv = activeFd.cost[c.key];
     const tv = activeTd.cost[c.key];
-    const diff = tv - fv;
-    const pct = Math.round((diff/fv)*100);
+    const fvUSD = toUSD(fv, fd.currency);
+    const tvUSD = toUSD(tv, td.currency);
+    const diff = tvUSD - fvUSD;
+    const pct = fvUSD > 0 ? Math.round((diff/fvUSD)*100) : 0;
     const diffStr = diff >= 0 ? `+${pct}%` : `${pct}%`;
     const diffColor = diff <= 0 ? 'var(--green)' : 'var(--red)';
-    const fBar = Math.round((fv/maxVal)*100);
-    const tBar = Math.round((tv/maxVal)*100);
+    const fBar = maxUSDVal > 0 ? Math.round((fvUSD/maxUSDVal)*100) : 0;
+    const tBar = maxUSDVal > 0 ? Math.round((tvUSD/maxUSDVal)*100) : 0;
     return `
       <div class="cost-row">
         <div class="cost-label">${c.icon} ${c.label}</div>
@@ -331,14 +538,15 @@ function renderCosts(from, to, fromData, toData) {
             <div class="cost-bar-val" style="color:var(--text)">${td.currency || 'USD'} ${tv.toLocaleString()}</div>
           </div>
         </div>
-        <div style="font-size:0.8rem;font-weight:700;color:${diffColor};width:48px;text-align:right;flex-shrink:0">${diffStr}</div>
+        <div class="cost-row-diff" style="font-size:0.8rem;font-weight:700;color:${diffColor};width:48px;text-align:right;flex-shrink:0">${diffStr}</div>
       </div>
     `;
   }).join('');
 
-  const totalFrom = Object.values(activeFd.cost).reduce((a,b)=>a+b,0) - (activeFd.cost.dining||0);
-  const totalTo = Object.values(activeTd.cost).reduce((a,b)=>a+b,0) - (activeTd.cost.dining||0);
-  const totalDiff = Math.round(((totalTo-totalFrom)/totalFrom)*100);
+  const keys = ['rent', 'food', 'transport', 'utilities'];
+  const totalFrom = keys.reduce((s, k) => s + toUSD(activeFd.cost[k] || 0, fd.currency), 0);
+  const totalTo = keys.reduce((s, k) => s + toUSD(activeTd.cost[k] || 0, td.currency), 0);
+  const totalDiff = totalFrom > 0 ? Math.round(((totalTo-totalFrom)/totalFrom)*100) : 0;
   const saving = totalDiff < 0;
 
   const deepLinks = renderDeepDiveLinks('costs', to.code);
@@ -353,13 +561,13 @@ function renderCosts(from, to, fromData, toData) {
       </div>
     </div>
     <div class="info-grid">
-      <div class="info-card">
+      <div class="info-card" id="cost-diff-card">
         <div class="card-icon">${saving ? '💚' : '📊'}</div>
         <div class="card-label">Cost Difference</div>
         <div class="card-value" style="color:${saving?'var(--green)':'var(--red)'}">${saving?'':'+'} ${totalDiff}%</div>
-        <div class="card-sub">${saving ? `You could save ~${Math.abs(totalTo-totalFrom).toLocaleString()} ${td.currency}/mo` : `Expect to spend more than in ${from.name}`}</div>
+        <div class="card-sub">${saving ? `You could save ~${Math.round(Math.abs(fromUSD(totalTo, td.currency) - fromUSD(totalFrom, td.currency))).toLocaleString()} ${td.currency}/mo` : `Expect to spend more than in ${from.name}`}</div>
       </div>
-      <div class="info-card">
+      <div class="info-card" id="cost-rent-card">
         <div class="card-icon">🏠</div>
         <div class="card-label">Avg Rent in ${to.name}</div>
         <div class="card-value">${td.currency} ${activeTd.cost.rent.toLocaleString()}/mo</div>
@@ -408,7 +616,12 @@ function rebuildCostBars() {
   const fromData = COUNTRY_DATA[_currentFrom ? _currentFrom.code : ''] || { cost:{rent:1200,food:300,transport:100,utilities:120,dining:180}, currency:'USD' };
   const tdCost = activeTd ? activeTd.cost : toData.cost;
   const fdCost = activeFd ? activeFd.cost : fromData.cost;
-  const maxVal = Math.max(...cats.map(k => Math.max(fdCost[k]||0, tdCost[k]||0)));
+  const maxUSDVal = Math.max(...cats.map(k => {
+    const fvUSD = toUSD(fdCost[k] || 0, fromData.currency);
+    const tvUSD = toUSD(tdCost[k] || 0, toData.currency);
+    return Math.max(fvUSD, tvUSD);
+  }));
+  const rows = document.querySelectorAll('#cost-breakdown .cost-row');
   const bars = document.querySelectorAll('#cost-breakdown .cost-bar-wrap');
   cats.forEach((k, i) => {
     const fBar = bars[i*2], tBar = bars[i*2+1];
@@ -416,12 +629,29 @@ function rebuildCostBars() {
     const ff = fBar.querySelector('.cost-bar-fill');
     const tf = tBar.querySelector('.cost-bar-fill');
     const fv = fdCost[k] || 0, tv = tdCost[k] || 0;
-    if (ff) { ff.dataset.width = Math.round((fv/maxVal)*100); ff.style.width = ff.dataset.width+'%'; }
-    if (tf) { tf.dataset.width = Math.round((tv/maxVal)*100); tf.style.width = tf.dataset.width+'%'; }
+    const fvUSD = toUSD(fv, fromData.currency);
+    const tvUSD = toUSD(tv, toData.currency);
+    if (ff) { ff.dataset.width = maxUSDVal > 0 ? Math.round((fvUSD/maxUSDVal)*100) : 0; ff.style.width = ff.dataset.width+'%'; }
+    if (tf) { tf.dataset.width = maxUSDVal > 0 ? Math.round((tvUSD/maxUSDVal)*100) : 0; tf.style.width = tf.dataset.width+'%'; }
     const fVal = fBar.querySelector('.cost-bar-val');
     const tVal = tBar.querySelector('.cost-bar-val');
     if (fVal) fVal.textContent = `${fromData.currency} ${fv.toLocaleString()}`;
     if (tVal) tVal.textContent = `${toData.currency} ${tv.toLocaleString()}`;
+
+    const row = rows[i];
+    if (row) {
+      const fvUSD = toUSD(fv, fromData.currency);
+      const tvUSD = toUSD(tv, toData.currency);
+      const diff = tvUSD - fvUSD;
+      const pct = fvUSD > 0 ? Math.round((diff/fvUSD)*100) : 0;
+      const diffStr = diff >= 0 ? `+${pct}%` : `${pct}%`;
+      const diffColor = diff <= 0 ? 'var(--green)' : 'var(--red)';
+      const diffLabel = row.querySelector('.cost-row-diff');
+      if (diffLabel) {
+        diffLabel.textContent = diffStr;
+        diffLabel.style.color = diffColor;
+      }
+    }
   });
 }
 
@@ -554,6 +784,7 @@ function renderTips(to, d) {
 // ── Static Checklist Section ────────────────────────────────────────────────
 (function buildStaticChecklist() {
   const container = document.getElementById('checklist-container');
+  if (!container) return;
   container.innerHTML = renderChecklist();
   initChecklist();
 })();
@@ -676,6 +907,186 @@ window.renderVisa = function(from, to, d) {
   return special + _origRenderVisa(from, to, d);
 };
 
+const CULTURE_DATA = {
+  ES: {
+    communication: "Warm, highly social, and expressive. Interrupting is often seen as active engagement rather than rudeness. Physical space is smaller, and double-cheek kisses (right to left) are standard greetings among friends.",
+    workplace: "Hierarchical but relationship-driven. Trust is built over meals. Punctuality is appreciated but slightly flexible in social-work settings. Expect late lunch breaks (2 PM - 4 PM) and a strong emphasis on work-life balance.",
+    social: "Dining happens very late — lunch at 2:30 PM, dinner at 9:30 PM or 10 PM. Tipping is not expected, though rounding up or leaving a few coins is common for good service. Tapas culture involves moving from bar to bar.",
+    taboos: [
+      "Don't expect shops or government offices to be open during the traditional siesta hours (2 PM to 5 PM) in smaller cities.",
+      "Don't tip excessively (like 15-20%) — it marks you as a tourist and is not part of the local economy.",
+      "Don't discuss regional politics (e.g., Catalan independence) casually unless you know the person well."
+    ]
+  },
+  JP: {
+    communication: "Highly indirect, polite, and reliant on non-verbal cues (reading the air, or 'Kuuki o yomu'). Modesty and humility are highly valued. Greetings are done with a bow; physical contact is rare.",
+    workplace: "Strict hierarchy (Senpai/Kohai dynamics). Group consensus ('Ringisho') is preferred over individual decisions. Punctuality is absolute — being 'on time' means arriving 10 minutes early. After-work socializing ('Nomikai') is common for team cohesion.",
+    social: "Shoes must always be removed when entering homes, temples, and traditional restaurants. Talking on cell phones or making loud noise on trains is strictly frowned upon. Tipping is non-existent and can be seen as insulting.",
+    taboos: [
+      "Don't tip service staff. If you leave extra cash, they will run after you to return it.",
+      "Don't eat or drink while walking in public. Consume snacks next to the vending machine or store.",
+      "Don't stick your chopsticks vertically into a bowl of rice (this mimics a funeral ritual)."
+    ]
+  },
+  AU: {
+    communication: "Relaxed, direct, and heavily laced with dry humor, irony, and slang. 'Tall poppy syndrome' means boasting or self-promotion is actively disliked. Eye contact is important; greetings are casual (e.g., 'G'day').",
+    workplace: "Egalitarian structure. Bosses are addressed by their first names. Strong emphasis on working hard but logging off on time. Networking is casual, often centered around 'Friday drinks' or a coffee chat.",
+    social: "Outdoor lifestyle is central — BBQs ('barbies'), beach visits, and sports are massive. Tipping is not mandatory, though 10% is increasingly common in high-end restaurants. Coffee culture is serious; expect world-class espresso.",
+    taboos: [
+      "Don't sit in the back of a taxi if you are traveling alone — it is seen as snobbish; sit in the front seat next to the driver.",
+      "Don't skip your turn to buy a round of drinks ('shouting') at a pub.",
+      "Don't brag about your wealth, status, or academic degrees."
+    ]
+  },
+  GB: {
+    communication: "Polite, reserved, and heavily reliant on understatement, self-deprecation, and sarcasm. Saying 'sorry' is a default reflex for minor inconveniences. Direct criticism is often masked as polite suggestions.",
+    workplace: "Polite but professional. Team structures are relatively flat but retain subtle hierarchies. Meetings start promptly. After-work pub culture is the primary way to build rapport with colleagues.",
+    social: "Queuing (waiting in line) is an absolute, sacred social contract — never cut a line. Tipping 10% is standard in restaurants but not expected in pubs or taxis. Pubs close relatively early compared to continental Europe.",
+    taboos: [
+      "Don't cut in front of anyone in a queue. It is considered the height of bad manners.",
+      "Don't complain excessively or make a scene in restaurants. Locals prefer 'quiet dissatisfaction'.",
+      "Don't use the 'two-finger salute' (peace sign with palm facing inward) — it is an offensive gesture equivalent to the middle finger."
+    ]
+  },
+  US: {
+    communication: "Direct, highly enthusiastic, and informal. Small talk with strangers is standard and expected. Personal space is valued. Greetings are casual (a smile, handshake, or 'How's it going?').",
+    workplace: "Fast-paced, individualistic, and highly career-focused. Flat organizational structures are common, and workers are encouraged to speak up. Long hours are often wore as a badge of honor.",
+    social: "Tipping is practically mandatory for service industries: 18-20% at restaurants, $1-$2 per drink at bars, and 15% for taxis. Portions are large, and taking leftovers home ('doggy bag') is standard.",
+    taboos: [
+      "Don't skip tipping. Service workers rely on tips as their primary source of income due to low sub-minimum wages.",
+      "Don't discuss sensitive topics like religion, personal finances, or partisan politics with new acquaintances.",
+      "Don't cut in line or stand too close to others in public spaces (respect personal bubbles)."
+    ]
+  }
+};
+
+window.renderCultureTab = function(from, to, toData) {
+  const code = to.code;
+  const fromName = from.name;
+  const toName = to.name;
+  const data = CULTURE_DATA[code] || {
+    communication: `Expect a mix of local customs and regional communication styles. In general, taking the time to learn a few basic greeting phrases in the local language goes a long way.`,
+    workplace: `Workplace dynamics vary, but being respectful of local hierarchical structures and understanding local work-life balance customs (such as quiet hours or lunch rituals) will help you integrate smoothly.`,
+    social: `Observe local tipping habits, dining times, and social greetings. Every culture has its own rhythm for meals and gatherings — watching what the locals do is the best way to learn.`,
+    taboos: [
+      "Don't make assumptions about local political, religious, or historical topics.",
+      "Don't ignore local dress codes or public behavior expectations, especially in sacred or traditional spaces.",
+      "Don't forget to research local tipping and payment habits (cash vs. card)."
+    ]
+  };
+
+  const region = to.region || 'local';
+  let regionalChecklist = [];
+  if (region.includes('Europe')) {
+    regionalChecklist = [
+      "Diligent waste recycling separation is a civic duty.",
+      "Respect 'quiet hours' (Ruhezeit) on Sundays and late evenings.",
+      "Bring your own reusable grocery bags to supermarkets.",
+      "Greet shopkeepers when entering and leaving small boutiques."
+    ];
+  } else if (region.includes('Asia')) {
+    regionalChecklist = [
+      "Always remove your shoes when entering homes and sacred sites.",
+      "Avoid direct public confrontations — prioritize 'saving face'.",
+      "Use both hands when presenting business cards or gifts.",
+      "Research chopsticks etiquette (never stick them upright)."
+    ];
+  } else if (region.includes('Americas')) {
+    regionalChecklist = [
+      "Understand tipping norms for hospitality and transport services.",
+      "Embrace friendly small talk in queues and retail spaces.",
+      "Respect personal space bubbles in public.",
+      "Double check local tax practices (often added at checkout)."
+    ];
+  } else {
+    regionalChecklist = [
+      "Dress modestly when visiting public or sacred spaces.",
+      "Research local tipping expectations to avoid over/underpaying.",
+      "Use your right hand for greetings, payments, and eating.",
+      "Ask permission before photographing local residents."
+    ];
+  }
+
+  const tabooItems = data.taboos.map(t => `<li style="margin-bottom: 8px;">❌ ${t}</li>`).join('');
+  const prepItems = regionalChecklist.map((item, i) => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;font-size:0.92rem;color:var(--text)">
+      <input type="checkbox" id="cult-check-${i}" style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer">
+      <label for="cult-check-${i}" style="cursor:pointer;user-select:none">${item}</label>
+    </div>
+  `).join('');
+
+  return `
+    <div class="culture-tab-container" style="animation: pageFadeIn 0.35s ease;">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">🤝 Cultural Norms &amp; Etiquette</h3>
+        <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Adapt smoothly to your new home. Understand the subtle social rules, workplace customs, and taboos of ${toName}.</p>
+      </div>
+
+      <div class="culture-grid" style="display:grid;grid-template-columns: 1.2fr 1fr;gap:2rem;">
+        <div class="culture-cards-wrap" style="display:flex;flex-direction:column;gap:1.25rem;">
+          <div class="culture-card" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.15)">
+            <h4 style="margin:0 0 0.75rem 0;font-family:'Outfit',sans-serif;font-size:1.15rem;color:var(--accent);display:flex;align-items:center;gap:8px">🗣️ Communication Style</h4>
+            <p style="margin:0;line-height:1.6;font-size:0.92rem;color:var(--text)">${data.communication}</p>
+          </div>
+
+          <div class="culture-card" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.15)">
+            <h4 style="margin:0 0 0.75rem 0;font-family:'Outfit',sans-serif;font-size:1.15rem;color:var(--accent);display:flex;align-items:center;gap:8px">💼 Workplace Dynamics</h4>
+            <p style="margin:0;line-height:1.6;font-size:0.92rem;color:var(--text)">${data.workplace}</p>
+          </div>
+
+          <div class="culture-card" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.15)">
+            <h4 style="margin:0 0 0.75rem 0;font-family:'Outfit',sans-serif;font-size:1.15rem;color:var(--accent);display:flex;align-items:center;gap:8px">🍕 Social &amp; Dining Norms</h4>
+            <p style="margin:0;line-height:1.6;font-size:0.92rem;color:var(--text)">${data.social}</p>
+          </div>
+        </div>
+
+        <div class="culture-side-wrap" style="display:flex;flex-direction:column;gap:1.25rem;">
+          <div class="culture-card taboo-card" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:1.5rem;">
+            <h4 style="margin:0 0 0.75rem 0;font-family:'Outfit',sans-serif;font-size:1.15rem;color:#ef4444;display:flex;align-items:center;gap:8px">🚫 Critical Taboos &amp; Don'ts</h4>
+            <ul style="margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:0.92rem;line-height:1.5;color:var(--text)">
+              ${tabooItems}
+            </ul>
+          </div>
+
+          <div class="culture-card" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:0 4px 15px rgba(0,0,0,0.15)">
+            <h4 style="margin:0 0 0.75rem 0;font-family:'Outfit',sans-serif;font-size:1.15rem;color:var(--text);display:flex;align-items:center;gap:8px">📝 Cultural Adaptability Prep</h4>
+            <p style="margin:0 0 1rem 0;font-size:0.85rem;color:var(--muted)">Key shifts you'll experience relocating to this region:</p>
+            ${prepItems}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+window.renderBudgetTab = function() {
+  return `
+    <div class="budget-tab-container" style="animation: pageFadeIn 0.35s ease;">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">💰 Move Budget Calculator</h3>
+        <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Estimate your total one-time moving costs. Adjust each item to match your situation — the total updates live.</p>
+      </div>
+      <div class="budget-calc-wrap">
+        <div class="budget-items" id="budget-items"></div>
+        <div class="budget-summary" id="budget-summary"></div>
+      </div>
+    </div>
+  `;
+};
+
+window.renderCommunityTab = function(from, to) {
+  const communityHtml = renderCommunitySection(from, to);
+  return `
+    <div class="community-tab-container" style="animation: pageFadeIn 0.35s ease;">
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">👥 Expat Community &amp; Networks</h3>
+        <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Connect with fellow expats from your home country, discover local support groups, and see other major expat populations.</p>
+      </div>
+      ${communityHtml}
+    </div>
+  `;
+};
+
 // Patch setTab to use window versions
 const _origSetTab = setTab;
 window.setTab = function(tab, from, to) {
@@ -684,8 +1095,14 @@ window.setTab = function(tab, from, to) {
   const fromData = COUNTRY_DATA[from.code];
   if (tab === 'overview') content.innerHTML = window.renderOverview(from, to, toData);
   else if (tab === 'visa') content.innerHTML = window.renderVisa(from, to, toData);
-  else if (tab === 'costs') content.innerHTML = renderCosts(from, to, fromData, toData);
+  else if (tab === 'costs') content.innerHTML = window.renderCosts(from, to, fromData, toData);
   else if (tab === 'checklist') content.innerHTML = renderChecklistWithLinks();
+  else if (tab === 'culture') content.innerHTML = window.renderCultureTab(from, to, toData);
+  else if (tab === 'community') content.innerHTML = window.renderCommunityTab(from, to);
+  else if (tab === 'budget') {
+    content.innerHTML = window.renderBudgetTab();
+    initBudgetCalc();
+  }
   else if (tab === 'tips') content.innerHTML = renderTips(to, toData);
   if (tab === 'costs') animateBars();
   if (tab === 'checklist') initChecklist();
@@ -695,32 +1112,33 @@ window.setTab = function(tab, from, to) {
 const _origShowResults = showResults;
 window.showResults = function(from, to) {
   _currentFrom = from; _currentTo = to;
+  document.body.classList.add('results-active');
+  document.getElementById('page-plan').classList.add('results-active');
   document.getElementById('results-panel').classList.remove('hidden');
-  document.getElementById('results-panel').scrollIntoView({behavior:'smooth',block:'start'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+  const fromTitleName = (from.type === 'city' && from.cityName) ? `${from.cityName}, ${from.name}` : from.name;
+  const toTitleName = (to.type === 'city' && to.cityName) ? `${to.cityName}, ${to.name}` : to.name;
   const routeEl = document.getElementById('results-route');
-  routeEl.innerHTML = `${from.flag} ${from.name} <span style="color:var(--accent);margin:0 0.5rem">→</span> ${to.flag} ${to.name}`;
+  routeEl.innerHTML = `${from.flag} ${fromTitleName} <span style="color:var(--accent);margin:0 0.5rem">→</span> ${to.flag} ${toTitleName}`;
+  
+  // Set default tab to overview and reset active tab highlight styles
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  const overviewTab = document.getElementById('tab-overview');
+  if (overviewTab) overviewTab.classList.add('active');
   window.setTab('overview', from, to);
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      window.setTab(t.dataset.tab, from, to);
+  
+  if (!window._tabsInitialized) {
+    window._tabsInitialized = true;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        window.setTab(t.dataset.tab, _currentFrom, _currentTo);
+      });
     });
-  });
-};
-
-// Override doSearch to use window.showResults
-document.getElementById('search-btn').addEventListener('click', () => {
-  if (!fromCountry || !toCountry) {
-    const missing = !fromCountry ? 'from-input' : 'to-input';
-    const el = document.getElementById(missing);
-    el.style.borderColor = '#ef4444';
-    el.focus();
-    setTimeout(() => el.style.borderColor = '', 2000);
-    return;
   }
-  window.showResults(fromCountry, toCountry);
-}, true);
+};
 
 // ── Checklist with Links ──────────────────────────────────────────────────────
 function renderChecklistWithLinks() {
@@ -779,9 +1197,11 @@ window.rebuildCostBars = function() {
   const fromData = COUNTRY_DATA[_currentFrom ? _currentFrom.code : ''] || {cost:{rent:1200,food:300,transport:100,utilities:120,dining:180},currency:'USD'};
   const tdCost = activeTd ? activeTd.cost : toData.cost;
   const fdCost = activeFd ? activeFd.cost : fromData.cost;
-  const tdTotal = (tdCost.rent||0)+(tdCost.food||0)+(tdCost.transport||0)+(tdCost.utilities||0);
-  const fdTotal = (fdCost.rent||0)+(fdCost.food||0)+(fdCost.transport||0)+(fdCost.utilities||0);
-  const diff = Math.round(((tdTotal-fdTotal)/fdTotal)*100);
+  const toCur = toData.currency || COUNTRY_CURRENCY[_currentTo ? _currentTo.code : ''] || 'USD';
+  const fromCur = fromData.currency || COUNTRY_CURRENCY[_currentFrom ? _currentFrom.code : ''] || 'USD';
+  const tdTotalUSD = ['rent','food','transport','utilities'].reduce((s,k) => s + toUSD(tdCost[k]||0, toCur), 0);
+  const fdTotalUSD = ['rent','food','transport','utilities'].reduce((s,k) => s + toUSD(fdCost[k]||0, fromCur), 0);
+  const diff = fdTotalUSD > 0 ? Math.round(((tdTotalUSD - fdTotalUSD)/fdTotalUSD)*100) : 0;
   const saving = diff < 0;
   const diffCard = document.getElementById('cost-diff-card');
   const rentCard = document.getElementById('cost-rent-card');
@@ -789,8 +1209,9 @@ window.rebuildCostBars = function() {
     diffCard.querySelector('.card-icon').textContent = saving ? '💚' : '📊';
     diffCard.querySelector('.card-value').style.color = saving ? 'var(--green)' : 'var(--red)';
     diffCard.querySelector('.card-value').textContent = (saving?'':'+') + diff + '%';
+    const savingAmountInToCur = Math.abs(fromUSD(tdTotalUSD, toCur) - fromUSD(fdTotalUSD, toCur));
     diffCard.querySelector('.card-sub').textContent = saving
-      ? `You could save ~${Math.abs(tdTotal-fdTotal).toLocaleString()} ${toData.currency}/mo`
+      ? `You could save ~${Math.round(savingAmountInToCur).toLocaleString()} ${toCur}/mo`
       : `Expect to spend more than in ${_currentFrom ? _currentFrom.name : 'origin'}`;
   }
   if (rentCard) {
@@ -808,21 +1229,6 @@ window.animateBars = function() {
   if (fromSel) fromSel.onchange = window.rebuildCostBars;
 };
 
-// Patch renderCosts summary cards to have IDs
-const _origRenderCosts = renderCosts;
-window.renderCosts = function(from, to, fromData, toData) {
-  let html = _origRenderCosts(from, to, fromData, toData);
-  html = html.replace('<div class="info-card">\n      <div class="card-icon">', '<div class="info-card" id="cost-diff-card">\n      <div class="card-icon">');
-  // Add ID to rent card
-  html = html.replace('Avg Rent in', '~~~RENT~~~Avg Rent in');
-  const parts = html.split('~~~RENT~~~');
-  if (parts.length === 2) {
-    const insertAt = parts[0].lastIndexOf('<div class="info-card">');
-    parts[0] = parts[0].substring(0, insertAt) + '<div class="info-card" id="cost-rent-card">' + parts[0].substring(insertAt + '<div class="info-card">'.length);
-    html = parts.join('Avg Rent in');
-  }
-  return html;
-};
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 let quizAnswers = {}, quizStep = 0;
@@ -1154,7 +1560,7 @@ const ENHANCED_QUESTIONS = [
     id:"budget", question:"What's your monthly budget for living costs?", icon:"💰",
     type:"budget"
   },
-  ...QUIZ_QUESTIONS.filter(q => q.id !== 'budget')
+  ...QUIZ_QUESTIONS.filter(q => q.id !== 'budget' && q.id !== 'vibe')
 ];
 
 let enhQuizAnswers = {}, enhQuizStep = 0;
@@ -1534,7 +1940,7 @@ renderEnhQuizStep = function() {
   _prevRenderEnhQuizStep();
 };
 
-// ── Fix: renderCosts currency fallback should use COUNTRY_CURRENCY map ────────
+// ── Fix: renderCosts currency fallback and monthly total injection ────────
 const _origRenderCosts2 = window.renderCosts || renderCosts;
 window.renderCosts = function(from, to, fromData, toData) {
   // Look up correct currency for countries missing from COUNTRY_DATA
@@ -1545,7 +1951,48 @@ window.renderCosts = function(from, to, fromData, toData) {
   else if (!fromData.currency) fromData = { ...fromData, currency: fromCurrency };
   if (!toData)   toData   = { cost:{rent:1000,food:250,transport:80, utilities:100,dining:150},  currency: toCurrency };
   else if (!toData.currency)   toData   = { ...toData,   currency: toCurrency };
-  return _origRenderCosts2(from, to, fromData, toData);
+
+  // Safe fallback for cost objects
+  const fdCost = fromData.cost || {rent:1200,food:300,transport:100,utilities:120,dining:180};
+  const tdCost = toData.cost || {rent:1000,food:250,transport:80, utilities:100,dining:150};
+
+  // Call the original renderCosts function with the patched data
+  let html = _origRenderCosts2(from, to, fromData, toData);
+
+  // Check if specific cities are pre-selected in search context
+  const initialToIdx = (to && to.type === 'city') ? to.cityIndex : -1;
+  const initialFromIdx = (from && from.type === 'city') ? from.cityIndex : -1;
+  const citiesList = CITY_DATA[to.code] || [];
+  const fromCitiesList = CITY_DATA[from.code] || [];
+  const activeFd = (initialFromIdx >= 0 && fromCitiesList[initialFromIdx]) ? fromCitiesList[initialFromIdx] : { cost: fdCost };
+  const activeTd = (initialToIdx >= 0 && citiesList[initialToIdx]) ? citiesList[initialToIdx] : { cost: tdCost };
+
+  // Calculate totals using the correct, patched city/country costs!
+  const keys = ['rent','food','transport','utilities'];
+  const fTotal = keys.reduce((s,k)=>s+(activeFd.cost[k]||0),0);
+  const tTotal = keys.reduce((s,k)=>s+(activeTd.cost[k]||0),0);
+  const fTotalUSD = keys.reduce((s,k)=>s+toUSD(activeFd.cost[k]||0, fromData.currency),0);
+  const tTotalUSD = keys.reduce((s,k)=>s+toUSD(activeTd.cost[k]||0, toData.currency),0);
+  const diff = fTotalUSD > 0 ? Math.round(((tTotalUSD-fTotalUSD)/fTotalUSD)*100) : 0;
+  const diffColor = diff<=0?'var(--green)':'var(--red)';
+  const totalRow = `
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="cost-row" style="align-items:center">
+        <div class="cost-label" style="font-weight:700;color:var(--text)">📊 Monthly Total</div>
+        <div class="cost-bars">
+          <div class="cost-bar-wrap">
+            <div style="font-size:0.82rem;color:var(--muted);padding:2px 0" id="from-total-label">${fromData.currency} ${fTotal.toLocaleString()}/mo</div>
+          </div>
+          <div class="cost-bar-wrap">
+            <div style="font-size:0.9rem;font-weight:700;color:var(--text);padding:2px 0" id="to-total-label">${toData.currency} ${tTotal.toLocaleString()}/mo</div>
+          </div>
+        </div>
+        <div style="font-size:0.85rem;font-weight:700;color:${diffColor};width:48px;text-align:right;flex-shrink:0" id="total-diff-label">${diff>0?'+':''}${diff}%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Excludes dining out (discretionary spend)</div>
+    </div>`;
+  html = html.replace('<div class="cost-legend">', totalRow + '<div class="cost-legend">');
+  return html;
 };
 
 // Extend COUNTRY_CURRENCY with more European and common countries
@@ -1558,7 +2005,7 @@ Object.assign(COUNTRY_CURRENCY, {
   ZA:'ZAR', NG:'NGN', KE:'KES', EG:'EGP',
   TR:'TRY', IL:'ILS', SA:'SAR', QA:'QAR', KW:'KWD', BH:'BHD', OM:'OMR',
   UA:'UAH', RU:'RUB', BY:'BYN', KZ:'KZT',
-  AR:'ARS', CL:'CLP', CO:'COP', PE:'PEN', UY:'UYU',
+  AR:'ARS', CL:'CLP', CO:'COP', PE:'PEN', UY:'UYU', CR:'CRC', MA:'MAD',
 });
 
 // ── Origin-country travel advisory links ──────────────────────────────────────
@@ -1612,37 +2059,7 @@ window.renderOverview = function(from, to, d) {
   return safety + base;
 };
 
-// ── Cost breakdown totals ─────────────────────────────────────────────────────
-const _prevRenderCosts2 = window.renderCosts;
-window.renderCosts = function(from, to, fromData, toData) {
-  let html = _prevRenderCosts2(from, to, fromData, toData);
-  // Inject totals row after the cost-legend closing div
-  const fd = fromData || { cost:{rent:1200,food:300,transport:100,utilities:120,dining:180}, currency: COUNTRY_CURRENCY[from.code]||'USD' };
-  const td = toData   || { cost:{rent:1000,food:250,transport:80, utilities:100,dining:150},  currency: COUNTRY_CURRENCY[to.code]||'USD' };
-  const keys = ['rent','food','transport','utilities'];
-  const fTotal = keys.reduce((s,k)=>s+(fd.cost[k]||0),0);
-  const tTotal = keys.reduce((s,k)=>s+(td.cost[k]||0),0);
-  const diff = Math.round(((tTotal-fTotal)/fTotal)*100);
-  const diffColor = diff<=0?'var(--green)':'var(--red)';
-  const totalRow = `
-    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
-      <div class="cost-row" style="align-items:center">
-        <div class="cost-label" style="font-weight:700;color:var(--text)">📊 Monthly Total</div>
-        <div class="cost-bars">
-          <div class="cost-bar-wrap">
-            <div style="font-size:0.82rem;color:var(--muted);padding:2px 0" id="from-total-label">${fd.currency} ${fTotal.toLocaleString()}/mo</div>
-          </div>
-          <div class="cost-bar-wrap">
-            <div style="font-size:0.9rem;font-weight:700;color:var(--text);padding:2px 0" id="to-total-label">${td.currency} ${tTotal.toLocaleString()}/mo</div>
-          </div>
-        </div>
-        <div style="font-size:0.85rem;font-weight:700;color:${diffColor};width:48px;text-align:right;flex-shrink:0" id="total-diff-label">${diff>0?'+':''}${diff}%</div>
-      </div>
-      <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Excludes dining out (discretionary spend)</div>
-    </div>`;
-  html = html.replace('</div>\n      <div class="cost-legend">', totalRow + '</div>\n      <div class="cost-legend">');
-  return html;
-};
+// Cost breakdown totals are now handled inside the main renderCosts override above
 
 // Update rebuildCostBars to also refresh totals
 const _prevRebuildCostBars2 = window.rebuildCostBars;
@@ -1666,7 +2083,9 @@ window.rebuildCostBars = function() {
   const keys = ['rent','food','transport','utilities'];
   const fTotal = keys.reduce((s,k)=>s+(fdCost[k]||0),0);
   const tTotal = keys.reduce((s,k)=>s+(tdCost[k]||0),0);
-  const diff = fTotal > 0 ? Math.round(((tTotal-fTotal)/fTotal)*100) : 0;
+  const fTotalUSD = keys.reduce((s,k)=>s+toUSD(fdCost[k]||0, fromCur),0);
+  const tTotalUSD = keys.reduce((s,k)=>s+toUSD(tdCost[k]||0, toCur),0);
+  const diff = fTotalUSD > 0 ? Math.round(((tTotalUSD-fTotalUSD)/fTotalUSD)*100) : 0;
   const fromTotalEl = document.getElementById('from-total-label');
   const toTotalEl = document.getElementById('to-total-label');
   const diffEl = document.getElementById('total-diff-label');
@@ -1724,21 +2143,22 @@ function renderDestinationGrid(originCode) {
     const c = COUNTRIES.find(x => x.code === dest.code);
     if (!c) return;
     const card = document.createElement('div');
-    card.className = 'dest-card';
+    const pop = typeof COUNTRY_POPULATIONS !== 'undefined' ? COUNTRY_POPULATIONS[c.code] || 'N/A' : 'N/A';
     card.innerHTML = `
       <div class="dest-flag">${c.flag}</div>
       <div class="dest-name">${c.name}</div>
       <div class="dest-tagline">${dest.tagline}</div>
+      <div style="font-size:0.75rem; color:var(--muted); margin-bottom: 0.25rem;">👥 Pop: ${pop}</div>
       ${originCountry ? `<div class="dest-origin-note">Popular with ${originCountry.flag} ${originCountry.name} movers</div>` : ''}
       <div class="dest-trend">📈 ${dest.trend}</div>
     `;
     card.addEventListener('click', () => {
-      toCountry = c;
+      toCountry = { type: 'country', code: c.code, name: c.name, flag: c.flag };
       document.getElementById('to-input').value = c.name;
       document.getElementById('to-input').dataset.code = c.code;
       // Also pre-fill from if origin filter is active
       if (originCountry && !fromCountry) {
-        fromCountry = originCountry;
+        fromCountry = { type: 'country', code: originCountry.code, name: originCountry.name, flag: originCountry.flag };
         document.getElementById('from-input').value = originCountry.name;
         document.getElementById('from-input').dataset.code = originCountry.code;
       }
@@ -1750,6 +2170,94 @@ function renderDestinationGrid(originCode) {
 }
 
 // ── Compare section: Countries + Cities toggle ────────────────────────────────
+let selectedCompareCountries = ["US","GB","DE","PT","TH","SG","AU","MX","CA","JP","AE","NL","ES","FR","AT","IE"];
+
+function toggleCompareDropdown(event) {
+  if (event) event.stopPropagation();
+  const dropdown = document.getElementById('cmp-countries-dropdown');
+  if (!dropdown) return;
+  const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+  dropdown.style.display = isHidden ? 'block' : 'none';
+}
+
+document.addEventListener('click', (event) => {
+  const dropdown = document.getElementById('cmp-countries-dropdown');
+  const btn = document.getElementById('cmp-countries-btn-select');
+  if (dropdown && btn && !dropdown.contains(event.target) && !btn.contains(event.target)) {
+    dropdown.style.display = 'none';
+  }
+});
+
+function handleCompareCountryCheckbox(checkbox) {
+  const code = checkbox.value;
+  if (checkbox.checked) {
+    if (!selectedCompareCountries.includes(code)) {
+      selectedCompareCountries.push(code);
+    }
+  } else {
+    selectedCompareCountries = selectedCompareCountries.filter(x => x !== code);
+  }
+  updateCompareDropdownButtonText();
+  renderCountryCompare();
+}
+
+function updateCompareDropdownButtonText() {
+  const btnText = document.getElementById('multiselect-btn-text');
+  if (btnText) {
+    btnText.textContent = `Select Countries (${selectedCompareCountries.length})`;
+  }
+}
+
+function toggleAllCompareCountries(selectAll, event) {
+  if (event) event.stopPropagation();
+  const allCodes = Object.keys(COUNTRY_DATA).filter(code => code !== 'ALL');
+  
+  if (selectAll) {
+    selectedCompareCountries = [...allCodes];
+  } else {
+    selectedCompareCountries = [];
+  }
+  
+  // Re-sync checkboxes
+  const container = document.getElementById('multiselect-items-list');
+  if (container) {
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.checked = selectAll;
+    });
+  }
+  
+  updateCompareDropdownButtonText();
+  renderCountryCompare();
+}
+
+function buildCountryChecklist() {
+  const container = document.getElementById('multiselect-items-list');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  const allCodes = Object.keys(COUNTRY_DATA).filter(code => code !== 'ALL');
+  
+  allCodes.forEach(code => {
+    const c = COUNTRIES.find(x => x.code === code);
+    if (!c) return;
+    const isChecked = selectedCompareCountries.includes(code);
+    
+    const item = document.createElement('label');
+    item.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text);cursor:pointer;padding:6px 8px;border-radius:4px;user-select:none;transition:background 0.2s';
+    item.innerHTML = `
+      <input type="checkbox" value="${code}" ${isChecked ? 'checked' : ''} onchange="handleCompareCountryCheckbox(this)" style="cursor:pointer;accent-color:var(--accent)" />
+      <span>${c.flag} ${c.name}</span>
+    `;
+    item.addEventListener('mouseenter', () => item.style.background = 'rgba(255,255,255,0.06)');
+    item.addEventListener('mouseleave', () => item.style.background = 'transparent');
+    
+    container.appendChild(item);
+  });
+  
+  updateCompareDropdownButtonText();
+}
+
 (function buildCompareSection() {
   const section = document.getElementById('compare');
   const inner = section.querySelector('.section-inner');
@@ -1767,17 +2275,41 @@ function renderDestinationGrid(originCode) {
   }).join('');
 
   controls.innerHTML = `
-    <div class="compare-toggle">
-      <button class="compare-toggle-btn active" id="cmp-countries-btn" onclick="setCompareMode('countries')">🌍 Countries</button>
-      <button class="compare-toggle-btn" id="cmp-cities-btn" onclick="setCompareMode('cities')">🏙️ Cities</button>
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;width:100%">
+      <div class="compare-toggle">
+        <button class="compare-toggle-btn active" id="cmp-countries-btn" onclick="setCompareMode('countries')">🌍 Countries</button>
+        <button class="compare-toggle-btn" id="cmp-cities-btn" onclick="setCompareMode('cities')">🏙️ Cities</button>
+      </div>
+      
+      <!-- Custom Country Multi-Select Dropdown Checklist -->
+      <div class="custom-multiselect" id="cmp-countries-multiselect" style="position:relative; z-index:100">
+        <button class="multiselect-btn" id="cmp-countries-btn-select" onclick="toggleCompareDropdown(event)" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);cursor:pointer;font-size:0.85rem;min-width:240px;text-align:left;transition:border-color 0.2s">
+          <span id="multiselect-btn-text">Select Countries (${selectedCompareCountries.length})</span>
+          <span style="font-size:0.75rem;color:var(--muted);transition:transform 0.2s">▼</span>
+        </button>
+        <div class="multiselect-dropdown" id="cmp-countries-dropdown" style="display:none;position:absolute;top:100%;left:0;margin-top:6px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 12px 30px rgba(0,0,0,0.5);padding:12px;min-width:260px;max-height:320px;overflow-y:auto;z-index:1000">
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            <button onclick="toggleAllCompareCountries(true, event)" style="background:none;border:none;color:var(--accent);font-size:0.78rem;cursor:pointer;font-weight:600">Select All</button>
+            <button onclick="toggleAllCompareCountries(false, event)" style="background:none;border:none;color:var(--muted);font-size:0.78rem;cursor:pointer;font-weight:600">Clear All</button>
+          </div>
+          <div id="multiselect-items-list" style="display:flex;flex-direction:column;gap:4px">
+            <!-- Dynamic Country Checkboxes -->
+          </div>
+        </div>
+      </div>
+
+      <select class="compare-filter-select" id="cmp-country-filter" style="display:none" onchange="renderCityCompare()">
+        <option value="ALL">All countries</option>
+        ${cityCountries}
+      </select>
+      
+      <span class="compare-count" id="cmp-count" style="margin-left:auto"></span>
     </div>
-    <select class="compare-filter-select" id="cmp-country-filter" style="display:none" onchange="renderCityCompare()">
-      <option value="ALL">All countries</option>
-      ${cityCountries}
-    </select>
-    <span class="compare-count" id="cmp-count"></span>
   `;
   inner.insertBefore(controls, grid);
+
+  // Build the checkboxes
+  buildCountryChecklist();
 
   // Render initial country view
   renderCountryCompare();
@@ -1789,7 +2321,12 @@ function setCompareMode(mode) {
   _compareMode = mode;
   document.getElementById('cmp-countries-btn').classList.toggle('active', mode === 'countries');
   document.getElementById('cmp-cities-btn').classList.toggle('active', mode === 'cities');
-  document.getElementById('cmp-country-filter').style.display = mode === 'cities' ? 'block' : 'none';
+  
+  const multiselect = document.getElementById('cmp-countries-multiselect');
+  const cityFilter = document.getElementById('cmp-country-filter');
+  if (multiselect) multiselect.style.display = mode === 'countries' ? 'block' : 'none';
+  if (cityFilter) cityFilter.style.display = mode === 'cities' ? 'block' : 'none';
+
   if (mode === 'countries') renderCountryCompare();
   else renderCityCompare();
 }
@@ -1798,7 +2335,21 @@ function renderCountryCompare() {
   const grid = document.getElementById('compare-grid');
   grid.innerHTML = '';
   grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
-  const codes = ["US","GB","DE","PT","TH","SG","AU","MX","CA","JP","AE","NL","ES","FR","AT","IE"];
+  
+  const codes = selectedCompareCountries;
+  
+  if (codes.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--muted);border:1px dashed var(--border);border-radius:var(--radius);background:var(--card2);max-width:450px;margin:2rem auto">
+        <span style="font-size:3rem;display:block;margin-bottom:1rem">🌍</span>
+        <h4 style="color:var(--text);margin-bottom:0.5rem">No countries selected</h4>
+        <p style="font-size:0.85rem">Use the checklist above to select which countries you want to compare side-by-side.</p>
+      </div>
+    `;
+    document.getElementById('cmp-count').textContent = '0 countries';
+    return;
+  }
+
   codes.forEach(code => {
     const c = COUNTRIES.find(x => x.code === code);
     const d = COUNTRY_DATA[code];
@@ -1806,9 +2357,11 @@ function renderCountryCompare() {
     const total = d.cost.rent + d.cost.food + d.cost.transport + d.cost.utilities;
     const card = document.createElement('div');
     card.className = 'compare-card';
+    const pop = typeof COUNTRY_POPULATIONS !== 'undefined' ? COUNTRY_POPULATIONS[code] || 'N/A' : 'N/A';
     card.innerHTML = `
       <div class="compare-flag">${c.flag}</div>
       <div class="compare-country">${c.name}</div>
+      <div class="compare-metric" style="margin-bottom: 4px;"><span class="metric-label" style="font-weight:600">👥 Population</span><span class="metric-val" style="font-weight:600; color:var(--text)">${pop}</span></div>
       <div class="compare-metric"><span class="metric-label">Rent</span><span class="metric-val">${d.currency} ${d.cost.rent.toLocaleString()}/mo</span></div>
       <div class="compare-metric"><span class="metric-label">Food</span><span class="metric-val">${d.currency} ${d.cost.food}/mo</span></div>
       <div class="compare-metric"><span class="metric-label">Transport</span><span class="metric-val">${d.currency} ${d.cost.transport}/mo</span></div>
@@ -1856,6 +2409,7 @@ function renderCityCompare() {
     const total = (city.cost.rent||0) + (city.cost.food||0) + (city.cost.transport||0) + (city.cost.utilities||0);
     const card = document.createElement('div');
     card.className = 'city-compare-card';
+    const pop = typeof CITY_POPULATIONS !== 'undefined' ? CITY_POPULATIONS[city.name] || 'N/A' : 'N/A';
     card.innerHTML = `
       <div class="city-compare-header">
         <div class="city-compare-flag">${countryObj ? countryObj.flag : '🌍'}</div>
@@ -1864,6 +2418,7 @@ function renderCityCompare() {
           <div class="city-compare-country">${city.name.includes(',') ? city.name.split(',').slice(1).join(',').trim() + ' · ' : ''}${countryObj ? countryObj.name : ''}</div>
         </div>
       </div>
+      <div class="compare-metric" style="margin-bottom: 4px;"><span class="metric-label" style="font-weight:600">👥 Population</span><span class="metric-val" style="font-weight:600; color:var(--text)">${pop}</span></div>
       <div class="compare-metric"><span class="metric-label">Rent</span><span class="metric-val">${currency} ${(city.cost.rent||0).toLocaleString()}/mo</span></div>
       <div class="compare-metric"><span class="metric-label">Food</span><span class="metric-val">${currency} ${(city.cost.food||0).toLocaleString()}/mo</span></div>
       <div class="compare-metric"><span class="metric-label">Transport</span><span class="metric-val">${currency} ${(city.cost.transport||0).toLocaleString()}/mo</span></div>
@@ -1885,7 +2440,14 @@ function renderCityCompare() {
 
 // ── Checklist: all collapsed by default ───────────────────────────────────────
 function renderChecklistWithLinks() {
-  return `<div class="checklist-phases" id="checklist-phases">
+  return `
+    <div class="print-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: var(--card2); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius-sm);">
+      <span style="font-size: 0.88rem; color: var(--muted);">Track and print your moving checklist tasks.</span>
+      <button onclick="window.printChecklist()" class="action-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; font-size: 0.85rem; background: rgba(99,102,241,0.15); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--text); cursor: pointer; transition: all 0.2s; font-family:'Inter',sans-serif; font-weight:600; outline: none;">
+        🖨️ Print Checklist
+      </button>
+    </div>
+    <div class="checklist-phases" id="checklist-phases">
     ${CHECKLIST_PHASES.map((phase, pi) => `
       <div class="phase-card" id="phase-${pi}">
         <div class="phase-header" onclick="togglePhase(${pi})">
@@ -1908,6 +2470,79 @@ function renderChecklistWithLinks() {
       </div>`).join('')}
   </div>`;
 }
+
+window.printChecklist = function() {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert("Please allow popups to print your checklist.");
+    return;
+  }
+  
+  const fromName = _currentFrom ? _currentFrom.name : 'Origin';
+  const toName = _currentTo ? _currentTo.name : 'Destination';
+  
+  let html = `
+    <html>
+      <head>
+        <title>Relocation Checklist: ${fromName} to ${toName}</title>
+        <style>
+          body { font-family: 'Inter', system-ui, -apple-system, sans-serif; padding: 3rem; color: #1e293b; background: #fff; line-height: 1.6; }
+          .header { border-bottom: 3px solid #6366f1; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+          h1 { font-family: 'Outfit', system-ui, sans-serif; font-size: 2.2rem; margin: 0 0 0.5rem 0; color: #0f172a; }
+          .subtitle { color: #64748b; font-size: 1rem; font-weight: 500; }
+          .phase { margin-bottom: 2rem; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; page-break-inside: avoid; background: #f8fafc; }
+          .phase-title { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; margin: 0 0 1.2rem 0; color: #0f172a; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+          .item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 0.85rem; font-size: 0.98rem; }
+          .checkbox { width: 20px; height: 20px; border: 2px solid #94a3b8; border-radius: 4px; flex-shrink: 0; margin-top: 2px; display: inline-flex; align-items: center; justify-content: center; }
+          .checked { text-decoration: line-through; color: #94a3b8; }
+          .checked-box { background: #6366f1; border-color: #6366f1; }
+          .checked-mark { color: white; font-size: 13px; font-weight: bold; }
+          @media print {
+            body { padding: 0; background: none; }
+            .phase { border: 1px solid #cbd5e1; background: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Relocatr Move Planner</h1>
+          <div class="subtitle">Personalized Checklist: ${fromName} ➔ ${toName} &nbsp;|&nbsp; Generated on ${new Date().toLocaleDateString()}</div>
+        </div>
+  `;
+
+  CHECKLIST_PHASES.forEach((phase, pi) => {
+    html += `
+      <div class="phase">
+        <div class="phase-title">${phase.icon} ${phase.title}</div>
+    `;
+    phase.items.forEach((item, ii) => {
+      const el = document.getElementById(`chkl-${pi}-${ii}`);
+      const isChecked = el ? el.checked : false;
+      html += `
+        <div class="item">
+          <div class="checkbox ${isChecked ? 'checked-box' : ''}">
+            ${isChecked ? '<span class="checked-mark">✓</span>' : ''}
+          </div>
+          <span class="${isChecked ? 'checked' : ''}">${item}</span>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  });
+
+  html += `
+      </body>
+    </html>
+  `;
+
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 350);
+};
 
 // Also fix static checklist on page (the homepage version)
 (function fixStaticChecklist() {
@@ -1949,6 +2584,7 @@ function initBudgetCalc() {
 
 function renderBudgetItems() {
   const container = document.getElementById('budget-items');
+  if (!container) return;
   container.innerHTML = BUDGET_ITEMS.map(item => {
     const val = budgetValues[item.id];
     const pct = Math.round(((val - item.min) / (item.max - item.min)) * 100);
@@ -1987,6 +2623,8 @@ function updateBudgetItem(id, rawVal, slider) {
 }
 
 function renderBudgetSummary() {
+  const container = document.getElementById('budget-summary');
+  if (!container) return;
   const total = Object.values(budgetValues).reduce((a,b) => a+b, 0);
   const rows = BUDGET_ITEMS.filter(i => budgetValues[i.id] > 0).map(i =>
     `<div class="budget-summary-row">
@@ -1998,7 +2636,7 @@ function renderBudgetSummary() {
     `<button class="budget-cur-btn ${budgetCurrency===c.code?'active':''}"
       onclick="setBudgetCurrency('${c.code}')">${c.sym} ${c.code}</button>`).join('');
 
-  document.getElementById('budget-summary').innerHTML = `
+  container.innerHTML = `
     <div class="budget-summary-title">💰 Your Move Budget</div>
     <div class="budget-currency-row">${curBtns}</div>
     ${rows}
@@ -2152,19 +2790,19 @@ renderDestinationGrid = function(originCode) {
   data.forEach(dest => {
     const c = COUNTRIES.find(x => x.code === dest.code);
     if (!c) return;
-    const card = document.createElement('div');
-    card.className = 'dest-card';
+    const pop = typeof COUNTRY_POPULATIONS !== 'undefined' ? COUNTRY_POPULATIONS[c.code] || 'N/A' : 'N/A';
     card.innerHTML = `
       <div class="dest-flag">${c.flag}</div>
       <div class="dest-name">${c.name}</div>
       <div class="dest-tagline">${dest.tagline}</div>
+      <div style="font-size:0.75rem; color:var(--muted); margin-bottom: 0.25rem;">👥 Pop: ${pop}</div>
       <div class="dest-trend">📈 ${dest.trend}</div>`;
     card.addEventListener('click', () => {
-      toCountry = c;
+      toCountry = { type: 'country', code: c.code, name: c.name, flag: c.flag };
       document.getElementById('to-input').value = c.name;
       document.getElementById('to-input').dataset.code = c.code;
       if (originCountry && !fromCountry) {
-        fromCountry = originCountry;
+        fromCountry = { type: 'country', code: originCountry.code, name: originCountry.name, flag: originCountry.flag };
         document.getElementById('from-input').value = originCountry.name;
         document.getElementById('from-input').dataset.code = originCountry.code;
       }
@@ -2206,122 +2844,64 @@ function commBadge(size) {
   return                     {cls:'comm-emerging', label:'Emerging Community'};
 }
 
-function renderCommunitySection(from, to) {
-  const destData = DIASPORA_DATA[to.code];
-  if (!destData) return '';
+// Helper to generate dynamic community links with Instagram and info tooltips
+function getCommunityLinks(from, to, cityKey) {
+  const fromName = from.name;
+  const destName = cityKey || to.name;
+  const shortDest = destName.split(',')[0].trim();
+  const fbQuery = encodeURIComponent(fromName + ' expats ' + shortDest);
+  const redditQuery = encodeURIComponent('expats ' + destName);
+  const igTag = `expatsin${destName.toLowerCase().replace(/[^a-z0-9]/g,'')}`;
 
-  const fromCode = from.code;
-  // Find best city match for the active city selector (if any)
-  const toSel = document.getElementById('to-city-select');
-  const cityIdx = toSel ? parseInt(toSel.value) : -1;
-  const cities = CITY_DATA[to.code] || [];
-  const activeCityName = cityIdx >= 0 ? cities[cityIdx].name : null;
-
-  // Look up community data — try city first, fall back to national
-  let commData = null, levelLabel = '';
-  if (activeCityName && destData.cities) {
-    // Find matching city key (partial match)
-    const cityKey = Object.keys(destData.cities).find(k =>
-      k.toLowerCase().includes(activeCityName.split(',')[0].toLowerCase()) ||
-      activeCityName.toLowerCase().includes(k.split(',')[0].toLowerCase())
-    );
-    if (cityKey) { commData = destData.cities[cityKey][fromCode]; levelLabel = cityKey; }
-  }
-  if (!commData && destData.national) {
-    commData = destData.national[fromCode];
-    levelLabel = to.name + ' (national)';
-  }
-
-  // Top communities in the destination (city or national)
-  let topData = {};
-  if (activeCityName && destData.cities) {
-    const cityKey = Object.keys(destData.cities).find(k =>
-      k.toLowerCase().includes(activeCityName.split(',')[0].toLowerCase()) ||
-      activeCityName.toLowerCase().includes(k.split(',')[0].toLowerCase())
-    );
-    if (cityKey) topData = destData.cities[cityKey];
-  }
-  if (!Object.keys(topData).length && destData.national) topData = destData.national;
-
-  const topSorted = Object.entries(topData)
-    .filter(([code]) => code !== fromCode)
-    .sort(([,a],[,b]) => (b.size||0)-(a.size||0))
-    .slice(0, 6);
-
-  // Your community box
-  let yourCommunityHtml = '';
-  if (commData) {
-    const badge = commBadge(commData.size || 0);
-    const fromCountry = COUNTRIES.find(c => c.code === fromCode);
-    const communityLinks = [
-      { label:'🌐 Internations', url:`https://www.internations.org/go/to/${to.name.toLowerCase().replace(/\s+/g,'-')}` },
-      { label:'💬 Expat.com', url:`https://www.expat.com/forum/${to.name.toLowerCase().replace(/\s+/g,'-')}/` },
-      { label:'📱 Facebook Groups', url:`https://www.facebook.com/search/groups?q=${encodeURIComponent((fromCountry?fromCountry.name:from.name)+' expats '+to.name)}` },
-    ];
-    yourCommunityHtml = `
-      <div class="community-your-box">
-        <div class="community-your-top">
-          <div class="community-your-flag">${fromCountry ? fromCountry.flag : '🌍'}</div>
-          <div class="community-your-info" style="flex:1">
-            <h4>${fromCountry ? fromCountry.name : from.name} community in ${levelLabel}</h4>
-            <p>${commData.desc || 'Expat community present in the destination.'}</p>
-          </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div class="community-your-size">~${fmtPopulation(commData.size || 0)}</div>
-            <div class="community-your-label">residents</div>
-            <div style="margin-top:6px"><span class="community-badge ${badge.cls}">${badge.label}</span></div>
-          </div>
-        </div>
-        <div class="community-links">
-          ${communityLinks.map(l=>`<a class="community-link" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}
-        </div>
-      </div>`;
-  } else {
-    yourCommunityHtml = `
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1.25rem;color:var(--muted);font-size:0.88rem">
-        🌍 We don't have specific community size data for ${from.name} nationals in ${activeCityName || to.name} yet, but expat communities exist across all major cities.
-        <a class="community-link" style="display:inline-flex;margin-top:0.75rem" href="https://www.internations.org" target="_blank" rel="noopener">Find your community on Internations ↗</a>
-      </div>`;
-  }
-
-  // Top communities
-  const topCommHtml = topSorted.length ? `
-    <div style="margin-top:0.5rem">
-      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.65rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600">
-        Largest communities in ${activeCityName || to.name}
-      </div>
-      <div class="top-communities-grid">
-        ${topSorted.map(([code, data], i) => {
-          const c = COUNTRIES.find(x => x.code === code);
-          if (!c) return '';
-          return `<div class="top-comm-card">
-            <div class="top-comm-rank">${i+1}</div>
-            <div class="top-comm-flag">${c.flag}</div>
-            <div class="top-comm-info">
-              <div class="tc-name">${c.name}</div>
-              <div class="tc-size">~${fmtPopulation(data.size || 0)}</div>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>` : '';
-
-  return `<div class="community-section">
-    <div class="community-header">
-      <h3>👥 Community & Expat Life</h3>
-    </div>
-    ${yourCommunityHtml}
-    ${topCommHtml}
-  </div>`;
+  return [
+    { 
+      label: '🌐 InterNations', 
+      url: `https://www.internations.org/${shortDest.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-')}-expats`,
+      desc: 'Global networking platform that hosts regular physical meetups, events, and online groups for expats.' 
+    },
+    { 
+      label: '💬 Expat.com Forum', 
+      url: `https://www.expat.com/en/forum/`,
+      desc: 'Local discussion forums, housing listings, and user Q&As about moving and living in the country.' 
+    },
+    { 
+      label: '🔴 Reddit Expats', 
+      url: `https://www.reddit.com/search/?q=${redditQuery}&type=sr`,
+      desc: 'Searches Reddit subreddits and discussions for local expat communities and advice.' 
+    },
+    { 
+      label: '📱 Facebook Groups', 
+      url: `https://www.facebook.com/search/groups/?q=${fbQuery}`,
+      desc: 'Finds expat and housing groups (requires a Facebook account and login to view results).' 
+    },
+    { 
+      label: '📸 Instagram Tags', 
+      url: `https://www.instagram.com/explore/tags/${igTag}/`,
+      desc: `Explore photos, stories, and visual guides uploaded by other expats using the #${igTag} hashtag (requires Instagram login).` 
+    }
+  ];
 }
 
-// Patch window.renderOverview to append community section
-const _prevRenderOverview3 = window.renderOverview;
-window.renderOverview = function(from, to, d) {
-  const base = _prevRenderOverview3(from, to, d);
-  const community = renderCommunitySection(from, to);
-  return base + community;
-};
+function renderCommunityLinksHtml(from, to, cityKey) {
+  const links = getCommunityLinks(from, to, cityKey);
+  return `
+    <div class="community-links-grid">
+      ${links.map(l => `
+        <div class="comm-link-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <a class="community-link-btn" href="${l.url}" target="_blank" rel="noopener noreferrer">
+              ${l.label} <span style="font-size:0.75rem;margin-left:2px">↗</span>
+            </a>
+            <div class="info-tooltip-wrap">
+              <span class="info-icon" title="More info">ℹ️</span>
+              <div class="info-tooltip">${l.desc}</div>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
 
 // ── Community section: city filter + fixed links ──────────────────────────────
 let _commFromCode = null, _commToCode = null, _commCityKey = null;
@@ -2329,6 +2909,14 @@ let _commFromCode = null, _commToCode = null, _commCityKey = null;
 function renderCommunitySection(from, to) {
   _commFromCode = from.code;
   _commToCode = to.code;
+  
+  // Pre-initialize city selection if the user searched for a specific city
+  if (to.type === 'city') {
+    _commCityKey = to.name;
+  } else {
+    _commCityKey = null;
+  }
+
   const destData = DIASPORA_DATA[to.code];
   const fromCode = from.code;
 
@@ -2338,20 +2926,25 @@ function renderCommunitySection(from, to) {
   // Merge, prioritising diaspora cities
   const allCityOptions = [...new Set([...diasporaCities, ...fallbackCities])].sort();
 
+  const countryObj = COUNTRIES.find(c => c.code === to.code);
+  const countryName = countryObj ? countryObj.name : to.name;
+
   const citySelectHtml = allCityOptions.length ? `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap">
       <label style="font-size:0.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em">City:</label>
       <select class="compare-filter-select" id="comm-city-select" onchange="updateCommunityCity(this.value)" style="padding:6px 12px;font-size:0.85rem">
-        <option value="">All of ${to.name}</option>
+        <option value="">All of ${countryName}</option>
         ${allCityOptions.map(city => `<option value="${city}" ${city === _commCityKey ? 'selected' : ''}>${city}</option>`).join('')}
       </select>
     </div>` : '';
 
   // Look up community data — city or national
   let commData = null, levelLabel = to.name;
+  let hasSpecificCityData = false;
   if (_commCityKey && destData && destData.cities && destData.cities[_commCityKey]) {
     commData = destData.cities[_commCityKey][fromCode];
     levelLabel = _commCityKey;
+    hasSpecificCityData = true;
   } else if (!_commCityKey && destData && destData.national) {
     commData = destData.national[fromCode];
     levelLabel = to.name + ' (national)';
@@ -2359,8 +2952,16 @@ function renderCommunitySection(from, to) {
 
   // Top communities in selected city or national
   let topData = {};
-  if (_commCityKey && destData && destData.cities && destData.cities[_commCityKey]) {
-    topData = destData.cities[_commCityKey];
+  let showCityUnavailableNotice = false;
+  if (_commCityKey) {
+    if (hasSpecificCityData) {
+      topData = destData.cities[_commCityKey];
+    } else {
+      if (destData && destData.national) {
+        topData = destData.national;
+        showCityUnavailableNotice = true;
+      }
+    }
   } else if (destData && destData.national) {
     topData = destData.national;
   }
@@ -2371,18 +2972,8 @@ function renderCommunitySection(from, to) {
     .slice(0, 6);
 
   const fromCountry = COUNTRIES.find(c => c.code === fromCode);
-
-  // Fixed, reliable community links
-  const countrySlug = to.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g,'');
   const fromName = fromCountry ? fromCountry.name : from.name;
-  const fbQuery = encodeURIComponent(fromName + ' expats ' + (_commCityKey || to.name));
-  const redditQuery = encodeURIComponent('expats ' + (_commCityKey || to.name));
-  const communityLinks = [
-    { label:'🌐 Internations', url:`https://www.internations.org/expat-insider/` },
-    { label:'💬 Expat.com Forum', url:`https://www.expat.com/forum/list.php` },
-    { label:'🔴 Reddit Expats', url:`https://www.reddit.com/search/?q=${redditQuery}&type=sr` },
-    { label:'📱 Facebook Groups', url:`https://www.facebook.com/search/groups/?q=${fbQuery}` },
-  ];
+  const linksHtml = renderCommunityLinksHtml(from, to, _commCityKey);
 
   let yourCommunityHtml = '';
   if (commData && commData.size) {
@@ -2401,24 +2992,28 @@ function renderCommunitySection(from, to) {
             <div style="margin-top:6px"><span class="community-badge ${badge.cls}">${badge.label}</span></div>
           </div>
         </div>
-        <div class="community-links">
-          ${communityLinks.map(l=>`<a class="community-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label} ↗</a>`).join('')}
-        </div>
+        ${linksHtml}
       </div>`;
   } else {
+    const displayUnavailableName = _commCityKey ? _commCityKey : levelLabel;
     yourCommunityHtml = `
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1.25rem;font-size:0.88rem;color:var(--muted)">
-        🌍 We don't have specific size data for ${fromName} nationals in ${levelLabel} yet — but expat communities exist in most cities. Use the links below to find yours.
-        <div class="community-links" style="margin-top:0.75rem">
-          ${communityLinks.map(l=>`<a class="community-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label} ↗</a>`).join('')}
-        </div>
+        🌍 We don't have specific size data for ${fromName} nationals in ${displayUnavailableName} yet — but expat communities exist in most cities. Use the links below to find yours.
+        ${linksHtml}
       </div>`;
   }
+
+  const noticeHtml = showCityUnavailableNotice ? `
+    <div style="padding:10px 14px; background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.2); border-radius:var(--radius-sm); color:var(--yellow); font-size:0.82rem; margin-bottom:1rem; display:flex; align-items:center; gap:8px;">
+      ⚠️ City-level community data for ${_commCityKey} is currently unavailable. Showing national rankings for ${to.name} instead.
+    </div>` : '';
+
+  const displayLocation = (_commCityKey && !showCityUnavailableNotice) ? _commCityKey : `${to.name} (National)`;
 
   const topCommHtml = topSorted.length ? `
     <div style="margin-top:0.5rem">
       <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.65rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600">
-        Largest communities in ${_commCityKey || to.name}
+        Largest communities in ${displayLocation}
       </div>
       <div class="top-communities-grid">
         ${topSorted.map(([code, data], i) => {
@@ -2441,6 +3036,7 @@ function renderCommunitySection(from, to) {
     ${citySelectHtml}
     <div id="community-inner">
       ${yourCommunityHtml}
+      ${noticeHtml}
       ${topCommHtml}
     </div>
   </div>`;
@@ -2448,9 +3044,7 @@ function renderCommunitySection(from, to) {
 
 function updateCommunityCity(cityKey) {
   _commCityKey = cityKey || null;
-  // Re-render just the inner community content
   const inner = document.getElementById('community-inner');
-  const sel = document.getElementById('comm-city-select');
   if (!inner || !_commFromCode || !_commToCode) return;
   const fromObj = COUNTRIES.find(c => c.code === _commFromCode) || { code: _commFromCode, name: _commFromCode };
   const toObj = COUNTRIES.find(c => c.code === _commToCode) || { code: _commToCode, name: _commToCode };
@@ -2471,15 +3065,9 @@ function updateCommunityCity(cityKey) {
   const topSorted = Object.entries(topData).filter(([c])=>c!==fromCode).sort(([,a],[,b])=>(b.size||0)-(a.size||0)).slice(0,6);
   const fromCountry = COUNTRIES.find(c => c.code === fromCode);
   const fromName = fromCountry ? fromCountry.name : fromCode;
-  const redditQuery = encodeURIComponent('expats ' + (_commCityKey || toObj.name));
-  const fbQuery = encodeURIComponent(fromName + ' expats ' + (_commCityKey || toObj.name));
-  const links = [
-    { label:'🌐 Internations', url:'https://www.internations.org/expat-insider/' },
-    { label:'💬 Expat.com', url:'https://www.expat.com/forum/list.php' },
-    { label:'🔴 Reddit', url:`https://www.reddit.com/search/?q=${redditQuery}&type=sr` },
-    { label:'📱 Facebook', url:`https://www.facebook.com/search/groups/?q=${fbQuery}` },
-  ];
-  const linksHtml = `<div class="community-links">${links.map(l=>`<a class="community-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label} ↗</a>`).join('')}</div>`;
+  
+  const linksHtml = renderCommunityLinksHtml(fromObj, toObj, _commCityKey);
+  
   let yourHtml = '';
   if (commData && commData.size) {
     const badge = commBadge(commData.size);
@@ -2529,9 +3117,60 @@ function switchPage(pageKey) {
     btn.classList.toggle('active', btn.id === 'pnav-' + pageKey);
   });
 
+  // Toggle body classes for scroll control
+  document.body.classList.toggle('page-plan-active', pageKey === 'plan');
+  document.body.classList.toggle('page-explore-active', pageKey === 'explore');
+
   // Reset scroll position for a fresh start
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Invalidate Leaflet map size if switching to explore page with map tab active
+  if (pageKey === 'explore') {
+    const activeBtn = document.querySelector('#explore-tabs .tab.active');
+    if (activeBtn && activeBtn.dataset.exploreTab === 'map' && window.map) {
+      setTimeout(() => {
+        window.map.invalidateSize();
+      }, 100);
+    }
+  }
 }
 
 // Expose globally for inline onclick handlers in the HTML
 window.switchPage = switchPage;
+
+// ── Explore Page Tab Switcher ────────────────────────────────────────────────
+function switchExploreTab(tabName) {
+  document.querySelectorAll('#explore-tabs .tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.exploreTab === tabName);
+  });
+  
+  const mapSec = document.getElementById('explore-map-section');
+  const trendSec = document.getElementById('explore');
+  const compSec = document.getElementById('compare');
+  const quizSec = document.getElementById('quiz-section');
+  
+  if (mapSec) mapSec.classList.toggle('hidden', tabName !== 'map');
+  if (trendSec) trendSec.classList.toggle('hidden', tabName !== 'trending');
+  if (compSec) compSec.classList.toggle('hidden', tabName !== 'compare');
+  if (quizSec) quizSec.classList.toggle('hidden', tabName !== 'quiz');
+  
+  if (tabName === 'map' && window.map) {
+    setTimeout(() => {
+      window.map.invalidateSize();
+    }, 100);
+  }
+}
+
+// Wire up the explore tabs
+(function initExploreTabs() {
+  const tabsContainer = document.getElementById('explore-tabs');
+  if (!tabsContainer) return;
+  tabsContainer.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchExploreTab(btn.dataset.exploreTab);
+    });
+  });
+  
+  // Set default explore tab to 'map' and hide other sections initially
+  switchExploreTab('map');
+})();
