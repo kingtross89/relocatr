@@ -360,6 +360,10 @@ body:not(.results-active):not(.page-explore-active) #footer {
 
 /* RESPONSIVE */
 @media(max-width:768px){
+  #navbar { padding: 0 1rem; }
+  .nav-inner { justify-content: space-between; gap: 0.5rem; }
+  .page-nav-btn { padding: 8px 12px; font-size: 0.8rem; }
+  #hero { height: auto; min-height: calc(100vh - 64px); padding: 3rem 1rem; }
   .hero-globe { width: 90vw; right: 50%; transform: translate(50%,-50%); opacity: 0.2; }
   .hero-content { margin-left: 0; text-align: center; }
   .hero-stats { justify-content: center; }
@@ -367,6 +371,10 @@ body:not(.results-active):not(.page-explore-active) #footer {
   .swap-btn { align-self: center; transform: rotate(90deg); }
   .visa-grid { grid-template-columns: 1fr; }
   .tabs { grid-template-columns: repeat(2, 1fr); }
+  #world-map { height: 380px !important; }
+}
+@media(max-width:480px){
+  .logo-text { display: none; }
 }
 
 /* CITY SELECTOR */
