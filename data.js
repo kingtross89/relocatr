@@ -475,10 +475,11 @@ const GOV_LINKS = {
     { icon:"🪪", label:"Government.nl — BSN Registration", url:"https://www.government.nl/topics/personal-data/citizen-service-number-bsn", cat:"ID & Registration" },
   ],
   ES: [
-    { icon:"🛂", label:"Exteriores — Visas & Residency", url:"https://www.exteriores.gob.es/en/ServiciosAlCiudadano/Paginas/Visados.aspx", cat:"Immigration" },
-    { icon:"💰", label:"Agencia Tributaria — Tax Authority", url:"https://www.agenciatributaria.es", cat:"Tax" },
-    { icon:"🏥", label:"Ministerio de Sanidad — Healthcare", url:"https://www.mscbs.gob.es", cat:"Healthcare" },
-    { icon:"🪪", label:"NIE / TIE Registration Guide", url:"https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/extranjeria/regimen-general/tarjeta-de-identidad-de-extranjero", cat:"ID & Registration" },
+    { icon:"🛂", label:"Spanish Embassy Australia — Visa Info", url:"https://www.exteriores.gob.es/Embajadas/canberra/en/ServiciosConsulares/Paginas/index.aspx", cat:"Immigration" },
+    { icon:"💼", label:"Ministerio de Inclusion — Immigration", url:"https://www.inclusion.gob.es/en/portada.html", cat:"Immigration" },
+    { icon:"💰", label:"Agencia Tributaria — Tax Authority", url:"https://sede.agenciatributaria.gob.es", cat:"Tax" },
+    { icon:"🏥", label:"Ministerio de Sanidad — Healthcare", url:"https://www.sanidad.gob.es/en/home.htm", cat:"Healthcare" },
+    { icon:"🪪", label:"Interior Ministry — Foreigner ID (NIE/TIE)", url:"https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/extranjeria/", cat:"ID & Registration" },
   ],
   FR: [
     { icon:"🛂", label:"France-Visas — Official Visa Portal", url:"https://france-visas.gouv.fr/en_US/web/france-visas", cat:"Immigration" },
