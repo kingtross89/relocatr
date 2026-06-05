@@ -584,20 +584,28 @@ const VISA_SPECIALS = {
   },
 };
 
+const AFFILIATE_LINKS = {
+  wise: "https://wise.com", // EDIT THIS with your Wise affiliate link
+  safetywing: "https://safetywing.com", // EDIT THIS with your SafetyWing affiliate link
+  airalo: "https://airalo.com", // EDIT THIS with your Airalo affiliate link
+  worldnomads: "https://www.worldnomads.com", // EDIT THIS with your World Nomads affiliate link
+  cigna: "https://www.cigna.com/individuals-families/international-expat-health-insurance", // EDIT THIS with your Cigna affiliate link
+};
+
 const CHECKLIST_LINKS = {
   "Research visa requirements for your destination":"https://www.iatatravelcentre.com",
   "Apply for your visa or residency permit":"https://www.iatatravelcentre.com",
   "Get a certified translation of key documents":"https://ata.net/page/find-a-language-professional",
   "Apostille important documents (birth cert, marriage cert, degree)":"https://www.hcch.net/en/instruments/conventions/authorities1/?cid=41",
-  "Open an international bank account (Wise, Revolut, Charles Schwab)":"https://wise.com",
-  "Book flights and organise travel insurance":"https://www.worldnomads.com",
+  "Open an international bank account (Wise, Revolut, Charles Schwab)": AFFILIATE_LINKS.wise,
+  "Book flights and organise travel insurance": AFFILIATE_LINKS.worldnomads,
   "Research international shipping companies for belongings":"https://www.sirelo.com",
-  "Research international health insurance options":"https://www.cigna.com/individuals-families/international-expat-health-insurance",
+  "Research international health insurance options": AFFILIATE_LINKS.cigna,
   "Consult a tax advisor about international tax implications":"https://www.taxesforexpats.com",
   "Research international schools if moving with children":"https://www.internationalschoolsdb.com",
   "Begin learning the local language basics":"https://www.duolingo.com",
   "Register at local government office (residency registration)":"https://www.expat.com/en/guide/moving-abroad/admin/11363-registering-with-local-authorities-abroad.html",
-  "Open a local bank account":"https://wise.com",
+  "Open a local bank account": AFFILIATE_LINKS.wise,
   "Apply for local tax identification number":"https://www.taxesforexpats.com",
   "Convert your driving licence if needed":"https://www.theaa.com/driving-advice/international/driving-abroad",
 };

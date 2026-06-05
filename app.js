@@ -892,12 +892,13 @@ function renderVisaSpecial(fromCode, toCode) {
   </div>`;
 }
 
-// Patch renderOverview to include safety warning
+// Patch renderOverview to include safety warning and affiliate widget
 const _origRenderOverview = renderOverview;
 window.renderOverview = function(from, to, d) {
   const safety = renderSafetyBanner(to.code);
   const base = _origRenderOverview(from, to, d);
-  return safety + base;
+  const affiliates = window.renderAffiliateWidget ? window.renderAffiliateWidget() : '';
+  return safety + base + affiliates;
 };
 
 // Patch renderVisa to include special visas
@@ -1140,9 +1141,78 @@ window.showResults = function(from, to) {
   }
 };
 
+// ── Affiliate & Sponsorship Widget ───────────────────────────────────────────
+window.renderAffiliateWidget = function() {
+  if (typeof AFFILIATE_LINKS === 'undefined') return '';
+  return `
+    <div class="affiliate-section" style="margin-bottom: 2rem;">
+      <div class="affiliate-title-row">
+        <h3>✨ Expat Services &amp; Member Deals</h3>
+        <span style="font-size:0.75rem; color:var(--muted); font-weight:500;">Partner Services</span>
+      </div>
+      <div class="affiliate-grid">
+        <!-- Wise -->
+        <div class="affiliate-card">
+          <div class="affiliate-header">
+            <div class="affiliate-info">
+              <div class="affiliate-icon">🏦</div>
+              <div class="affiliate-name">Wise Transfer</div>
+            </div>
+            <span class="affiliate-badge">Cheapest Fees</span>
+          </div>
+          <div class="affiliate-desc">
+            Send money abroad up to 8x cheaper than leading banks. Hold 40+ currencies and spend globally with zero hassle.
+          </div>
+          <div class="affiliate-action">
+            <span class="affiliate-deal">🎁 Free Transfer up to £500</span>
+            <a class="affiliate-btn" href="${AFFILIATE_LINKS.wise}" target="_blank" rel="noopener">Claim Offer ↗</a>
+          </div>
+        </div>
+
+        <!-- SafetyWing -->
+        <div class="affiliate-card">
+          <div class="affiliate-header">
+            <div class="affiliate-info">
+              <div class="affiliate-icon">🩺</div>
+              <div class="affiliate-name">SafetyWing Insurance</div>
+            </div>
+            <span class="affiliate-badge">Expat Choice</span>
+          </div>
+          <div class="affiliate-desc">
+            Flexible global travel medical insurance built specifically for digital nomads and expats. Cancel anytime.
+          </div>
+          <div class="affiliate-action">
+            <span class="affiliate-deal">🛡️ Global Coverage</span>
+            <a class="affiliate-btn" href="${AFFILIATE_LINKS.safetywing}" target="_blank" rel="noopener">Sign Up ↗</a>
+          </div>
+        </div>
+
+        <!-- Airalo -->
+        <div class="affiliate-card">
+          <div class="affiliate-header">
+            <div class="affiliate-info">
+              <div class="affiliate-icon">📱</div>
+              <div class="affiliate-name">Airalo eSIM Card</div>
+            </div>
+            <span class="affiliate-badge">Highly Rated</span>
+          </div>
+          <div class="affiliate-desc">
+            Get instant local mobile data in 200+ countries. Save on expensive data roaming fees upon arrival.
+          </div>
+          <div class="affiliate-action">
+            <span class="affiliate-deal">⚡ 10% Off local eSIMs</span>
+            <a class="affiliate-btn" href="${AFFILIATE_LINKS.airalo}" target="_blank" rel="noopener">Get eSIM ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
 // ── Checklist with Links ──────────────────────────────────────────────────────
 function renderChecklistWithLinks() {
-  return `<div class="checklist-phases" id="checklist-phases">
+  const affiliates = window.renderAffiliateWidget ? window.renderAffiliateWidget() : '';
+  return affiliates + `<div class="checklist-phases" id="checklist-phases">
     ${CHECKLIST_PHASES.map((phase, pi) => `
       <div class="phase-card ${pi===0?'open':''}" id="phase-${pi}">
         <div class="phase-header" onclick="togglePhase(${pi})">
