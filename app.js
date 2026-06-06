@@ -124,10 +124,10 @@ function buildDropdown(inputId, dropdownId, onSelect) {
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     dropdown.innerHTML = '';
+    if (inputId === 'from-input') fromCountry = null;
+    if (inputId === 'to-input') toCountry = null;
     if (!q) {
       dropdown.classList.remove('open');
-      if (inputId === 'from-input') fromCountry = null;
-      if (inputId === 'to-input') toCountry = null;
       return;
     }
 
@@ -225,18 +225,26 @@ function doSearch() {
     const term = val.trim().toLowerCase();
     if (!term) return null;
     
-    // 1. Try to find exact country match
-    const cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase() === term || c.code.toLowerCase() === term);
+    // 1. Try to find exact country match, then partial country match
+    let cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase() === term || c.code.toLowerCase() === term);
+    if (!cMatch) {
+      cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase().includes(term));
+    }
     if (cMatch) {
       return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
     }
     
-    // 2. Try to find city match
+    // 2. Try to find city match (exact first, then partial)
     let cityMatch = null;
     for (const [countryCode, cities] of Object.entries(CITY_DATA)) {
       const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
       if (!country) continue;
-      const idx = cities.findIndex(city => city.name.toLowerCase() === term);
+      
+      let idx = cities.findIndex(city => city.name.toLowerCase() === term);
+      if (idx < 0) {
+        idx = cities.findIndex(city => city.name.toLowerCase().includes(term));
+      }
+      
       if (idx >= 0) {
         const city = cities[idx];
         cityMatch = { type: 'city', code: countryCode, name: country.name, flag: country.flag, cityName: city.name, cityIndex: idx, region: country.region };
@@ -2657,16 +2665,16 @@ window.printChecklist = function() {
 
 // ── Move Budget Calculator ────────────────────────────────────────────────────
 const BUDGET_ITEMS = [
-  { id:'flights',   icon:'✈️',  label:'Flights & Travel',               hint:'Return flight for research trip + one-way moving flight(s). Add extra for family.',      min:100,   max:8000,  default:900,  step:50  },
-  { id:'shipping',  icon:'📦',  label:'Shipping & Removals',            hint:'Door-to-door shipping of belongings. Set to 0 if travelling light or selling everything.', min:0,     max:20000, default:2500, step:100 },
-  { id:'visa',      icon:'🛂',  label:'Visa & Immigration Fees',        hint:'Government application fees, biometrics, and any agent/lawyer costs.',                    min:0,     max:8000,  default:600,  step:50  },
-  { id:'docs',      icon:'📄',  label:'Document Prep',                  hint:'Certified translations, apostilles, notarisation, and official certifications.',           min:0,     max:3000,  default:400,  step:25  },
-  { id:'deposit',   icon:'🏠',  label:'First Rent + Deposit',           hint:'Typically 1-3 months rent upfront. Research your destination city.',                      min:0,     max:20000, default:4000, step:200 },
-  { id:'insurance', icon:'🏥',  label:'Health Insurance Setup',         hint:'International health cover before local plan kicks in. Usually 1-6 months.',              min:0,     max:5000,  default:800,  step:50  },
-  { id:'setup',     icon:'📱',  label:'Setup & Essentials',             hint:'New SIM, local bank fees, household items, and day-one expenses.',                        min:0,     max:5000,  default:600,  step:50  },
+  { id:'flights',   icon:'✈️',  label:'Flights & Travel',               hint:'Return flight for research trip + one-way moving flight(s). Add extra for family.',      min:0,     max:8000,  default:0,    step:50  },
+  { id:'shipping',  icon:'📦',  label:'Shipping & Removals',            hint:'Door-to-door shipping of belongings. Set to 0 if travelling light or selling everything.', min:0,     max:20000, default:0,    step:100 },
+  { id:'visa',      icon:'🛂',  label:'Visa & Immigration Fees',        hint:'Government application fees, biometrics, and any agent/lawyer costs.',                    min:0,     max:8000,  default:0,    step:50  },
+  { id:'docs',      icon:'📄',  label:'Document Prep',                  hint:'Certified translations, apostilles, notarisation, and official certifications.',           min:0,     max:3000,  default:0,    step:25  },
+  { id:'deposit',   icon:'🏠',  label:'First Rent + Deposit',           hint:'Typically 1-3 months rent upfront. Research your destination city.',                      min:0,     max:20000, default:0,    step:200 },
+  { id:'insurance', icon:'🏥',  label:'Health Insurance Setup',         hint:'International health cover before local plan kicks in. Usually 1-6 months.',              min:0,     max:5000,  default:0,    step:50  },
+  { id:'setup',     icon:'📱',  label:'Setup & Essentials',             hint:'New SIM, local bank fees, household items, and day-one expenses.',                        min:0,     max:5000,  default:0,    step:50  },
   { id:'storage',   icon:'🏪',  label:'Storage (if needed)',            hint:'Short-term storage for belongings you can\'t take immediately.',                           min:0,     max:4000,  default:0,    step:50  },
-  { id:'language',  icon:'📚',  label:'Language Courses',               hint:'Classes or apps to learn the local language before or after arrival.',                    min:0,     max:3000,  default:200,  step:50  },
-  { id:'buffer',    icon:'🚨',  label:'Emergency Buffer (10-20%)',      hint:'Always have a cash buffer for unexpected costs — delays, fees, medical, or downtime.',     min:500,   max:15000, default:2000, step:100 },
+  { id:'language',  icon:'📚',  label:'Language Courses',               hint:'Classes or apps to learn the local language before or after arrival.',                    min:0,     max:3000,  default:0,    step:50  },
+  { id:'buffer',    icon:'🚨',  label:'Emergency Buffer (10-20%)',      hint:'Always have a cash buffer for unexpected costs — delays, fees, medical, or downtime.',     min:0,     max:15000, default:0,    step:100 },
 ];
 
 const BUDGET_CURRENCIES = [
@@ -2747,7 +2755,7 @@ function renderBudgetSummary() {
       <span class="budget-total-val" id="budget-grand-total">${fmtBudget(total)}</span>
     </div>
     <div class="budget-tip">💡 This is a one-time moving cost estimate. For monthly living costs, use the Cost of Living comparison after searching your route above.</div>
-    <button class="budget-reset-btn" onclick="resetBudget()">↺ Reset to Defaults</button>`;
+    <button class="budget-reset-btn" onclick="resetBudget()">↺ Reset to 0</button>`;
 }
 
 function setBudgetCurrency(code) {
