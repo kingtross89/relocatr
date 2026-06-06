@@ -271,12 +271,12 @@ const CITY_DATA = {
     { name:"Edmonton, AB", cost:{rent:1400,food:345,transport:90,utilities:145,dining:205} },
   ],
   AU: [
-    { name:"Sydney, NSW", cost:{rent:2400,food:440,transport:140,utilities:160,dining:290} },
-    { name:"Melbourne, VIC", cost:{rent:1900,food:400,transport:130,utilities:150,dining:270} },
-    { name:"Brisbane, QLD", cost:{rent:1700,food:390,transport:115,utilities:145,dining:250} },
-    { name:"Perth, WA", cost:{rent:1600,food:375,transport:110,utilities:155,dining:240} },
-    { name:"Adelaide, SA", cost:{rent:1400,food:360,transport:100,utilities:140,dining:220} },
-    { name:"Gold Coast, QLD", cost:{rent:1500,food:370,transport:105,utilities:140,dining:235} },
+    { name:"Sydney, NSW", cost:{rent:2400,food:440,transport:140,utilities:160,dining:290}, climate:"Temperate (warm summers, mild winters)", qualityOfLife:9.1 },
+    { name:"Melbourne, VIC", cost:{rent:1900,food:400,transport:130,utilities:150,dining:270}, climate:"Temperate (highly changeable weather)", qualityOfLife:9.0 },
+    { name:"Brisbane, QLD", cost:{rent:1700,food:390,transport:115,utilities:145,dining:250}, climate:"Humid subtropical (hot summers, mild winters)", qualityOfLife:8.9 },
+    { name:"Perth, WA", cost:{rent:1600,food:375,transport:110,utilities:155,dining:240}, climate:"Mediterranean (hot, dry summers; mild, wet winters)", qualityOfLife:9.2 },
+    { name:"Adelaide, SA", cost:{rent:1400,food:360,transport:100,utilities:140,dining:220}, climate:"Mediterranean (hot summers, mild winters)", qualityOfLife:9.1 },
+    { name:"Gold Coast, QLD", cost:{rent:1500,food:370,transport:105,utilities:140,dining:235}, climate:"Subtropical (warm/hot summers, mild/warm winters)", qualityOfLife:8.8 },
   ],
   FR: [
     { name:"Paris", cost:{rent:1800,food:360,transport:90,utilities:140,dining:260} },
@@ -398,9 +398,14 @@ const CITY_DATA = {
     { name:"Shenzhen", cost:{rent:1000,food:280,transport:45,utilities:70,dining:160} }
   ],
   IN: [
-    { name:"Mumbai", cost:{rent:600,food:150,transport:30,utilities:50,dining:100} },
-    { name:"Bengaluru", cost:{rent:450,food:130,transport:25,utilities:40,dining:90} },
-    { name:"New Delhi", cost:{rent:400,food:120,transport:20,utilities:45,dining:80} }
+    { name:"Mumbai", cost:{rent:600,food:150,transport:30,utilities:50,dining:100}, climate:"Tropical wet and dry (monsoon, hot & humid)", qualityOfLife:6.4 },
+    { name:"Bengaluru", cost:{rent:450,food:130,transport:25,utilities:40,dining:90}, climate:"Tropical savanna (moderate/pleasant year-round)", qualityOfLife:7.2 },
+    { name:"New Delhi", cost:{rent:400,food:120,transport:20,utilities:45,dining:80}, climate:"Hot semi-arid (monsoon, extreme summer/winter)", qualityOfLife:5.5 },
+    { name:"Kolkata", cost:{rent:300,food:100,transport:15,utilities:35,dining:70}, climate:"Tropical wet and dry (hot, humid & monsoon)", qualityOfLife:6.0 },
+    { name:"Chennai", cost:{rent:350,food:110,transport:20,utilities:40,dining:75}, climate:"Tropical wet and dry (hot & humid year-round)", qualityOfLife:6.2 },
+    { name:"Hyderabad", cost:{rent:380,food:120,transport:20,utilities:40,dining:80}, climate:"Tropical wet and dry (hot summers, pleasant winters)", qualityOfLife:6.8 },
+    { name:"Pune", cost:{rent:350,food:120,transport:20,utilities:40,dining:80}, climate:"Hot semi-arid (moderate, pleasant winters)", qualityOfLife:7.0 },
+    { name:"Ahmedabad", cost:{rent:320,food:100,transport:15,utilities:35,dining:70}, climate:"Hot semi-arid (very hot summers, mild winters)", qualityOfLife:6.3 }
   ],
   EG: [
     { name:"Cairo", cost:{rent:350,food:100,transport:15,utilities:30,dining:70} },

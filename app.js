@@ -95,8 +95,8 @@ const CITY_POPULATIONS = {
   // CN
   "Shanghai": "26.3M", "Beijing": "21.9M", "Shenzhen": "17.6M", "Guangzhou": "18.7M",
   // IN
-  "Mumbai": "12.5M", "Delhi": "16.8M", "Bangalore": "8.4M", "Hyderabad": "6.9M",
-  "Chennai": "4.6M",
+  "Mumbai": "12.5M", "Delhi": "16.8M", "New Delhi": "16.8M", "Bangalore": "8.4M", "Bengaluru": "8.4M",
+  "Kolkata": "14.9M", "Chennai": "11.5M", "Hyderabad": "10.8M", "Pune": "6.9M", "Ahmedabad": "8.3M",
   // EG
   "Cairo": "9.5M", "Alexandria": "5.2M",
   // KE
@@ -105,6 +105,13 @@ const CITY_POPULATIONS = {
   "Lagos": "15.3M", "Abuja": "1.2M",
   // MA
   "Casablanca": "3.4M", "Marrakech": "928k", "Rabat": "577k"
+};
+
+window.getCityPopulation = function(cityName) {
+  if (typeof CITY_POPULATIONS === 'undefined') return 'N/A';
+  if (CITY_POPULATIONS[cityName]) return CITY_POPULATIONS[cityName];
+  const base = cityName.split(',')[0].trim();
+  return CITY_POPULATIONS[base] || 'N/A';
 };
 
 window.COUNTRY_POPULATIONS = COUNTRY_POPULATIONS;
@@ -310,7 +317,7 @@ function setTab(tab, from, to) {
 
 // ── Overview ────────────────────────────────────────────────────────────────
 function renderOverview(from, to, d) {
-  if (!d) return genericOverview(from, to);
+  if (!d) return renderFallbackOverview(from, to);
   const citiesList = CITY_DATA[to.code] || [];
   const selectedCity = (to.type === 'city' && citiesList[to.cityIndex]) ? citiesList[to.cityIndex] : null;
   const cost = selectedCity ? selectedCity.cost : d.cost;
@@ -366,13 +373,13 @@ function renderOverview(from, to, d) {
       <div class="info-card">
         <div class="card-icon">🌤</div>
         <div class="card-label">Climate</div>
-        <div class="card-value" style="font-size:1rem">${d.climate}</div>
+        <div class="card-value" style="font-size:1rem">${climate}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">⭐</div>
         <div class="card-label">Quality of Life</div>
-        <div class="card-value">${d.qualityOfLife}/10</div>
-        <div class="card-sub">${renderStars(d.qualityOfLife)}</div>
+        <div class="card-value">${qol}/10</div>
+        <div class="card-sub">${renderStars(qol)}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">💵</div>
@@ -383,7 +390,7 @@ function renderOverview(from, to, d) {
   `;
 }
 
-function genericOverview(from, to) {
+function renderFallbackOverview(from, to) {
   const toCountryObj = COUNTRIES.find(c => c.code === to.code);
   const region = (toCountryObj && toCountryObj.region) || to.region || 'Global';
   return `
@@ -2500,7 +2507,7 @@ function renderCityCompare() {
     const total = (city.cost.rent||0) + (city.cost.food||0) + (city.cost.transport||0) + (city.cost.utilities||0);
     const card = document.createElement('div');
     card.className = 'city-compare-card';
-    const pop = typeof CITY_POPULATIONS !== 'undefined' ? CITY_POPULATIONS[city.name] || 'N/A' : 'N/A';
+    const pop = window.getCityPopulation(city.name);
     card.innerHTML = `
       <div class="city-compare-header">
         <div class="city-compare-flag">${countryObj ? countryObj.flag : '🌍'}</div>

@@ -116,6 +116,11 @@ const CITY_COORDS = {
   "Mumbai": [19.0760, 72.8777],
   "Bengaluru": [12.9716, 77.5946],
   "New Delhi": [28.6139, 77.2090],
+  "Kolkata": [22.5726, 88.3639],
+  "Chennai": [13.0827, 80.2707],
+  "Hyderabad": [17.3850, 78.4867],
+  "Pune": [18.5204, 73.8567],
+  "Ahmedabad": [23.0225, 72.5714],
   "Cairo": [30.0444, 31.2357],
   "Alexandria": [31.2001, 29.9187],
   "Dahab": [28.5010, 34.5134],
@@ -188,7 +193,7 @@ function initExploreMap() {
             const rentUSD = city.cost.rent;
             const foodTransUSD = city.cost.food + city.cost.transport;
 
-            const cityPop = typeof CITY_POPULATIONS !== 'undefined' ? CITY_POPULATIONS[city.name] || 'N/A' : 'N/A';
+            const cityPop = typeof window.getCityPopulation === 'function' ? window.getCityPopulation(city.name) : 'N/A';
 
             const popupContent = `
               <div style="font-family: 'Inter', sans-serif; color: #fff; background: var(--card2); border-radius: 8px; padding: 5px; min-width: 200px;">
