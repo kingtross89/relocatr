@@ -132,8 +132,9 @@ function buildDropdown(inputId, dropdownId, onSelect) {
     Object.entries(CITY_DATA).forEach(([countryCode, cities]) => {
       const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
       if (!country) return;
+      const countryMatch = country.name.toLowerCase().includes(q);
       cities.forEach((city, idx) => {
-        if (city.name.toLowerCase().includes(q)) {
+        if (city.name.toLowerCase().includes(q) || countryMatch) {
           cityMatches.push({
             type: 'city',
             name: city.name,
