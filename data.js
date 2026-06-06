@@ -586,7 +586,7 @@ const VISA_SPECIALS = {
 
 const AFFILIATE_LINKS = {
   wise: "https://wise.com/invite/dic/albertc552", // User's personal Wise affiliate link
-  safetywing: "https://safetywing.com", // EDIT THIS with your SafetyWing affiliate link
+  safetywing: "https://safetywing.com/?referenceID=26540784&utm_source=26540784&utm_medium=Ambassador", // User's personal SafetyWing affiliate link
   airalo: "https://airalo.com", // EDIT THIS with your Airalo affiliate link
   worldnomads: "https://www.worldnomads.com", // EDIT THIS with your World Nomads affiliate link
   cigna: "https://www.cigna.com/individuals-families/international-expat-health-insurance", // EDIT THIS with your Cigna affiliate link
