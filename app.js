@@ -369,8 +369,9 @@ function renderOverview(from, to, d) {
   const langLabel = `Language (${to.name})`;
   const langSub = 'Official & spoken';
 
+  const currCode = d ? d.currency : (COUNTRY_CURRENCY[to.code] || '');
   const currLabel = `Currency (${to.name})`;
-  const currSub = 'Local currency';
+  const currSub = currCode ? (CURRENCY_NAMES[currCode] || 'Local currency') : 'Local currency';
 
   return `
     <div class="overview-hero">
@@ -433,7 +434,7 @@ function renderOverview(from, to, d) {
         <div class="card-icon">💵</div>
         <div class="card-label">${currLabel}</div>
         <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${d.currency}</div>
-        <div class="card-sub">${currSub}</div>
+        <div class="card-sub">${CURRENCY_NAMES[d.currency] || 'Local currency'}</div>
       </div>
     </div>
   `;
@@ -1614,6 +1615,26 @@ const FALLBACK_RATES = {USD:1,GBP:0.79,EUR:0.92,AUD:1.53,CAD:1.36,JPY:149,INR:83
 
 // Country currency map
 const COUNTRY_CURRENCY = {US:"USD",GB:"GBP",DE:"EUR",FR:"EUR",ES:"EUR",PT:"EUR",NL:"EUR",IT:"EUR",AU:"AUD",CA:"CAD",JP:"JPY",IN:"INR",SG:"SGD",ZA:"ZAR",BR:"BRL",CH:"CHF",AE:"AED",NZ:"NZD",MX:"MXN",HK:"HKD",TH:"THB",NO:"NOK",SE:"SEK",DK:"DKK"};
+
+// Full currency names
+const CURRENCY_NAMES = {
+  USD:"US Dollar",GBP:"British Pound",EUR:"Euro",AUD:"Australian Dollar",
+  CAD:"Canadian Dollar",JPY:"Japanese Yen",INR:"Indian Rupee",SGD:"Singapore Dollar",
+  ZAR:"South African Rand",BRL:"Brazilian Real",CHF:"Swiss Franc",AED:"UAE Dirham",
+  NZD:"New Zealand Dollar",MXN:"Mexican Peso",HKD:"Hong Kong Dollar",THB:"Thai Baht",
+  NOK:"Norwegian Krone",SEK:"Swedish Krona",DKK:"Danish Krone",IDR:"Indonesian Rupiah",
+  KRW:"South Korean Won",CNY:"Chinese Yuan",TRY:"Turkish Lira",PKR:"Pakistani Rupee",
+  BDT:"Bangladeshi Taka",VND:"Vietnamese Dong",PHP:"Philippine Peso",MYR:"Malaysian Ringgit",
+  EGP:"Egyptian Pound",KES:"Kenyan Shilling",NGN:"Nigerian Naira",GHS:"Ghanaian Cedi",
+  COP:"Colombian Peso",ARS:"Argentine Peso",CLP:"Chilean Peso",PEN:"Peruvian Sol",
+  PLN:"Polish Zloty",CZK:"Czech Koruna",HUF:"Hungarian Forint",RON:"Romanian Leu",
+  UAH:"Ukrainian Hryvnia",ILS:"Israeli Shekel",SAR:"Saudi Riyal",QAR:"Qatari Riyal",
+  KWD:"Kuwaiti Dinar",BHD:"Bahraini Dinar",OMR:"Omani Rial",JOD:"Jordanian Dinar",
+  MAD:"Moroccan Dirham",TZS:"Tanzanian Shilling",ETB:"Ethiopian Birr"
+};
+function currencyFullName(code) {
+  return CURRENCY_NAMES[code] ? `${code} — ${CURRENCY_NAMES[code]}` : code;
+}
 
 let liveRates = null;
 let ratesFetched = false;
