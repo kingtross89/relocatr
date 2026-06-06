@@ -332,18 +332,52 @@ function renderOverview(from, to, d) {
   const diff = d.visaDifficulty;
   const badgeClass = diff === 'Easy' ? 'badge-green' : diff === 'Medium' ? 'badge-yellow' : 'badge-red';
   
+  const fromCityName = (from.type === 'city' && from.cityName) ? from.cityName.split(',')[0].trim() : null;
+  const toCityName = (to.type === 'city' && to.cityName) ? to.cityName.split(',')[0].trim() : null;
+
+  const originName = fromCityName ? `${fromCityName}, ${from.name}` : from.name;
+  const destName = toCityName ? `${toCityName}, ${to.name}` : to.name;
+  
+  const heroTitle = toCityName ? `Moving to ${toCityName}` : `Moving to ${to.name}`;
+  const heroSubtitle = `Key facts and what to expect when relocating from ${originName} to ${destName}`;
+
   const popVal = selectedCity ? (window.getCityPopulation(selectedCity.name)) : (COUNTRY_POPULATIONS[to.code] || 'N/A');
-  const popLabel = selectedCity ? `Population (${selectedCity.name.split(',')[0]})` : `Population (${to.name})`;
+  const popLabel = selectedCity ? `Population (${toCityName})` : `Population (${to.name})`;
+  const popSub = selectedCity ? 'City population' : 'Country population';
 
   const climate = (selectedCity && selectedCity.climate) ? selectedCity.climate : d.climate;
+  const climateLabel = selectedCity ? `Climate (${toCityName})` : `Climate (${to.name})`;
+  const climateSub = selectedCity ? 'Local weather profile' : 'Country climate zones';
+
   const qol = (selectedCity && selectedCity.qualityOfLife) ? selectedCity.qualityOfLife : d.qualityOfLife;
+  const qolLabel = selectedCity ? `Quality of Life (${toCityName})` : `Quality of Life (${to.name})`;
+  const qolSub = selectedCity ? 'City score' : 'Country average score';
+
+  const costLabel = selectedCity ? `Est. Monthly Cost (${toCityName})` : `Est. Monthly Cost (${to.name})`;
+  const costSub = selectedCity ? 'Rent + food + transport + utilities' : 'National average estimate';
+
+  // National average / country-wide labels
+  const visaLabel = `Visa Difficulty (${to.name})`;
+  const visaSub = d.visaType || 'Country-wide policy';
+
+  const timeLabel = `Processing Time (${to.name})`;
+  const timeSub = 'Average timeline';
+
+  const healthLabel = `Healthcare (${to.name})`;
+  const healthSub = 'National system';
+
+  const langLabel = `Language (${to.name})`;
+  const langSub = 'Official & spoken';
+
+  const currLabel = `Currency (${to.name})`;
+  const currSub = 'Local currency';
 
   return `
     <div class="overview-hero">
       <div class="overview-flags">${from.flag}<span class="overview-arrow">→</span>${to.flag}</div>
       <div class="overview-text">
-        <h2>Moving to ${to.name}</h2>
-        <p>Key facts and what to expect when relocating from ${from.name}</p>
+        <h2>${heroTitle}</h2>
+        <p>${heroSubtitle}</p>
       </div>
     </div>
     <div class="info-grid">
@@ -351,51 +385,55 @@ function renderOverview(from, to, d) {
         <div class="card-icon">👥</div>
         <div class="card-label">${popLabel}</div>
         <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${popVal}</div>
-        <div class="card-sub">${selectedCity ? 'City population' : 'Country population'}</div>
+        <div class="card-sub">${popSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">🛂</div>
-        <div class="card-label">Visa Difficulty</div>
+        <div class="card-label">${visaLabel}</div>
         <div class="card-value"><span class="badge ${badgeClass}">${d.visaDifficulty}</span></div>
-        <div class="card-sub">${d.visaType}</div>
+        <div class="card-sub">${visaSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">⏱</div>
-        <div class="card-label">Processing Time</div>
-        <div class="card-value">${d.visaTime}</div>
-        <div class="card-sub">Average timeline</div>
+        <div class="card-label">${timeLabel}</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${d.visaTime}</div>
+        <div class="card-sub">${timeSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">💰</div>
-        <div class="card-label">Est. Monthly Cost</div>
-        <div class="card-value">${d.currency} ${(cost.rent+cost.food+cost.transport+cost.utilities).toLocaleString()}</div>
-        <div class="card-sub">Rent + food + transport + utilities</div>
+        <div class="card-label">${costLabel}</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${d.currency} ${(cost.rent+cost.food+cost.transport+cost.utilities).toLocaleString()}</div>
+        <div class="card-sub">${costSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">🏥</div>
-        <div class="card-label">Healthcare</div>
+        <div class="card-label">${healthLabel}</div>
         <div class="card-value" style="font-size:1rem">${d.healthcare}</div>
+        <div class="card-sub">${healthSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">🗣</div>
-        <div class="card-label">Language</div>
+        <div class="card-label">${langLabel}</div>
         <div class="card-value" style="font-size:1rem">${d.language}</div>
+        <div class="card-sub">${langSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">🌤</div>
-        <div class="card-label">Climate</div>
+        <div class="card-label">${climateLabel}</div>
         <div class="card-value" style="font-size:1rem">${climate}</div>
+        <div class="card-sub">${climateSub}</div>
       </div>
       <div class="info-card">
         <div class="card-icon">⭐</div>
-        <div class="card-label">Quality of Life</div>
-        <div class="card-value">${qol}/10</div>
-        <div class="card-sub">${renderStars(qol)}</div>
+        <div class="card-label">${qolLabel}</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${qol}/10</div>
+        <div class="card-sub">${renderStars(qol)} (${qolSub})</div>
       </div>
       <div class="info-card">
         <div class="card-icon">💵</div>
-        <div class="card-label">Currency</div>
-        <div class="card-value">${d.currency}</div>
+        <div class="card-label">${currLabel}</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight: 700;">${d.currency}</div>
+        <div class="card-sub">${currSub}</div>
       </div>
     </div>
   `;
@@ -404,23 +442,53 @@ function renderOverview(from, to, d) {
 function renderFallbackOverview(from, to) {
   const toCountryObj = COUNTRIES.find(c => c.code === to.code);
   const region = (toCountryObj && toCountryObj.region) || to.region || 'Global';
+  
+  const fromCityName = (from.type === 'city' && from.cityName) ? from.cityName.split(',')[0].trim() : null;
+  const toCityName = (to.type === 'city' && to.cityName) ? to.cityName.split(',')[0].trim() : null;
+
+  const originName = fromCityName ? `${fromCityName}, ${from.name}` : from.name;
+  const destName = toCityName ? `${toCityName}, ${to.name}` : to.name;
+  
+  const heroTitle = toCityName ? `Moving to ${toCityName}` : `Moving to ${to.name}`;
+  const heroSubtitle = `General relocation guide from ${originName} to ${destName}`;
+  
   return `
     <div class="overview-hero">
       <div class="overview-flags">${from.flag}<span class="overview-arrow">→</span>${to.flag}</div>
       <div class="overview-text">
-        <h2>Moving to ${to.name}</h2>
-        <p>General relocation guide from ${from.name}</p>
+        <h2>${heroTitle}</h2>
+        <p>${heroSubtitle}</p>
       </div>
     </div>
     <div class="info-grid">
-      <div class="info-card"><div class="card-icon">🛂</div><div class="card-label">First Step</div><div class="card-value" style="font-size:0.95rem">Check ${to.name}'s official immigration website</div></div>
-      <div class="info-card"><div class="card-icon">🌐</div><div class="card-label">Region</div><div class="card-value">${region}</div></div>
-      <div class="info-card"><div class="card-icon">📋</div><div class="card-label">Key Action</div><div class="card-value" style="font-size:0.95rem">Use the Checklist tab to plan your move</div></div>
-      <div class="info-card"><div class="card-icon">💡</div><div class="card-label">Tip</div><div class="card-value" style="font-size:0.9rem">Join expat forums specific to ${to.name} for on-the-ground advice</div></div>
+      <div class="info-card">
+        <div class="card-icon">🛂</div>
+        <div class="card-label">First Step (${to.name})</div>
+        <div class="card-value" style="font-size:0.95rem">Check ${to.name}'s official immigration website</div>
+        <div class="card-sub">Country-wide policy</div>
+      </div>
+      <div class="info-card">
+        <div class="card-icon">🌐</div>
+        <div class="card-label">Region</div>
+        <div class="card-value" style="font-size:1.5rem; font-weight:700">${region}</div>
+        <div class="card-sub">Geographical area</div>
+      </div>
+      <div class="info-card">
+        <div class="card-icon">📋</div>
+        <div class="card-label">Key Action</div>
+        <div class="card-value" style="font-size:0.95rem">Use the Checklist tab to plan your move</div>
+        <div class="card-sub">Interactive checklist</div>
+      </div>
+      <div class="info-card">
+        <div class="card-icon">💡</div>
+        <div class="card-label">Tip</div>
+        <div class="card-value" style="font-size:0.9rem">Join expat forums specific to ${toCityName || to.name} for on-the-ground advice</div>
+        <div class="card-sub">Community tip</div>
+      </div>
     </div>
     <div class="tip-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;">
       <div class="tip-category">General Advice</div>
-      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">While we don't have specific data for ${to.name} yet, our universal checklist, visa guide, and cost comparison tools can still help you plan. Visit the other tabs above!</p>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">While we don't have specific data for ${toCityName || to.name} yet, our universal checklist, visa guide, and cost comparison tools can still help you plan. Visit the other tabs above!</p>
     </div>
   `;
 }
