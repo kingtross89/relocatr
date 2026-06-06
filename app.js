@@ -2192,17 +2192,17 @@ const TRAVEL_ADVISORIES = {
   CA:{ name:"Travel.gc.ca (Canada)",         url:()=>"https://travel.gc.ca/travelling/advisories",                          fallback:"https://travel.gc.ca/travelling/advisories" },
   NZ:{ name:"SafeTravel New Zealand",        url:()=>"https://www.safetravel.govt.nz",                                      fallback:"https://www.safetravel.govt.nz" },
   US:{ name:"US State Dept Advisory",        url:()=>"https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", fallback:"https://travel.state.gov" },
-  DE:{ name:"Auswärtiges Amt (Germany)",     url:()=>"https://www.auswaertiges-amt.de/en/ReiseUndSicherheit/reise-und-sicherheitshinweise", fallback:"https://www.auswaertiges-amt.de" },
+  DE:{ name:"Auswärtiges Amt (Germany)",     url:()=>"https://www.auswaertiges-amt.de/en/",                                 fallback:"https://www.auswaertiges-amt.de" },
   FR:{ name:"France Diplomatie",             url:()=>"https://www.diplomatie.gouv.fr/en/coming-to-france/safety-of-french-nationals-abroad/travel-advice-by-country-and-territory", fallback:"https://www.diplomatie.gouv.fr" },
   IE:{ name:"DFA Travel Advice (Ireland)",   url:()=>"https://www.dfa.ie/travel/travel-advice",                             fallback:"https://www.dfa.ie/travel" },
-  NL:{ name:"Netherlands Travel Advice",     url:()=>"https://www.nederlandwereldwijd.nl/reizen-naar-het-buitenland/reisadvies", fallback:"https://www.nederlandwereldwijd.nl" },
+  NL:{ name:"Netherlands Travel Advice",     url:()=>"https://www.netherlandsandyou.nl/",                                   fallback:"https://www.nederlandwereldwijd.nl" },
   SE:{ name:"UD Travel Advice (Sweden)",     url:()=>"https://www.ud.se/reseinfo",                                          fallback:"https://www.ud.se" },
-  NO:{ name:"UD Travel Advice (Norway)",     url:()=>"https://www.regjeringen.no/en/topics/foreign-affairs/travel-information", fallback:"https://www.regjeringen.no" },
-  DK:{ name:"UM Travel Advice (Denmark)",    url:()=>"https://um.dk/en/travel-and-residence/travel-to-denmark/travel-advice", fallback:"https://um.dk" },
-  SG:{ name:"MFA Singapore Travel Advisory",url:()=>"https://www.mfa.gov.sg/Services/Singaporeans/Travel-Advisory",         fallback:"https://www.mfa.gov.sg" },
+  NO:{ name:"UD Travel Advice (Norway)",     url:()=>"https://www.regjeringen.no/en/topics/foreign-affairs/id927/",         fallback:"https://www.regjeringen.no" },
+  DK:{ name:"UM Travel Advice (Denmark)",    url:()=>"https://um.dk/en/travel-and-residence/",                              fallback:"https://um.dk" },
+  SG:{ name:"MFA Singapore Travel Advisory",url:()=>"https://www.mfa.gov.sg/Consular-Services/Singapore-Citizens/Travelling-Overseas/Travel-Notices", fallback:"https://www.mfa.gov.sg" },
   JP:{ name:"MOFA Japan Overseas Safety",    url:()=>"https://www.anzen.mofa.go.jp",                                        fallback:"https://www.anzen.mofa.go.jp" },
   IN:{ name:"MEA India Travel Advisory",     url:()=>"https://www.mea.gov.in/travel-advisory.htm",                          fallback:"https://www.mea.gov.in" },
-  ZA:{ name:"DIRCO South Africa Travel",     url:()=>"https://www.dirco.gov.za/travel-advice",                              fallback:"https://www.dirco.gov.za" },
+  ZA:{ name:"DIRCO South Africa Travel",     url:()=>"https://www.dirco.gov.za",                                            fallback:"https://www.dirco.gov.za" },
 };
 const DEFAULT_ADVISORY = { name:"US State Dept Travel Advisory", url:()=>"https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html", fallback:"https://travel.state.gov" };
 
@@ -3039,7 +3039,7 @@ function getCommunityLinks(from, to, cityKey) {
     },
     { 
       label: '💬 Expat.com Forum', 
-      url: `https://www.expat.com/en/forum/`,
+      url: `https://www.expat.com/forum/`,
       desc: 'Local discussion forums, housing listings, and user Q&As about moving and living in the country.' 
     },
     { 

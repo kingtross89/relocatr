@@ -436,7 +436,7 @@ const GOV_LINKS = {
     { icon:"💰", label:"IRS — Taxes for New Arrivals", url:"https://www.irs.gov/individuals/international-taxpayers", cat:"Tax" },
     { icon:"🏥", label:"HealthCare.gov — Health Insurance", url:"https://www.healthcare.gov", cat:"Healthcare" },
     { icon:"🪪", label:"SSA — Social Security Number", url:"https://www.ssa.gov/ssnumber", cat:"ID & Registration" },
-    { icon:"🚗", label:"DMV — Driver's License Info", url:"https://www.dmv.org/international-driver-licenses.php", cat:"Driving" },
+    { icon:"🚗", label:"USA.gov — Driving for Non-Citizens", url:"https://www.usa.gov/non-citizen-driving", cat:"Driving" },
   ],
   GB: [
     { icon:"🛂", label:"UKVI — UK Visas & Immigration", url:"https://www.gov.uk/browse/visas-immigration", cat:"Immigration" },
@@ -451,7 +451,7 @@ const GOV_LINKS = {
     { icon:"🏛️", label:"Make it in Germany — Official Portal", url:"https://www.make-it-in-germany.com/en", cat:"Immigration" },
     { icon:"💰", label:"Bundeszentralamt für Steuern — Tax ID", url:"https://www.bzst.de/EN", cat:"Tax" },
     { icon:"🏥", label:"GKV Spitzenverband — Health Insurance", url:"https://www.gkv-spitzenverband.de", cat:"Healthcare" },
-    { icon:"🪪", label:"Bundesregierung — Residence Registration", url:"https://www.bundesregierung.de/breg-en/topics/arrival-integration", cat:"ID & Registration" },
+    { icon:"🪪", label:"Bundesregierung — Arrival & Integration", url:"https://www.bundesregierung.de/breg-en", cat:"ID & Registration" },
   ],
   CA: [
     { icon:"🛂", label:"IRCC — Immigration, Refugees & Citizenship", url:"https://www.canada.ca/en/immigration-refugees-citizenship.html", cat:"Immigration" },
@@ -464,7 +464,7 @@ const GOV_LINKS = {
     { icon:"💰", label:"ATO — Australian Taxation Office", url:"https://www.ato.gov.au/individuals", cat:"Tax" },
     { icon:"🏥", label:"Services Australia — Medicare", url:"https://www.servicesaustralia.gov.au/medicare", cat:"Healthcare" },
     { icon:"🪪", label:"ATO — Tax File Number", url:"https://www.ato.gov.au/individuals-and-families/tax-file-number", cat:"ID & Registration" },
-    { icon:"🚗", label:"AusTroads — Licence Recognition", url:"https://www.austroads.com.au/drivers-vehicles/overseas-drivers-licences", cat:"Driving" },
+    { icon:"🚗", label:"Austroads — Overseas Licence Recognition", url:"https://austroads.com.au/drivers-vehicles/overseas-licences", cat:"Driving" },
   ],
   PT: [
     { icon:"🛂", label:"AIMA — Immigration & Asylum", url:"https://www.aima.gov.pt", cat:"Immigration" },
@@ -476,33 +476,33 @@ const GOV_LINKS = {
   NL: [
     { icon:"🛂", label:"IND — Immigration & Naturalisation", url:"https://ind.nl/en", cat:"Immigration" },
     { icon:"💰", label:"Belastingdienst — Dutch Tax Authority", url:"https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/individuals", cat:"Tax" },
-    { icon:"🏥", label:"Zorgwijzer — Health Insurance Guide", url:"https://www.zorgwijzer.nl/en", cat:"Healthcare" },
-    { icon:"🪪", label:"Government.nl — BSN Registration", url:"https://www.government.nl/topics/personal-data/citizen-service-number-bsn", cat:"ID & Registration" },
+    { icon:"🏥", label:"Zorgwijzer — Health Insurance Guide", url:"https://www.zorgwijzer.nl/", cat:"Healthcare" },
+    { icon:"🪪", label:"Government.nl — BSN Registration", url:"https://www.government.nl/themes/government-and-democracy/personal-data/citizen-service-number-bsn", cat:"ID & Registration" },
   ],
   ES: [
     { icon:"🛂", label:"Spanish Embassy Australia — Visa Info", url:"https://www.exteriores.gob.es/Embajadas/canberra/en/ServiciosConsulares/Paginas/index.aspx", cat:"Immigration" },
-    { icon:"💼", label:"Ministerio de Inclusion — Immigration", url:"https://www.inclusion.gob.es/en/portada.html", cat:"Immigration" },
+    { icon:"💼", label:"Ministerio de Inclusion — Immigration", url:"https://www.inclusion.gob.es/", cat:"Immigration" },
     { icon:"💰", label:"Agencia Tributaria — Tax Authority", url:"https://sede.agenciatributaria.gob.es", cat:"Tax" },
     { icon:"🏥", label:"Ministerio de Sanidad — Healthcare", url:"https://www.sanidad.gob.es/en/home.htm", cat:"Healthcare" },
     { icon:"🪪", label:"Interior Ministry — Foreigner ID (NIE/TIE)", url:"https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/extranjeria/", cat:"ID & Registration" },
   ],
   FR: [
-    { icon:"🛂", label:"France-Visas — Official Visa Portal", url:"https://france-visas.gouv.fr/en_US/web/france-visas", cat:"Immigration" },
-    { icon:"💰", label:"Impôts.gouv — French Tax Authority", url:"https://www.impots.gouv.fr/en", cat:"Tax" },
+    { icon:"🛂", label:"France-Visas — Official Visa Portal", url:"https://france-visas.gouv.fr/", cat:"Immigration" },
+    { icon:"💰", label:"Impôts.gouv — French Tax Authority", url:"https://www.impots.gouv.fr/accueil", cat:"Tax" },
     { icon:"🏥", label:"Ameli.fr — French Healthcare (CPAM)", url:"https://www.ameli.fr", cat:"Healthcare" },
     { icon:"🪪", label:"CAF — Housing Allowance", url:"https://www.caf.fr", cat:"Benefits" },
   ],
   JP: [
-    { icon:"🛂", label:"MOJ — Japan Immigration Services", url:"https://www.moj.go.jp/EN/immigration", cat:"Immigration" },
+    { icon:"🛂", label:"ISA — Japan Immigration Services", url:"https://www.moj.go.jp/isa/index.html", cat:"Immigration" },
     { icon:"💼", label:"Japan External Trade Organization", url:"https://www.jetro.go.jp/en/invest/setting_up", cat:"Business" },
     { icon:"💰", label:"NTA — Japan National Tax Agency", url:"https://www.nta.go.jp/english/index.htm", cat:"Tax" },
-    { icon:"🏥", label:"MHLW — Health Insurance Guide", url:"https://www.mhlw.go.jp/english/policy/health-medical/health-insurance/index.html", cat:"Healthcare" },
+    { icon:"🏥", label:"MHLW — Health Insurance Guide", url:"https://www.mhlw.go.jp/english/", cat:"Healthcare" },
   ],
   SG: [
     { icon:"🛂", label:"MOM — Ministry of Manpower (Passes)", url:"https://www.mom.gov.sg/passes-and-permits", cat:"Immigration" },
     { icon:"🪪", label:"ICA — Immigration & Checkpoints Authority", url:"https://www.ica.gov.sg", cat:"Immigration" },
-    { icon:"💰", label:"IRAS — Inland Revenue Authority", url:"https://www.iras.gov.sg/taxes/individual-income-tax/foreigners", cat:"Tax" },
-    { icon:"🏥", label:"MOH — Singapore Health Ministry", url:"https://www.moh.gov.sg/cost-financing/healthcare-schemes-subsidies", cat:"Healthcare" },
+    { icon:"💰", label:"IRAS — Inland Revenue Authority", url:"https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax", cat:"Tax" },
+    { icon:"🏥", label:"MOH — Singapore Health Ministry", url:"https://www.moh.gov.sg/managing-expenses/schemes-and-subsidies/", cat:"Healthcare" },
   ],
   AE: [
     { icon:"🛂", label:"GDRFA — Dubai Residency Authority", url:"https://gdrfad.gov.ae", cat:"Immigration" },
@@ -514,7 +514,7 @@ const GOV_LINKS = {
     { icon:"🛂", label:"Thai Immigration Bureau", url:"https://www.immigration.go.th", cat:"Immigration" },
     { icon:"💼", label:"BOI — Thailand Board of Investment", url:"https://www.boi.go.th/en/index", cat:"Business / SMART Visa" },
     { icon:"💰", label:"Revenue Department — Thai Taxes", url:"https://www.rd.go.th/english", cat:"Tax" },
-    { icon:"🏥", label:"NHSO — National Health Security Office", url:"https://www.nhso.go.th/eng", cat:"Healthcare" },
+    { icon:"🏥", label:"NHSO — National Health Security Office", url:"https://www.nhso.go.th", cat:"Healthcare" },
   ],
   MX: [
     { icon:"🛂", label:"INM — Instituto Nacional de Migración", url:"https://www.gob.mx/inm", cat:"Immigration" },
@@ -523,30 +523,30 @@ const GOV_LINKS = {
     { icon:"🪪", label:"RENAPO — CURP Registration", url:"https://www.gob.mx/curp", cat:"ID & Registration" },
   ],
   BR: [
-    { icon:"🛂", label:"Polícia Federal — Immigration Brazil", url:"https://www.gov.br/pf/pt-br/assuntos/estrangeiros", cat:"Immigration" },
+    { icon:"🛂", label:"Polícia Federal — Immigration Brazil", url:"https://www.gov.br/pf/pt-br/assuntos/imigracao", cat:"Immigration" },
     { icon:"💰", label:"Receita Federal — CPF & Taxes", url:"https://www.gov.br/receitafederal/pt-br", cat:"Tax" },
     { icon:"🏥", label:"Ministério da Saúde — SUS Healthcare", url:"https://www.gov.br/saude/pt-br", cat:"Healthcare" },
     { icon:"🪪", label:"Governo.br — CPF for Foreigners", url:"https://www.gov.br/pt-br/servicos/inscrever-no-cpf", cat:"ID & Registration" },
   ],
   IN: [
-    { icon:"🛂", label:"Indian Visa Online — Official E-Visa Portal", url:"https://indianvisaonline.gov.in", cat:"Immigration" },
-    { icon:"💼", label:"e-FRRO — Foreigners Registration Office", url:"https://indianfrro.gov.in/frro", cat:"Immigration" },
+    { icon:"🛂", label:"Indian Visa Online — Official E-Visa Portal", url:"https://indianvisaonline.gov.in/evisa/tvoa.html", cat:"Immigration" },
+    { icon:"💼", label:"e-FRRO — Foreigners Registration Office", url:"https://indianfrro.gov.in", cat:"Immigration" },
     { icon:"💰", label:"Income Tax Department — e-Filing", url:"https://www.incometax.gov.in", cat:"Tax" },
-    { icon:"🏥", label:"Ministry of Health & Family Welfare", url:"https://main.mohfw.gov.in", cat:"Healthcare" },
+    { icon:"🏥", label:"Ministry of Health & Family Welfare", url:"https://mohfw.gov.in", cat:"Healthcare" },
     { icon:"🪪", label:"UIDAI — Aadhaar Resident ID", url:"https://uidai.gov.in", cat:"ID & Registration" },
   ],
 };
 
 const DEEP_DIVE = {
   visa: {
-    US: { heading:"US Immigration — The Full Picture", body:"The US has no single immigration pathway — the right visa depends on your nationality, skills, employer, family ties, or investment level. The H-1B lottery opens annually in March. Green Card processing via EB categories can take 1–20+ years depending on your nationality. Consider consulting an AILA-member immigration attorney.", links:[{label:"AILA — Find an Immigration Lawyer",url:"https://www.aila.org/find-an-immigration-lawyer"},{label:"USA.gov — Living in the US",url:"https://www.usa.gov/new-to-us"}] },
+    US: { heading:"US Immigration — The Full Picture", body:"The US has no single immigration pathway — the right visa depends on your nationality, skills, employer, family ties, or investment level. The H-1B lottery opens annually in March. Green Card processing via EB categories can take 1–20+ years depending on your nationality. Consider consulting an AILA-member immigration attorney.", links:[{label:"AILA — Find an Immigration Lawyer",url:"https://www.ailalawyer.com/"},{label:"USA.gov — Living in the US",url:"https://www.usa.gov/non-immigrant-visas"}] },
     GB: { heading:"UK Skilled Worker Visa — Deep Dive", body:"You need a job offer from a licensed sponsor paying at least £38,700/year (or the going rate for the role). Points are awarded for salary, qualifications, and English. Your employer must be on the UKVI sponsor register. The Certificate of Sponsorship (CoS) must be obtained before you apply.", links:[{label:"UKVI Sponsor Register",url:"https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers"},{label:"Skilled Worker Visa Guide",url:"https://www.gov.uk/skilled-worker-visa"}] },
     DE: { heading:"Germany EU Blue Card & Job Seeker", body:"The EU Blue Card is the fastest route for skilled non-EU workers — you need a recognised degree and a job offer paying €45,300+/year (€56,400 for shortage occupations). The Job Seeker Visa allows 6 months to find employment in Germany before converting to a work visa.", links:[{label:"EU Blue Card Germany",url:"https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card"},{label:"Recognition of Foreign Qualifications",url:"https://www.anerkennung-in-deutschland.de/en"}] },
     IN: { heading:"Indian Visa & FRRO Registration", body:"For foreigners relocating to India, the main visa pathways are the Employment Visa (requires an employer contract paying at least $25,000 USD/year) and the Business Visa. All foreigners staying longer than 180 days must register with the local FRRO (Foreigners Regional Registration Office) within 14 days of arrival. PIO and OCI cardholders enjoy visa-free entry and residency rights.", links:[{label:"Ministry of Home Affairs — Visa Guidelines",url:"https://www.mha.gov.in/en/divisionofmha/foreigners-division"},{label:"e-FRRO Registration Instructions",url:"https://indianfrro.gov.in/frro/menu/instructionsfrro.html"}] },
-    DEFAULT: { heading:"Research Official Sources", body:"Immigration requirements vary significantly based on your nationality and circumstances. Always verify current requirements via the official embassy or consulate of your destination country. Requirements change frequently.", links:[{label:"IATA Travel Centre — Visa Requirements",url:"https://www.iatatravelcentre.com"},{label:"Timatic — Visa Check Tool",url:"https://www.iata.org/en/publications/timatic"}] }
+    DEFAULT: { heading:"Research Official Sources", body:"Immigration requirements vary significantly based on your nationality and circumstances. Always verify current requirements via the official embassy or consulate of your destination country. Requirements change frequently.", links:[{label:"IATA Timatic — Visa Check Tool",url:"https://www.iata.org/en/services/compliance/timatic"},{label:"USA.gov — Non-Immigrant Visas",url:"https://www.usa.gov/non-immigrant-visas"}] }
   },
   costs: {
-    DEFAULT: { heading:"Tools to Research Costs Further", links:[{label:"Numbeo — Real Cost of Living Data",url:"https://www.numbeo.com/cost-of-living"},{label:"Expatistan — Cost Comparisons",url:"https://www.expatistan.com/cost-of-living"},{label:"Teleport — City Comparisons",url:"https://teleport.org"}] }
+    DEFAULT: { heading:"Tools to Research Costs Further", links:[{label:"Numbeo — Real Cost of Living Data",url:"https://www.numbeo.com/cost-of-living"},{label:"Expatistan — Cost Comparisons",url:"https://www.expatistan.com/cost-of-living"},{label:"Nomad List — Quality of Life & Cost Comparison",url:"https://nomadlist.com"}] }
   },
   tips: {
     DEFAULT: { heading:"Expat Community Resources", links:[{label:"Internations — Global Expat Network",url:"https://www.internations.org"},{label:"Expat.com — Country Forums",url:"https://www.expat.com"},{label:"Reddit r/expats",url:"https://www.reddit.com/r/expats"},{label:"Wise — International Money Transfers",url:"https://wise.com"},{label:"Revolut — Multi-Currency Banking",url:"https://www.revolut.com"}] }
@@ -576,14 +576,14 @@ const VISA_SPECIALS = {
     badge:"🦘 E-3 Visa — Australians Only",
     info:"Australian citizens have exclusive access to the E-3 visa: 10,500 spots/year, 2-year renewable work visa. Requires a US job offer and specialty occupation degree. Far easier than the H-1B lottery. Your spouse gets E-3D status with full work authorisation.",
     links:[
-      {label:"USCIS — E-3 Visa for Australians",url:"https://www.uscis.gov/working-in-the-united-states/temporary-workers/e-3-certain-specialty-occupation-professionals-from-australia"},
-      {label:"State Dept — E-3 Visa Information",url:"https://travel.state.gov/content/travel/en/us-visas/employment/e3-visa-australian-specialty-occupation.html"},
+      {label:"USCIS — E-3 Visa for Australians",url:"https://www.uscis.gov/working-in-the-united-states/temporary-workers/e-3-specialty-occupation-workers-from-australia"},
+      {label:"State Dept — E-3 Visa Information",url:"https://travel.state.gov/content/travel/en/us-visas/employment/temporary-worker-visas.html"},
     ]
   },
   "NZ→AU":{
     badge:"🥝 Special Category Visa (SCV)",
     info:"New Zealand citizens automatically receive a Special Category Visa on arrival in Australia — no application needed. You can live, work, and study in Australia indefinitely, though permanent residency must be formally applied for.",
-    links:[{label:"Home Affairs — NZ Citizens in Australia",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/special-category-444"}]
+    links:[{label:"Home Affairs — NZ Citizens in Australia",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/special-category-visa-subclass-444"}]
   },
   "GB→CA":{
     badge:"🇬🇧 IEC Working Holiday — UK Citizens",
@@ -599,8 +599,8 @@ const VISA_SPECIALS = {
     badge:"🇮🇳 MATES & Skilled Visas",
     info:"Indian citizens can migrate to Australia via the points-based General Skilled Migration (Subclass 189/190/491). Additionally, the new MATES scheme offers a fast-track temporary work pathway (up to 2 years) for early-career Indian professionals in STEM and tech sectors.",
     links:[
-      {label:"Home Affairs — MATES Scheme",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/mates"},
-      {label:"SkillSelect Points Calculator",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-calculator"}
+      {label:"Home Affairs — MATES Scheme",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/temporary-work-403/mates"},
+      {label:"SkillSelect Points Calculator",url:"https://immi.homeaffairs.gov.au/help-support/tools/points-calculator"}
     ]
   },
   "AU→IN":{
@@ -618,13 +618,13 @@ const AFFILIATE_LINKS = {
   safetywing: "https://safetywing.com/?referenceID=26540784&utm_source=26540784&utm_medium=Ambassador", // User's personal SafetyWing affiliate link
   airalo: "https://airalo.com", // EDIT THIS with your Airalo affiliate link
   worldnomads: "https://www.worldnomads.com", // EDIT THIS with your World Nomads affiliate link
-  cigna: "https://www.cigna.com/individuals-families/international-expat-health-insurance", // EDIT THIS with your Cigna affiliate link
+  cigna: "https://www.cignaglobal.com/", // EDIT THIS with your Cigna affiliate link
 };
 
 const CHECKLIST_LINKS = {
-  "Research visa requirements for your destination":"https://www.iatatravelcentre.com",
-  "Apply for your visa or residency permit":"https://www.iatatravelcentre.com",
-  "Get a certified translation of key documents":"https://ata.net/page/find-a-language-professional",
+  "Research visa requirements for your destination":"https://www.iata.org/en/services/compliance/timatic",
+  "Apply for your visa or residency permit":"https://www.iata.org/en/services/compliance/timatic",
+  "Get a certified translation of key documents":"https://www.atanet.org/find-a-language-professional/",
   "Apostille important documents (birth cert, marriage cert, degree)":"https://www.hcch.net/en/instruments/conventions/authorities1/?cid=41",
   "Open an international bank account (Wise, Revolut, Charles Schwab)": AFFILIATE_LINKS.wise,
   "Book flights and organise travel insurance": AFFILIATE_LINKS.worldnomads,
@@ -633,10 +633,10 @@ const CHECKLIST_LINKS = {
   "Consult a tax advisor about international tax implications":"https://www.taxesforexpats.com",
   "Research international schools if moving with children":"https://www.internationalschoolsdb.com",
   "Begin learning the local language basics":"https://www.duolingo.com",
-  "Register at local government office (residency registration)":"https://www.expat.com/en/guide/moving-abroad/admin/11363-registering-with-local-authorities-abroad.html",
+  "Register at local government office (residency registration)":"https://www.expat.com/en/guide/",
   "Open a local bank account": AFFILIATE_LINKS.wise,
   "Apply for local tax identification number":"https://www.taxesforexpats.com",
-  "Convert your driving licence if needed":"https://www.theaa.com/driving-advice/international/driving-abroad",
+  "Convert your driving licence if needed":"https://www.theaa.com/driving-advice/driving-abroad",
 };
 
 const QUIZ_QUESTIONS = [
