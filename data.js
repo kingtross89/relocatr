@@ -585,7 +585,7 @@ const VISA_SPECIALS = {
 };
 
 const AFFILIATE_LINKS = {
-  wise: "https://wise.com", // EDIT THIS with your Wise affiliate link
+  wise: "https://wise.com/invite/dic/albertc552", // User's personal Wise affiliate link
   safetywing: "https://safetywing.com", // EDIT THIS with your SafetyWing affiliate link
   airalo: "https://airalo.com", // EDIT THIS with your Airalo affiliate link
   worldnomads: "https://www.worldnomads.com", // EDIT THIS with your World Nomads affiliate link
