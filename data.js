@@ -523,6 +523,13 @@ const GOV_LINKS = {
     { icon:"🏥", label:"Ministério da Saúde — SUS Healthcare", url:"https://www.gov.br/saude/pt-br", cat:"Healthcare" },
     { icon:"🪪", label:"Governo.br — CPF for Foreigners", url:"https://www.gov.br/pt-br/servicos/inscrever-no-cpf", cat:"ID & Registration" },
   ],
+  IN: [
+    { icon:"🛂", label:"Indian Visa Online — Official E-Visa Portal", url:"https://indianvisaonline.gov.in", cat:"Immigration" },
+    { icon:"💼", label:"e-FRRO — Foreigners Registration Office", url:"https://indianfrro.gov.in/frro", cat:"Immigration" },
+    { icon:"💰", label:"Income Tax Department — e-Filing", url:"https://www.incometax.gov.in", cat:"Tax" },
+    { icon:"🏥", label:"Ministry of Health & Family Welfare", url:"https://main.mohfw.gov.in", cat:"Healthcare" },
+    { icon:"🪪", label:"UIDAI — Aadhaar Resident ID", url:"https://uidai.gov.in", cat:"ID & Registration" },
+  ],
 };
 
 const DEEP_DIVE = {
@@ -530,6 +537,7 @@ const DEEP_DIVE = {
     US: { heading:"US Immigration — The Full Picture", body:"The US has no single immigration pathway — the right visa depends on your nationality, skills, employer, family ties, or investment level. The H-1B lottery opens annually in March. Green Card processing via EB categories can take 1–20+ years depending on your nationality. Consider consulting an AILA-member immigration attorney.", links:[{label:"AILA — Find an Immigration Lawyer",url:"https://www.aila.org/find-an-immigration-lawyer"},{label:"USA.gov — Living in the US",url:"https://www.usa.gov/new-to-us"}] },
     GB: { heading:"UK Skilled Worker Visa — Deep Dive", body:"You need a job offer from a licensed sponsor paying at least £38,700/year (or the going rate for the role). Points are awarded for salary, qualifications, and English. Your employer must be on the UKVI sponsor register. The Certificate of Sponsorship (CoS) must be obtained before you apply.", links:[{label:"UKVI Sponsor Register",url:"https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers"},{label:"Skilled Worker Visa Guide",url:"https://www.gov.uk/skilled-worker-visa"}] },
     DE: { heading:"Germany EU Blue Card & Job Seeker", body:"The EU Blue Card is the fastest route for skilled non-EU workers — you need a recognised degree and a job offer paying €45,300+/year (€56,400 for shortage occupations). The Job Seeker Visa allows 6 months to find employment in Germany before converting to a work visa.", links:[{label:"EU Blue Card Germany",url:"https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card"},{label:"Recognition of Foreign Qualifications",url:"https://www.anerkennung-in-deutschland.de/en"}] },
+    IN: { heading:"Indian Visa & FRRO Registration", body:"For foreigners relocating to India, the main visa pathways are the Employment Visa (requires an employer contract paying at least $25,000 USD/year) and the Business Visa. All foreigners staying longer than 180 days must register with the local FRRO (Foreigners Regional Registration Office) within 14 days of arrival. PIO and OCI cardholders enjoy visa-free entry and residency rights.", links:[{label:"Ministry of Home Affairs — Visa Guidelines",url:"https://www.mha.gov.in/en/divisionofmha/foreigners-division"},{label:"e-FRRO Registration Instructions",url:"https://indianfrro.gov.in/frro/menu/instructionsfrro.html"}] },
     DEFAULT: { heading:"Research Official Sources", body:"Immigration requirements vary significantly based on your nationality and circumstances. Always verify current requirements via the official embassy or consulate of your destination country. Requirements change frequently.", links:[{label:"IATA Travel Centre — Visa Requirements",url:"https://www.iatatravelcentre.com"},{label:"Timatic — Visa Check Tool",url:"https://www.iata.org/en/publications/timatic"}] }
   },
   costs: {
@@ -581,6 +589,22 @@ const VISA_SPECIALS = {
     badge:"🇮🇪 Working Holiday Visa — Irish Citizens",
     info:"Irish citizens aged 18–35 can apply for a Working Holiday visa for Australia — 1 year, extendable to 3 years with regional work. One of Australia's most popular Working Holiday nationalities.",
     links:[{label:"Home Affairs — Working Holiday Visa (417)",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/work-holiday-417"}]
+  },
+  "IN→AU":{
+    badge:"🇮🇳 MATES & Skilled Visas",
+    info:"Indian citizens can migrate to Australia via the points-based General Skilled Migration (Subclass 189/190/491). Additionally, the new MATES scheme offers a fast-track temporary work pathway (up to 2 years) for early-career Indian professionals in STEM and tech sectors.",
+    links:[
+      {label:"Home Affairs — MATES Scheme",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/mates"},
+      {label:"SkillSelect Points Calculator",url:"https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189/points-calculator"}
+    ]
+  },
+  "AU→IN":{
+    badge:"🇦🇺 OCI & Indian Visas",
+    info:"Australians of Indian origin can apply for an OCI (Overseas Citizenship of India) card for lifelong residency and work rights. For other Australians, an Employment Visa (sponsored by a local entity with a minimum salary) or Business Visa is required. E-visas are available for short tourist/business trips.",
+    links:[
+      {label:"VFS Global — Indian Visa Services Australia",url:"https://services.vfsglobal.com/aus/en/ind"},
+      {label:"Indian E-Visa Portal",url:"https://indianvisaonline.gov.in/evisa/tvoa.html"}
+    ]
   },
 };
 
@@ -650,6 +674,7 @@ const COUNTRY_PROFILES = {
   MX:{climates:["tropical","mediterranean"],english:false,visaEase:3,costScore:850,safetyScore:5,careerScore:6,lifestyleScore:8,healthcareScore:6,remoteOk:true,retiredOk:true,studentOk:false,familyOk:false},
   BR:{climates:["tropical","temperate"],english:false,visaEase:3,costScore:850,safetyScore:5,careerScore:6,lifestyleScore:8,healthcareScore:6,remoteOk:true,retiredOk:false,studentOk:false,familyOk:false},
   NZ:{climates:["temperate","mediterranean"],english:true,visaEase:2,costScore:2000,safetyScore:9,careerScore:7,lifestyleScore:10,healthcareScore:8,remoteOk:true,retiredOk:true,studentOk:true,familyOk:true},
+  IN:{climates:["tropical","temperate"],english:true,visaEase:2,costScore:700,safetyScore:6,careerScore:7,lifestyleScore:7,healthcareScore:7,remoteOk:true,retiredOk:false,studentOk:true,familyOk:true},
 };
 
 // Additional country data for missing countries
@@ -711,6 +736,7 @@ const TRENDING_BY_ORIGIN = {
     {code:"NZ",tagline:"Across the Tasman Sea",trend:"↑ 12% this year"},
     {code:"JP",tagline:"Culture & safety",trend:"↑ 18% this year"},
     {code:"CA",tagline:"Commonwealth & big skies",trend:"↑ 16% this year"},
+    {code:"IN",tagline:"Tech hub & MATES scheme",trend:"↑ 38% this year"},
   ],
   CA: [
     {code:"PT",tagline:"NHR & European lifestyle",trend:"↑ 44% this year"},
@@ -918,6 +944,18 @@ const DIASPORA_DATA = {
       "Paris":{US:{size:40000,desc:"Marais & Saint-Germain expat hubs"},GB:{size:50000,desc:""},PT:{size:80000,desc:""},DZ:{size:200000,desc:""},IT:{size:60000,desc:""},CN:{size:30000,desc:"Belleville Chinatown"},AU:{size:8000,desc:""}},
     }
   },
+  IN: {
+    national: {
+      AU:{size:10000,desc:"Concentrated in Mumbai, New Delhi & Bengaluru; corporate & embassy"},
+      GB:{size:35000,desc:"Large community of corporate professionals & retirees"},
+      US:{size:60000,desc:"Corporate, tech, & NGO workers; major hub in Bengaluru & Mumbai"},
+    },
+    cities: {
+      "Mumbai":{AU:{size:3000,desc:"Embassy & financial services"},GB:{size:12000,desc:""},US:{size:15000,desc:"Consulate & multinational HQs"}},
+      "Bengaluru":{AU:{size:2500,desc:"Tech leaders & startup collaborators"},GB:{size:8000,desc:""},US:{size:18000,desc:"Silicon Valley of India; tech expats"}},
+      "New Delhi":{AU:{size:3500,desc:"High Commission & diplomatic corps"},GB:{size:10000,desc:""},US:{size:12000,desc:"Diplomatic and NGO hub"}},
+    }
+  },
 };
 
 // Meta data for comparison cards
@@ -937,5 +975,6 @@ const COUNTRY_META = {
   ES: { religion: "Catholicism (58%)", industries: "Tourism, Auto, Pharma", retirementAge: "66.3" },
   FR: { religion: "Christianity (47%)", industries: "Aerospace, Tourism, Luxury", retirementAge: "64" },
   AT: { religion: "Catholicism (55%)", industries: "Tourism, Machinery, Chem", retirementAge: "65" },
-  IE: { religion: "Catholicism (69%)", industries: "Tech, Pharma, Finance", retirementAge: "66" }
+  IE: { religion: "Catholicism (69%)", industries: "Tech, Pharma, Finance", retirementAge: "66" },
+  IN: { religion: "Hinduism (79%)", industries: "IT, Services, Agriculture, Pharma", retirementAge: "60" }
 };
