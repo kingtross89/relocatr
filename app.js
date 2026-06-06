@@ -324,8 +324,11 @@ function renderOverview(from, to, d) {
   const diff = d.visaDifficulty;
   const badgeClass = diff === 'Easy' ? 'badge-green' : diff === 'Medium' ? 'badge-yellow' : 'badge-red';
   
-  const popVal = selectedCity ? (CITY_POPULATIONS[selectedCity.name] || 'N/A') : (COUNTRY_POPULATIONS[to.code] || 'N/A');
+  const popVal = selectedCity ? (window.getCityPopulation(selectedCity.name)) : (COUNTRY_POPULATIONS[to.code] || 'N/A');
   const popLabel = selectedCity ? `Population (${selectedCity.name.split(',')[0]})` : `Population (${to.name})`;
+
+  const climate = (selectedCity && selectedCity.climate) ? selectedCity.climate : d.climate;
+  const qol = (selectedCity && selectedCity.qualityOfLife) ? selectedCity.qualityOfLife : d.qualityOfLife;
 
   return `
     <div class="overview-hero">
