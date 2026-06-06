@@ -1094,6 +1094,16 @@ window.setTab = function(tab, from, to) {
   const content = document.getElementById('tab-content');
   const toData = COUNTRY_DATA[to.code];
   const fromData = COUNTRY_DATA[from.code];
+  
+  // Track tab clicks in Google Analytics
+  if (typeof gtag === 'function') {
+    gtag('event', 'tab_click', {
+      'event_category': 'engagement',
+      'event_label': tab,
+      'tab_name': tab
+    });
+  }
+
   if (tab === 'overview') content.innerHTML = window.renderOverview(from, to, toData);
   else if (tab === 'visa') content.innerHTML = window.renderVisa(from, to, toData);
   else if (tab === 'costs') content.innerHTML = window.renderCosts(from, to, fromData, toData);
@@ -1120,6 +1130,16 @@ window.showResults = function(from, to) {
   
   const fromTitleName = (from.type === 'city' && from.cityName) ? `${from.cityName}, ${from.name}` : from.name;
   const toTitleName = (to.type === 'city' && to.cityName) ? `${to.cityName}, ${to.name}` : to.name;
+  
+  // Track search queries in Google Analytics
+  if (typeof gtag === 'function') {
+    gtag('event', 'search_route', {
+      'event_category': 'relocation_search',
+      'event_label': `${fromTitleName} to ${toTitleName}`,
+      'search_from': fromTitleName,
+      'search_to': toTitleName
+    });
+  }
   const routeEl = document.getElementById('results-route');
   routeEl.innerHTML = `${from.flag} ${fromTitleName} <span style="color:var(--accent);margin:0 0.5rem">→</span> ${to.flag} ${toTitleName}`;
   
