@@ -2510,7 +2510,8 @@ function renderCityCompare() {
 
 // ── Checklist: all collapsed by default ───────────────────────────────────────
 function renderChecklistWithLinks() {
-  return `
+  const affiliates = window.renderAffiliateWidget ? window.renderAffiliateWidget() : '';
+  return affiliates + `
     <div class="print-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: var(--card2); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius-sm);">
       <span style="font-size: 0.88rem; color: var(--muted);">Track and print your moving checklist tasks.</span>
       <button onclick="window.printChecklist()" class="action-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; font-size: 0.85rem; background: rgba(99,102,241,0.15); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--text); cursor: pointer; transition: all 0.2s; font-family:'Inter',sans-serif; font-weight:600; outline: none;">
@@ -3166,7 +3167,8 @@ const _prevRenderOverview4 = window.renderOverview;
 window.renderOverview = function(from, to, d) {
   _commCityKey = null; // reset city on new search
   const base = _prevRenderOverview4(from, to, d);
-  return base;
+  const affiliates = window.renderAffiliateWidget ? window.renderAffiliateWidget() : '';
+  return base + affiliates;
 };
 
 /* ---------------------------------------------------------------------------
