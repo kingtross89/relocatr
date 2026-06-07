@@ -1593,25 +1593,65 @@ function pickQuizResult(code) {
 // ── Enhanced Quiz: City-level + Live Exchange Rates ───────────────────────────
 
 const MAJOR_CURRENCIES = [
+  // Asia-Pacific
+  {code:"AUD",flag:"🇦🇺",label:"Australian Dollar"},
+  {code:"NZD",flag:"🇳🇿",label:"NZ Dollar"},
+  {code:"SGD",flag:"🇸🇬",label:"Singapore Dollar"},
+  {code:"HKD",flag:"🇭🇰",label:"Hong Kong Dollar"},
+  {code:"JPY",flag:"🇯🇵",label:"Japanese Yen"},
+  {code:"CNY",flag:"🇨🇳",label:"Chinese Yuan"},
+  {code:"KRW",flag:"🇰🇷",label:"South Korean Won"},
+  {code:"INR",flag:"🇮🇳",label:"Indian Rupee"},
+  {code:"PKR",flag:"🇵🇰",label:"Pakistani Rupee"},
+  {code:"BDT",flag:"🇧🇩",label:"Bangladeshi Taka"},
+  {code:"IDR",flag:"🇮🇩",label:"Indonesian Rupiah"},
+  {code:"MYR",flag:"🇲🇾",label:"Malaysian Ringgit"},
+  {code:"PHP",flag:"🇵🇭",label:"Philippine Peso"},
+  {code:"THB",flag:"🇹🇭",label:"Thai Baht"},
+  {code:"VND",flag:"🇻🇳",label:"Vietnamese Dong"},
+  // Americas
   {code:"USD",flag:"🇺🇸",label:"US Dollar"},
+  {code:"CAD",flag:"🇨🇦",label:"Canadian Dollar"},
+  {code:"MXN",flag:"🇲🇽",label:"Mexican Peso"},
+  {code:"BRL",flag:"🇧🇷",label:"Brazilian Real"},
+  {code:"COP",flag:"🇨🇴",label:"Colombian Peso"},
+  {code:"ARS",flag:"🇦🇷",label:"Argentine Peso"},
+  {code:"CLP",flag:"🇨🇱",label:"Chilean Peso"},
+  {code:"PEN",flag:"🇵🇪",label:"Peruvian Sol"},
+  // Europe
   {code:"GBP",flag:"🇬🇧",label:"British Pound"},
   {code:"EUR",flag:"🇪🇺",label:"Euro"},
-  {code:"AUD",flag:"🇦🇺",label:"Australian Dollar"},
-  {code:"CAD",flag:"🇨🇦",label:"Canadian Dollar"},
-  {code:"JPY",flag:"🇯🇵",label:"Japanese Yen"},
-  {code:"INR",flag:"🇮🇳",label:"Indian Rupee"},
-  {code:"SGD",flag:"🇸🇬",label:"Singapore Dollar"},
-  {code:"ZAR",flag:"🇿🇦",label:"South African Rand"},
-  {code:"BRL",flag:"🇧🇷",label:"Brazilian Real"},
   {code:"CHF",flag:"🇨🇭",label:"Swiss Franc"},
+  {code:"NOK",flag:"🇳🇴",label:"Norwegian Krone"},
+  {code:"SEK",flag:"🇸🇪",label:"Swedish Krona"},
+  {code:"DKK",flag:"🇩🇰",label:"Danish Krone"},
+  {code:"PLN",flag:"🇵🇱",label:"Polish Zloty"},
+  {code:"CZK",flag:"🇨🇿",label:"Czech Koruna"},
+  {code:"HUF",flag:"🇭🇺",label:"Hungarian Forint"},
+  {code:"RON",flag:"🇷🇴",label:"Romanian Leu"},
+  {code:"TRY",flag:"🇹🇷",label:"Turkish Lira"},
+  // Middle East & Africa
   {code:"AED",flag:"🇦🇪",label:"UAE Dirham"},
-  {code:"NZD",flag:"🇳🇿",label:"NZ Dollar"},
-  {code:"MXN",flag:"🇲🇽",label:"Mexican Peso"},
-  {code:"HKD",flag:"🇭🇰",label:"Hong Kong Dollar"},
+  {code:"SAR",flag:"🇸🇦",label:"Saudi Riyal"},
+  {code:"QAR",flag:"🇶🇦",label:"Qatari Riyal"},
+  {code:"KWD",flag:"🇰🇼",label:"Kuwaiti Dinar"},
+  {code:"ILS",flag:"🇮🇱",label:"Israeli Shekel"},
+  {code:"EGP",flag:"🇪🇬",label:"Egyptian Pound"},
+  {code:"MAD",flag:"🇲🇦",label:"Moroccan Dirham"},
+  {code:"ZAR",flag:"🇿🇦",label:"South African Rand"},
+  {code:"KES",flag:"🇰🇪",label:"Kenyan Shilling"},
+  {code:"NGN",flag:"🇳🇬",label:"Nigerian Naira"},
 ];
 
 // Static fallback rates (to USD)
-const FALLBACK_RATES = {USD:1,GBP:0.79,EUR:0.92,AUD:1.53,CAD:1.36,JPY:149,INR:83,SGD:1.34,ZAR:18.6,BRL:4.97,CHF:0.89,AED:3.67,NZD:1.63,MXN:17.1,HKD:7.82,THB:35,MXN:17,SEK:10.5,NOK:10.6,DKK:6.9};
+const FALLBACK_RATES = {
+  USD:1, GBP:0.79, EUR:0.92, AUD:1.53, CAD:1.36, JPY:149, INR:83, SGD:1.34,
+  ZAR:18.6, BRL:4.97, CHF:0.89, AED:3.67, NZD:1.63, MXN:17.1, HKD:7.82,
+  THB:35, SEK:10.5, NOK:10.6, DKK:6.9, IDR:15800, MYR:4.7, PHP:56, VND:24800,
+  KRW:1330, CNY:7.24, TRY:32, PKR:278, BDT:110, COP:3950, ARS:870,
+  CLP:930, PEN:3.7, PLN:4.0, CZK:23, HUF:360, RON:4.6, ILS:3.7,
+  SAR:3.75, QAR:3.64, KWD:0.31, EGP:48, MAD:10, KES:130, NGN:1550
+};
 
 // Country currency map
 const COUNTRY_CURRENCY = {US:"USD",GB:"GBP",DE:"EUR",FR:"EUR",ES:"EUR",PT:"EUR",NL:"EUR",IT:"EUR",AU:"AUD",CA:"CAD",JP:"JPY",IN:"INR",SG:"SGD",ZA:"ZAR",BR:"BRL",CH:"CHF",AE:"AED",NZ:"NZD",MX:"MXN",HK:"HKD",TH:"THB",NO:"NOK",SE:"SEK",DK:"DKK"};
@@ -1812,7 +1852,16 @@ function renderEnhQuizStep() {
 
   if (q.type === 'budget') {
     const cur = enhQuizAnswers.currency || 'USD';
-    const sym = {USD:'$',GBP:'£',EUR:'€',AUD:'A$',CAD:'C$',JPY:'¥',INR:'₹',SGD:'S$',ZAR:'R',BRL:'R$',CHF:'CHF ',AED:'AED ',NZD:'NZ$',MXN:'MX$',HKD:'HK$'}[cur] || cur+' ';
+    const sym = {
+      USD:'$', GBP:'£', EUR:'€', AUD:'A$', CAD:'C$', JPY:'¥', INR:'₹',
+      SGD:'S$', ZAR:'R', BRL:'R$', CHF:'CHF ', AED:'AED ', NZD:'NZ$',
+      MXN:'MX$', HKD:'HK$', THB:'฿', IDR:'Rp', MYR:'RM', PHP:'₱',
+      VND:'₫', KRW:'₩', CNY:'¥', TRY:'₺', PKR:'₨', ILS:'₪',
+      SAR:'SAR ', QAR:'QAR ', KWD:'KD', EGP:'E£', MAD:'MAD ',
+      NOK:'kr', SEK:'kr', DKK:'kr', PLN:'zł', CZK:'Kč',
+      HUF:'Ft', RON:'lei', COP:'COL$', ARS:'AR$', CLP:'CL$',
+      PEN:'S/', KES:'KSh', NGN:'₦', BDT:'৳',
+    }[cur] || cur+' ';
     const tiers = BUDGET_TIERS_USD.map(usd => fromUSD(usd, cur));
     const labels = [
       `Under ${sym}${Math.round(tiers[0]).toLocaleString()}/mo`,
