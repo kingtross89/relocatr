@@ -580,7 +580,7 @@ const DEEP_DIVE = {
     DEFAULT: { heading:"Tools to Research Costs Further", links:[{label:"Numbeo — Real Cost of Living Data",url:"https://www.numbeo.com/cost-of-living"},{label:"Expatistan — Cost Comparisons",url:"https://www.expatistan.com/cost-of-living"},{label:"Nomad List — Quality of Life & Cost Comparison",url:"https://nomadlist.com"}] }
   },
   tips: {
-    DEFAULT: { heading:"Expat Community Resources", links:[{label:"Internations — Global Expat Network",url:"https://www.internations.org"},{label:"Expat.com — Country Forums",url:"https://www.expat.com"},{label:"Reddit r/expats",url:"https://www.reddit.com/r/expats"},{label:"Wise — International Money Transfers",url:"https://wise.com"},{label:"Revolut — Multi-Currency Banking",url:"https://www.revolut.com"}] }
+    DEFAULT: { heading:"Expat Community Resources", links:[{label:"Internations — Global Expat Network",url:"https://www.internations.org"},{label:"Expat.com — Country Forums",url:"https://www.expat.com"},{label:"Reddit r/expats",url:"https://www.reddit.com/r/expats"},{label:"Wise — International Money Transfers",url:"https://wise.com/invite/dic/albertc552"},{label:"Revolut — Multi-Currency Banking",url:"https://www.revolut.com"}] }
   }
 };
 
