@@ -2269,7 +2269,7 @@ const TRAVEL_ADVISORIES = {
   SE:{ name:"UD Travel Advice (Sweden)",     url:()=>"https://www.ud.se/reseinfo",                                          fallback:"https://www.ud.se" },
   NO:{ name:"UD Travel Advice (Norway)",     url:()=>"https://www.regjeringen.no/en/topics/foreign-affairs/id927/",         fallback:"https://www.regjeringen.no" },
   DK:{ name:"UM Travel Advice (Denmark)",    url:()=>"https://um.dk/en/travel-and-residence/",                              fallback:"https://um.dk" },
-  SG:{ name:"MFA Singapore Travel Advisory",url:()=>"https://www.mfa.gov.sg/Consular-Services/Singapore-Citizens/Travelling-Overseas/Travel-Notices", fallback:"https://www.mfa.gov.sg" },
+  SG:{ name:"MFA Singapore Travel Advisory",url:()=>"https://www.mfa.gov.sg", fallback:"https://www.mfa.gov.sg" },
   JP:{ name:"MOFA Japan Overseas Safety",    url:()=>"https://www.anzen.mofa.go.jp",                                        fallback:"https://www.anzen.mofa.go.jp" },
   IN:{ name:"MEA India Travel Advisory",     url:()=>"https://www.mea.gov.in/travel-advisory.htm",                          fallback:"https://www.mea.gov.in" },
   ZA:{ name:"DIRCO South Africa Travel",     url:()=>"https://www.dirco.gov.za",                                            fallback:"https://www.dirco.gov.za" },
@@ -3434,3 +3434,54 @@ function switchExploreTab(tabName) {
   // Set default explore tab to 'map' and hide other sections initially
   switchExploreTab('map');
 })();
+
+// ── Contact / Feedback Section ────────────────────────────────────────────────
+function switchContactTab(tab) {
+  // Update tab buttons
+  document.querySelectorAll('.contact-tab').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('ctab-' + tab);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  // Show/hide panels
+  const qPanel = document.getElementById('contact-question');
+  const fPanel = document.getElementById('contact-feedback');
+  if (qPanel) qPanel.style.display = tab === 'question' ? 'block' : 'none';
+  if (fPanel) fPanel.style.display = tab === 'feedback' ? 'block' : 'none';
+}
+
+function setRating(val) {
+  document.getElementById('rating-input').value = val;
+  document.querySelectorAll('.star').forEach(star => {
+    star.classList.toggle('lit', parseInt(star.dataset.val) <= val);
+  });
+}
+
+async function handleContactSubmit(e, form) {
+  e.preventDefault();
+  const btn = form.querySelector('.contact-submit-btn');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  try {
+    const data = new FormData(form);
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      // Find which success message to show
+      const wrap = form.closest('.contact-form-wrap');
+      const successEl = wrap.querySelector('.contact-success');
+      form.style.display = 'none';
+      if (successEl) successEl.style.display = 'block';
+    } else {
+      btn.textContent = 'Something went wrong — try again';
+      btn.disabled = false;
+    }
+  } catch {
+    btn.textContent = 'Network error — try again';
+    btn.disabled = false;
+  }
+}

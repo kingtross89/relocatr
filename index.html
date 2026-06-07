@@ -195,6 +195,90 @@
     </div>
   </div>
 
+  <!-- CONTACT / FEEDBACK SECTION -->
+  <section id="contact-section">
+    <div class="contact-inner">
+      <div class="contact-header">
+        <div class="contact-icon">💬</div>
+        <h2 class="section-title" style="margin-bottom:0.5rem">Get in Touch</h2>
+        <p class="section-sub" style="margin-bottom:2rem">Got a question about relocating? Want to suggest a city or flag an issue? We'd love to hear from you.</p>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="contact-tabs">
+        <button class="contact-tab active" id="ctab-question" onclick="switchContactTab('question')">🙋 Ask a Question</button>
+        <button class="contact-tab" id="ctab-feedback" onclick="switchContactTab('feedback')">💡 Leave Feedback</button>
+      </div>
+
+      <!-- Ask a Question form -->
+      <div class="contact-form-wrap" id="contact-question">
+        <form action="https://formspree.io/f/xbdegbdw" method="POST" class="contact-form" onsubmit="handleContactSubmit(event, this)">
+          <input type="hidden" name="_subject" value="Relocatr — Question from user">
+          <div class="contact-fields">
+            <div class="contact-field">
+              <label>Your name</label>
+              <input type="text" name="name" placeholder="e.g. Sarah" required>
+            </div>
+            <div class="contact-field">
+              <label>Your email</label>
+              <input type="email" name="email" placeholder="you@email.com" required>
+            </div>
+          </div>
+          <div class="contact-field">
+            <label>Where are you moving from / to?</label>
+            <input type="text" name="route" placeholder="e.g. New Delhi → Perth">
+          </div>
+          <div class="contact-field">
+            <label>Your question</label>
+            <textarea name="message" rows="4" placeholder="Ask us anything about the move process — visa, costs, housing, healthcare…" required></textarea>
+          </div>
+          <button type="submit" class="contact-submit-btn">Send Question →</button>
+        </form>
+        <div class="contact-success" id="contact-question-success" style="display:none">
+          <div class="success-icon">✅</div>
+          <h3>Got it — thanks!</h3>
+          <p>We'll get back to you within 1–2 business days.</p>
+        </div>
+      </div>
+
+      <!-- Leave Feedback form -->
+      <div class="contact-form-wrap" id="contact-feedback" style="display:none">
+        <form action="https://formspree.io/f/xbdegbdw" method="POST" class="contact-form" onsubmit="handleContactSubmit(event, this)">
+          <input type="hidden" name="_subject" value="Relocatr — Feedback from user">
+          <div class="contact-rating-row">
+            <label>How would you rate Relocatr?</label>
+            <div class="contact-stars" id="contact-stars">
+              <span class="star" data-val="1" onclick="setRating(1)">★</span>
+              <span class="star" data-val="2" onclick="setRating(2)">★</span>
+              <span class="star" data-val="3" onclick="setRating(3)">★</span>
+              <span class="star" data-val="4" onclick="setRating(4)">★</span>
+              <span class="star" data-val="5" onclick="setRating(5)">★</span>
+            </div>
+            <input type="hidden" name="rating" id="rating-input" value="">
+          </div>
+          <div class="contact-field">
+            <label>What did you find most useful?</label>
+            <input type="text" name="useful" placeholder="e.g. The visa deep dives, cost comparisons…">
+          </div>
+          <div class="contact-field">
+            <label>What could be improved?</label>
+            <textarea name="improve" rows="3" placeholder="Missing cities, broken links, confusing UI…"></textarea>
+          </div>
+          <div class="contact-field">
+            <label>Your email <span style="opacity:0.5;font-size:0.8rem">(optional — only if you'd like a reply)</span></label>
+            <input type="email" name="email" placeholder="you@email.com">
+          </div>
+          <button type="submit" class="contact-submit-btn">Send Feedback →</button>
+        </form>
+        <div class="contact-success" id="contact-feedback-success" style="display:none">
+          <div class="success-icon">🙏</div>
+          <h3>Thanks for the feedback!</h3>
+          <p>It genuinely helps us make Relocatr better for everyone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer id="footer">
     <div class="footer-inner">
@@ -206,6 +290,7 @@
       <p class="footer-note">Information is for guidance only. Always verify visa requirements with official government sources.</p>
     </div>
   </footer>
+
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="data.js?v=28"></script>
