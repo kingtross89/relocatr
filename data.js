@@ -1015,5 +1015,21 @@ const COUNTRY_META = {
   FR: { religion: "Christianity (47%)", industries: "Aerospace, Tourism, Luxury", retirementAge: "64" },
   AT: { religion: "Catholicism (55%)", industries: "Tourism, Machinery, Chem", retirementAge: "65" },
   IE: { religion: "Catholicism (69%)", industries: "Tech, Pharma, Finance", retirementAge: "66" },
-  IN: { religion: "Hinduism (79%)", industries: "IT, Services, Agriculture, Pharma", retirementAge: "60" }
+  IN: { religion: "Hinduism (79%)", industries: "IT, Services, Agriculture, Pharma", retirementAge: "60" },
+  BR: { religion: "Catholicism (65%)", industries: "Agriculture, Mining, Manufacturing", retirementAge: "65" },
+  ID: { religion: "Islam (87%)", industries: "Mining, Textiles, Agriculture", retirementAge: "58" },
+  VN: { religion: "Buddhism/Folk (74%)", industries: "Electronics, Textiles, Tourism", retirementAge: "62" },
+  ZA: { religion: "Christianity (80%)", industries: "Mining, Finance, Agriculture", retirementAge: "65" },
+  TR: { religion: "Islam (99%)", industries: "Textiles, Automotive, Tourism", retirementAge: "60" },
+  PH: { religion: "Christianity (90%)", industries: "BPO, Services, Agriculture", retirementAge: "65" },
+  KR: { religion: "Non-religious (60%)", industries: "Electronics, Automotive, Ship", retirementAge: "63" },
+  CL: { religion: "Christianity (60%)", industries: "Mining (Copper), Ag, Forestry", retirementAge: "65" },
+  CO: { religion: "Catholicism (73%)", industries: "Services, Oil, Agriculture", retirementAge: "62" },
+  AR: { religion: "Catholicism (63%)", industries: "Agriculture, Auto, Food Processing", retirementAge: "65" },
+  CR: { religion: "Christianity (70%)", industries: "Tourism, Microprocessors, Ag", retirementAge: "65" },
+  CN: { religion: "Buddhist/Folk (75%)", industries: "Manufacturing, Tech, Machinery", retirementAge: "60" },
+  EG: { religion: "Islam (90%)", industries: "Tourism, Oil/Gas, Agriculture", retirementAge: "60" },
+  KE: { religion: "Christianity (85%)", industries: "Agriculture, Tourism, Tech", retirementAge: "60" },
+  NG: { religion: "Islam (50%)/Xian (48%)", industries: "Oil/Gas, Agriculture, Telecoms", retirementAge: "60" },
+  MA: { religion: "Islam (99%)", industries: "Agriculture, Tourism, Phosphate", retirementAge: "63" }
 };
