@@ -2417,7 +2417,7 @@ function renderDestinationGrid(originCode) {
 }
 
 // ── Compare section: Countries + Cities toggle ────────────────────────────────
-let selectedCompareCountries = ["US","GB","DE","PT","TH","SG","AU","MX","CA","JP","AE","NL","ES","FR","AT","IE"];
+let selectedCompareCountries = ["US","GB","DE","PT","TH","SG","AU","MX","CA","JP","AE","NL","ES","FR","BR","ID","VN","ZA","TR","PH","KR","CL","CO","AR","CR","CN","IN","EG","KE","NG","MA"];
 
 function toggleCompareDropdown(event) {
   if (event) event.stopPropagation();

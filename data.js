@@ -320,6 +320,9 @@ const CITY_DATA = {
     { name:"Abu Dhabi", cost:{rent:1800,food:295,transport:120,utilities:185,dining:255} },
     { name:"Sharjah", cost:{rent:1100,food:265,transport:110,utilities:160,dining:210} },
   ],
+  SG: [
+    { name:"Singapore", cost:{rent:2200,food:350,transport:80,utilities:100,dining:180} }
+  ],
   TH: [
     { name:"Bangkok", cost:{rent:700,food:210,transport:55,utilities:85,dining:130} },
     { name:"Chiang Mai", cost:{rent:450,food:175,transport:40,utilities:70,dining:100} },
