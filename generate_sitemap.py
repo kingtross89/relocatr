@@ -1,0 +1,75 @@
+import re
+import urllib.parse
+from pathlib import Path
+
+# Paths
+base_dir = Path(__file__).parent
+data_js_path = base_dir / "data.js"
+sitemap_xml_path = base_dir / "sitemap.xml"
+
+# Read data.js
+content = data_js_path.read_text(encoding="utf-8")
+
+# 1. Parse Supported Countries (keys of COUNTRY_DATA)
+# Match keys in COUNTRY_DATA. E.g., "  AU: {"
+country_data_match = re.search(r'const COUNTRY_DATA = \{(.*?)\};', content, re.DOTALL)
+if not country_data_match:
+    raise ValueError("Could not find const COUNTRY_DATA in data.js")
+country_data_block = country_data_match.group(1)
+supported_countries = sorted(list(set(re.findall(r'^\s*([A-Z]{2})\s*:', country_data_block, re.MULTILINE))))
+
+# 2. Parse Cities in CITY_DATA
+# Match names of cities inside CITY_DATA, e.g., name:"New York, NY", cost:{...}
+city_data_match = re.search(r'const CITY_DATA = \{(.*?)\};', content, re.DOTALL)
+if not city_data_match:
+    # If it fails, try to just search till the end or another const
+    city_data_match = re.search(r'const CITY_DATA = \{(.*)', content, re.DOTALL)
+city_data_block = city_data_match.group(1)
+all_cities = sorted(list(set(re.findall(r'name\s*:\s*"([^"]+)"\s*,\s*cost\s*:\s*\{', city_data_block))))
+
+# Start generating XML
+urls = []
+
+# Add Home Page
+urls.append((
+    "https://relocatr.com/",
+    "daily",
+    "1.0"
+))
+
+# Generate Country to Country (all combinations)
+for c1 in supported_countries:
+    for c2 in supported_countries:
+        if c1 != c2:
+            url = f"https://relocatr.com/?from={c1}&amp;to={c2}"
+            urls.append((url, "weekly", "0.8"))
+
+# Generate City to City (all combinations)
+for city1 in all_cities:
+    for city2 in all_cities:
+        if city1 != city2:
+            # URL-encode parameters
+            from_param = urllib.parse.quote(city1)
+            to_param = urllib.parse.quote(city2)
+            url = f"https://relocatr.com/?from={from_param}&amp;to={to_param}"
+            urls.append((url, "weekly", "0.7"))
+
+# Write sitemap.xml
+xml_lines = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+]
+
+for url, freq, priority in urls:
+    xml_lines.append("  <url>")
+    xml_lines.append(f"    <loc>{url}</loc>")
+    xml_lines.append(f"    <changefreq>{freq}</changefreq>")
+    xml_lines.append(f"    <priority>{priority}</priority>")
+    xml_lines.append("  </url>")
+
+xml_lines.append("</urlset>")
+
+sitemap_xml_path.write_text("\n".join(xml_lines), encoding="utf-8")
+print(f"Success: Generated sitemap with {len(urls)} URLs at: {sitemap_xml_path}")
+print(f"Supported Countries Count: {len(supported_countries)}")
+print(f"Cities Count: {len(all_cities)}")

@@ -21,6 +21,35 @@ window.addEventListener('scroll', () => {
     ? 'rgba(8,11,20,0.95)' : 'rgba(8,11,20,0.6)';
 });
 
+// ── SEO Settings ────────────────────────────────────────────────────────────
+const DEFAULT_SEO = {
+  title: document.title,
+  description: document.querySelector('meta[name="description"]')?.content || '',
+  ogTitle: document.querySelector('meta[property="og:title"]')?.content || '',
+  ogDescription: document.querySelector('meta[property="og:description"]')?.content || '',
+  twitterTitle: document.querySelector('meta[property="twitter:title"]')?.content || '',
+  twitterDescription: document.querySelector('meta[property="twitter:description"]')?.content || ''
+};
+
+function updateSEO(title, description) {
+  document.title = title;
+  
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.content = description;
+  
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.content = title;
+  
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.content = description;
+  
+  const twTitle = document.querySelector('meta[property="twitter:title"]');
+  if (twTitle) twTitle.content = title;
+  
+  const twDesc = document.querySelector('meta[property="twitter:description"]');
+  if (twDesc) twDesc.content = description;
+}
+
 // ── Country Search Dropdowns ────────────────────────────────────────────────
 const DETAILED_COUNTRIES = COUNTRIES.filter(c => COUNTRY_DATA[c.code]);
 
@@ -216,44 +245,44 @@ if (navBtn) navBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
+function resolveTerm(val) {
+  if (!val) return null;
+  const term = val.trim().toLowerCase();
+  if (!term) return null;
+  
+  // 1. Try to find exact country match, then partial country match
+  let cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase() === term || c.code.toLowerCase() === term);
+  if (!cMatch) {
+    cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase().includes(term));
+  }
+  if (cMatch) {
+    return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
+  }
+  
+  // 2. Try to find city match (exact first, then partial)
+  let cityMatch = null;
+  for (const [countryCode, cities] of Object.entries(CITY_DATA)) {
+    const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
+    if (!country) continue;
+    
+    let idx = cities.findIndex(city => city.name.toLowerCase() === term);
+    if (idx < 0) {
+      idx = cities.findIndex(city => city.name.toLowerCase().includes(term));
+    }
+    
+    if (idx >= 0) {
+      const city = cities[idx];
+      cityMatch = { type: 'city', code: countryCode, name: country.name, flag: country.flag, cityName: city.name, cityIndex: idx, region: country.region };
+      break;
+    }
+  }
+  return cityMatch;
+}
+
 function doSearch() {
   const fi = document.getElementById('from-input');
   const ti = document.getElementById('to-input');
   
-  const resolveTerm = (val) => {
-    if (!val) return null;
-    const term = val.trim().toLowerCase();
-    if (!term) return null;
-    
-    // 1. Try to find exact country match, then partial country match
-    let cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase() === term || c.code.toLowerCase() === term);
-    if (!cMatch) {
-      cMatch = DETAILED_COUNTRIES.find(c => c.name.toLowerCase().includes(term));
-    }
-    if (cMatch) {
-      return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
-    }
-    
-    // 2. Try to find city match (exact first, then partial)
-    let cityMatch = null;
-    for (const [countryCode, cities] of Object.entries(CITY_DATA)) {
-      const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
-      if (!country) continue;
-      
-      let idx = cities.findIndex(city => city.name.toLowerCase() === term);
-      if (idx < 0) {
-        idx = cities.findIndex(city => city.name.toLowerCase().includes(term));
-      }
-      
-      if (idx >= 0) {
-        const city = cities[idx];
-        cityMatch = { type: 'city', code: countryCode, name: country.name, flag: country.flag, cityName: city.name, cityIndex: idx, region: country.region };
-        break;
-      }
-    }
-    return cityMatch;
-  };
-
   if (!fromCountry && fi) {
     fromCountry = resolveTerm(fi.value);
     if (fromCountry) {
@@ -309,6 +338,16 @@ function goHome() {
   toCountry = null;
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Clear query parameters in URL
+  if (window.history.pushState) {
+    window.history.pushState({}, '', window.location.pathname);
+  }
+
+  // Restore default SEO titles/descriptions
+  if (typeof updateSEO === 'function' && typeof DEFAULT_SEO === 'object') {
+    updateSEO(DEFAULT_SEO.title, DEFAULT_SEO.description);
+  }
 }
 window.goHome = goHome;
 
@@ -1215,9 +1254,24 @@ window.showResults = function(from, to) {
   document.getElementById('page-plan').classList.add('results-active');
   document.getElementById('results-panel').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Update URL search parameters for sharing/deep-linking
+  if (!window._isPopStateNavigation) {
+    const fromVal = from.type === 'city' ? from.cityName : from.code;
+    const toVal = to.type === 'city' ? to.cityName : to.code;
+    const newUrl = `${window.location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
+    window.history.pushState({ from, to }, '', newUrl);
+  }
   
   const fromTitleName = (from.type === 'city' && from.cityName) ? `${from.cityName}, ${from.name}` : from.name;
   const toTitleName = (to.type === 'city' && to.cityName) ? `${to.cityName}, ${to.name}` : to.name;
+  
+  // Update browser page titles and meta tags for programmatic SEO
+  if (typeof updateSEO === 'function') {
+    const dynamicTitle = `Moving from ${fromTitleName} to ${toTitleName} | Cost, Visas & Checklist — Relocatr`;
+    const dynamicDesc = `Planning a move from ${fromTitleName} to ${toTitleName}? Compare cost of living, calculate moving budgets, check visa requirements, and build your relocation checklist.`;
+    updateSEO(dynamicTitle, dynamicDesc);
+  }
   
   // Track search queries in Google Analytics
   if (typeof gtag === 'function') {
@@ -3485,3 +3539,41 @@ async function handleContactSubmit(e, form) {
     btn.disabled = false;
   }
 }
+
+// ── Deep Linking / Initializer ──────────────────────────────────────────────
+function checkUrlParamsAndLoad(isInitialLoad) {
+  const params = new URLSearchParams(window.location.search);
+  const fromQ = params.get('from');
+  const toQ = params.get('to');
+  if (fromQ && toQ) {
+    const fromObj = resolveTerm(fromQ);
+    const toObj = resolveTerm(toQ);
+    if (fromObj && toObj) {
+      fromCountry = fromObj;
+      toCountry = toObj;
+      
+      const fi = document.getElementById('from-input');
+      const ti = document.getElementById('to-input');
+      if (fi) {
+        fi.value = fromObj.type === 'city' ? fromObj.cityName : fromObj.name;
+        fi.dataset.code = fromObj.code;
+      }
+      if (ti) {
+        ti.value = toObj.type === 'city' ? toObj.cityName : toObj.name;
+        ti.dataset.code = toObj.code;
+      }
+      
+      window._isPopStateNavigation = true;
+      showResults(fromObj, toObj);
+      window._isPopStateNavigation = false;
+    }
+  } else if (!isInitialLoad) {
+    // If popstate back to home, call goHome
+    window._isPopStateNavigation = true;
+    goHome();
+    window._isPopStateNavigation = false;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => checkUrlParamsAndLoad(true));
+window.addEventListener('popstate', () => checkUrlParamsAndLoad(false));
