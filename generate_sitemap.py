@@ -32,7 +32,7 @@ urls = []
 
 # Add Home Page
 urls.append((
-    "https://relocatr.com/",
+    "https://myrelocatr.com/",
     "daily",
     "1.0"
 ))
@@ -41,7 +41,7 @@ urls.append((
 for c1 in supported_countries:
     for c2 in supported_countries:
         if c1 != c2:
-            url = f"https://relocatr.com/?from={c1}&amp;to={c2}"
+            url = f"https://myrelocatr.com/?from={c1}&amp;to={c2}"
             urls.append((url, "weekly", "0.8"))
 
 # Generate City to City (all combinations)
@@ -51,7 +51,7 @@ for city1 in all_cities:
             # URL-encode parameters
             from_param = urllib.parse.quote(city1)
             to_param = urllib.parse.quote(city2)
-            url = f"https://relocatr.com/?from={from_param}&amp;to={to_param}"
+            url = f"https://myrelocatr.com/?from={from_param}&amp;to={to_param}"
             urls.append((url, "weekly", "0.7"))
 
 # Write sitemap.xml
