@@ -2815,10 +2815,7 @@ const BUDGET_ITEMS = [
   { id:'buffer',    icon:'🚨',  label:'Emergency Buffer (10-20%)',      hint:'Always have a cash buffer for unexpected costs — delays, fees, medical, or downtime.',     min:0,     max:15000, default:0,    step:100 },
 ];
 
-const BUDGET_CURRENCIES = [
-  {code:'USD',sym:'$'},{code:'GBP',sym:'£'},{code:'EUR',sym:'€'},
-  {code:'AUD',sym:'A$'},{code:'CAD',sym:'C$'},{code:'INR',sym:'₹'},
-];
+// Budget tab uses MAJOR_CURRENCIES directly via a dropdown (defined earlier in file)
 
 let budgetValues = {};
 let budgetCurrency = 'USD';
@@ -2856,7 +2853,17 @@ function fmtBudget(usd) {
   const rates = liveRates || FALLBACK_RATES;
   const rate = rates[budgetCurrency] || 1;
   const converted = Math.round(usd * rate);
-  const sym = {USD:'$',GBP:'£',EUR:'€',AUD:'A$',CAD:'C$',INR:'₹'}[budgetCurrency] || (budgetCurrency+' ');
+  const SYMBOLS = {
+    USD:'$', GBP:'£', EUR:'€', AUD:'A$', CAD:'C$', JPY:'¥', INR:'₹',
+    SGD:'S$', ZAR:'R', BRL:'R$', CHF:'CHF ', AED:'AED ', NZD:'NZ$',
+    MXN:'MX$', HKD:'HK$', THB:'฿', IDR:'Rp', MYR:'RM', PHP:'₱',
+    VND:'₫', KRW:'₩', CNY:'¥', TRY:'₺', PKR:'₨', ILS:'₪',
+    SAR:'SAR ', QAR:'QAR ', KWD:'KD', EGP:'E£', MAD:'MAD ',
+    NOK:'kr', SEK:'kr', DKK:'kr', PLN:'zł', CZK:'Kč',
+    HUF:'Ft', RON:'lei', COP:'COL$', ARS:'AR$', CLP:'CL$',
+    PEN:'S/', KES:'KSh', NGN:'₦', BDT:'৳',
+  };
+  const sym = SYMBOLS[budgetCurrency] || (budgetCurrency + ' ');
   return sym + converted.toLocaleString();
 }
 
@@ -2880,13 +2887,17 @@ function renderBudgetSummary() {
       <span class="s-val">${fmtBudget(budgetValues[i.id])}</span>
     </div>`).join('');
 
-  const curBtns = BUDGET_CURRENCIES.map(c =>
-    `<button class="budget-cur-btn ${budgetCurrency===c.code?'active':''}"
-      onclick="setBudgetCurrency('${c.code}')">${c.sym} ${c.code}</button>`).join('');
+  const currencySelect = `
+    <div class="budget-currency-row" style="margin-bottom:1rem">
+      <label style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem;display:block">Display currency</label>
+      <select class="city-select" id="budget-currency-select" onchange="setBudgetCurrency(this.value)" style="width:100%;max-width:280px">
+        ${MAJOR_CURRENCIES.map(c => `<option value="${c.code}" ${budgetCurrency===c.code?'selected':''}>${c.flag} ${c.label} (${c.code})</option>`).join('')}
+      </select>
+    </div>`;
 
   container.innerHTML = `
     <div class="budget-summary-title">💰 Your Move Budget</div>
-    <div class="budget-currency-row">${curBtns}</div>
+    ${currencySelect}
     ${rows}
     <div class="budget-total-row">
       <span class="budget-total-label">Estimated Total</span>
