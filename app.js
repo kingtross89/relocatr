@@ -252,6 +252,43 @@ if (navBtn) navBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
+function makeSlug(name) {
+  return name.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s]+/g, '-')
+    .replace(/-+/g, '-')
+    .trim('-');
+}
+
+function resolveSlug(slug) {
+  if (!slug) return null;
+  const term = slug.toLowerCase();
+  
+  let cMatch = DETAILED_COUNTRIES.find(c => c.code.toLowerCase() === term);
+  if (cMatch) {
+    return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
+  }
+  
+  cMatch = DETAILED_COUNTRIES.find(c => makeSlug(c.name) === term);
+  if (cMatch) {
+    return { type: 'country', code: cMatch.code, name: cMatch.name, flag: cMatch.flag, region: cMatch.region };
+  }
+  
+  let cityMatch = null;
+  for (const [countryCode, cities] of Object.entries(CITY_DATA)) {
+    const country = DETAILED_COUNTRIES.find(c => c.code === countryCode);
+    if (!country) continue;
+    
+    const idx = cities.findIndex(city => makeSlug(city.name) === term);
+    if (idx >= 0) {
+      const city = cities[idx];
+      cityMatch = { type: 'city', code: countryCode, name: country.name, flag: country.flag, cityName: city.name, cityIndex: idx, region: country.region };
+      break;
+    }
+  }
+  return cityMatch;
+}
+
 function resolveTerm(val) {
   if (!val) return null;
   const term = val.trim().toLowerCase();
@@ -1258,58 +1295,30 @@ window.showResults = function(from, to) {
   document.getElementById('results-panel').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Update URL search parameters or clean paths for sharing/deep-linking
+  // Update URL to clean paths for sharing/deep-linking
   if (!window._isPopStateNavigation && !window.PRELOAD_FROM) {
-    const fromVal = from.type === 'city' ? from.cityName : from.code;
-    const toVal = to.type === 'city' ? to.cityName : to.code;
-    
-    // Check if the route is popular to push a clean URL
-    const makeSlug = (name) => {
-      return name.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/[\s]+/g, '-')
-        .replace(/-+/g, '-')
-        .trim('-');
-    };
-    
-    const popularCountryOrigins = ["US", "GB", "CA", "AU", "IN"];
-    const popularCityOrigins = ["New York, NY", "London", "San Francisco, CA", "Los Angeles, CA", "Toronto", "Sydney"];
-    
-    let isPopular = false;
     let slug = '';
-    
     if (from.type === 'city') {
-      isPopular = popularCityOrigins.includes(from.cityName) && to.type === 'city';
-      if (isPopular) {
-        const fromSlug = makeSlug(from.cityName);
-        const toSlug = makeSlug(to.cityName);
-        slug = `${fromSlug}-to-${toSlug}`;
-      }
+      const fromSlug = makeSlug(from.cityName);
+      const toSlug = makeSlug(to.cityName);
+      slug = `${fromSlug}-to-${toSlug}`;
     } else {
-      isPopular = popularCountryOrigins.includes(from.code) && to.type !== 'city';
-      if (isPopular) {
-        slug = `${from.code.toLowerCase()}-to-${to.code.toLowerCase()}`;
-      }
+      slug = `${from.code.toLowerCase()}-to-${to.code.toLowerCase()}`;
     }
     
-    if (isPopular) {
-      let newUrl;
-      let basePath = window.location.pathname;
-      if (basePath.endsWith('index.html')) {
-        basePath = basePath.substring(0, basePath.length - 10);
-      }
-      if (!basePath.endsWith('/')) basePath += '/';
-
-      if (window.location.protocol === 'file:') {
-        newUrl = `${basePath}routes/${slug}/index.html`;
-      } else {
-        newUrl = `${window.location.origin}${basePath}routes/${slug}/`;
-      }
-      window.history.pushState({ from, to }, '', newUrl);
-    } else {
-      const newUrl = `${window.location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
-      window.history.pushState({ from, to }, '', newUrl);
+    let newUrl;
+    let basePath = window.location.pathname;
+    if (basePath.endsWith('index.html')) {
+      basePath = basePath.substring(0, basePath.length - 10);
     }
+    if (!basePath.endsWith('/')) basePath += '/';
+
+    if (window.location.protocol === 'file:') {
+      newUrl = `${basePath}routes/${slug}/index.html`;
+    } else {
+      newUrl = `${window.location.origin}${basePath}routes/${slug}/`;
+    }
+    window.history.pushState({ from, to }, '', newUrl);
   }
   
   const fromTitleName = (from.type === 'city' && from.cityName) ? `${from.cityName}, ${from.name}` : from.name;
@@ -3649,6 +3658,51 @@ function checkUrlParamsAndLoad(isInitialLoad) {
   }
 
   const params = new URLSearchParams(window.location.search);
+  const redirectRoute = params.get('redirect_route');
+  if (redirectRoute) {
+    const parts = redirectRoute.split('-to-');
+    if (parts.length === 2) {
+      const fromSlug = parts[0];
+      const toSlug = parts[1];
+      const fromObj = resolveSlug(fromSlug);
+      const toObj = resolveSlug(toSlug);
+      if (fromObj && toObj) {
+        fromCountry = fromObj;
+        toCountry = toObj;
+        
+        const fi = document.getElementById('from-input');
+        const ti = document.getElementById('to-input');
+        if (fi) {
+          fi.value = fromObj.type === 'city' ? fromObj.cityName : fromObj.name;
+          fi.dataset.code = fromObj.code;
+        }
+        if (ti) {
+          ti.value = toObj.type === 'city' ? toObj.cityName : toObj.name;
+          ti.dataset.code = toObj.code;
+        }
+        
+        window._isPopStateNavigation = true;
+        showResults(fromObj, toObj);
+        window._isPopStateNavigation = false;
+        
+        let cleanUrl;
+        let basePath = window.location.pathname;
+        if (basePath.endsWith('index.html')) {
+          basePath = basePath.substring(0, basePath.length - 10);
+        }
+        if (!basePath.endsWith('/')) basePath += '/';
+        
+        if (window.location.protocol === 'file:') {
+          cleanUrl = `${basePath}routes/${fromSlug}-to-${toSlug}/index.html`;
+        } else {
+          cleanUrl = `${window.location.origin}${basePath}routes/${fromSlug}-to-${toSlug}/`;
+        }
+        window.history.replaceState({ from: fromObj, to: toObj }, '', cleanUrl);
+        return;
+      }
+    }
+  }
+
   const fromQ = params.get('from');
   const toQ = params.get('to');
   if (fromQ && toQ) {
