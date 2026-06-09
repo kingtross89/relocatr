@@ -149,6 +149,7 @@ window.CITY_POPULATIONS = CITY_POPULATIONS;
 function buildDropdown(inputId, dropdownId, onSelect) {
   const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
+  if (!input || !dropdown) return;
 
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
@@ -230,15 +231,21 @@ let _currentFrom = null, _currentTo = null;
 buildDropdown('from-input', 'from-dropdown', c => { fromCountry = c; });
 buildDropdown('to-input', 'to-dropdown', c => { toCountry = c; });
 
-document.getElementById('swap-btn').addEventListener('click', () => {
-  const fi = document.getElementById('from-input');
-  const ti = document.getElementById('to-input');
-  [fi.value, ti.value] = [ti.value, fi.value];
-  [fi.dataset.code, ti.dataset.code] = [ti.dataset.code || '', fi.dataset.code || ''];
-  [fromCountry, toCountry] = [toCountry, fromCountry];
-});
+const swapBtn = document.getElementById('swap-btn');
+if (swapBtn) {
+  swapBtn.addEventListener('click', () => {
+    const fi = document.getElementById('from-input');
+    const ti = document.getElementById('to-input');
+    [fi.value, ti.value] = [ti.value, fi.value];
+    [fi.dataset.code, ti.dataset.code] = [ti.dataset.code || '', fi.dataset.code || ''];
+    [fromCountry, toCountry] = [toCountry, fromCountry];
+  });
+}
 
-document.getElementById('search-btn').addEventListener('click', doSearch);
+const searchBtn = document.getElementById('search-btn');
+if (searchBtn) {
+  searchBtn.addEventListener('click', doSearch);
+}
 const navBtn = document.getElementById('nav-cta-btn');
 if (navBtn) navBtn.addEventListener('click', () => {
   document.getElementById('from-input').focus();
@@ -1251,12 +1258,58 @@ window.showResults = function(from, to) {
   document.getElementById('results-panel').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Update URL search parameters for sharing/deep-linking (skip if on a clean preloaded URL)
+  // Update URL search parameters or clean paths for sharing/deep-linking
   if (!window._isPopStateNavigation && !window.PRELOAD_FROM) {
     const fromVal = from.type === 'city' ? from.cityName : from.code;
     const toVal = to.type === 'city' ? to.cityName : to.code;
-    const newUrl = `${window.location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
-    window.history.pushState({ from, to }, '', newUrl);
+    
+    // Check if the route is popular to push a clean URL
+    const makeSlug = (name) => {
+      return name.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/[\s]+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+    };
+    
+    const popularCountryOrigins = ["US", "GB", "CA", "AU", "IN"];
+    const popularCityOrigins = ["New York, NY", "London", "San Francisco, CA", "Los Angeles, CA", "Toronto", "Sydney"];
+    
+    let isPopular = false;
+    let slug = '';
+    
+    if (from.type === 'city') {
+      isPopular = popularCityOrigins.includes(from.cityName) && to.type === 'city';
+      if (isPopular) {
+        const fromSlug = makeSlug(from.cityName);
+        const toSlug = makeSlug(to.cityName);
+        slug = `${fromSlug}-to-${toSlug}`;
+      }
+    } else {
+      isPopular = popularCountryOrigins.includes(from.code) && to.type !== 'city';
+      if (isPopular) {
+        slug = `${from.code.toLowerCase()}-to-${to.code.toLowerCase()}`;
+      }
+    }
+    
+    if (isPopular) {
+      let newUrl;
+      let basePath = window.location.pathname;
+      if (basePath.endsWith('index.html')) {
+        basePath = basePath.substring(0, basePath.length - 10);
+      }
+      if (!basePath.endsWith('/')) basePath += '/';
+
+      if (window.location.protocol === 'file:') {
+        newUrl = `${basePath}routes/${slug}/index.html`;
+      } else {
+        newUrl = `${window.location.origin}${basePath}routes/${slug}/`;
+      }
+      window.history.pushState({ from, to }, '', newUrl);
+    } else {
+      const newUrl = `${window.location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
+      window.history.pushState({ from, to }, '', newUrl);
+    }
   }
   
   const fromTitleName = (from.type === 'city' && from.cityName) ? `${from.cityName}, ${from.name}` : from.name;
@@ -1482,9 +1535,18 @@ window.animateBars = function() {
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 let quizAnswers = {}, quizStep = 0;
 
-document.getElementById('quiz-start-btn').addEventListener('click', () => openQuiz());
-document.getElementById('quiz-close').addEventListener('click', () => closeQuiz());
-document.getElementById('quiz-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeQuiz(); });
+const quizStart = document.getElementById('quiz-start-btn');
+if (quizStart) {
+  quizStart.addEventListener('click', () => openQuiz());
+}
+const quizClose = document.getElementById('quiz-close');
+if (quizClose) {
+  quizClose.addEventListener('click', () => closeQuiz());
+}
+const quizModal = document.getElementById('quiz-modal');
+if (quizModal) {
+  quizModal.addEventListener('click', e => { if (e.target === e.currentTarget) closeQuiz(); });
+}
 
 function openQuiz() {
   quizAnswers = {}; quizStep = 0;
