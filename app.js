@@ -2172,37 +2172,47 @@ function pickCityResult(countryCode, cityName) {
 // ── Fix: remove all old quiz-start-btn listeners by cloning the node ──────────
 (function fixQuizButton() {
   const oldBtn = document.getElementById('quiz-start-btn');
-  const newBtn = oldBtn.cloneNode(true);
-  oldBtn.parentNode.replaceChild(newBtn, oldBtn);
-  newBtn.addEventListener('click', async () => {
-    enhQuizAnswers = {}; enhQuizStep = 0;
-    document.getElementById('quiz-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    renderEnhQuizStep();
-    await fetchExchangeRates();
-    // Re-render budget step with live rates if user is still on it
-    if (ENHANCED_QUESTIONS[enhQuizStep] && ENHANCED_QUESTIONS[enhQuizStep].type === 'budget') {
+  if (oldBtn) {
+    const newBtn = oldBtn.cloneNode(true);
+    oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+    newBtn.addEventListener('click', async () => {
+      enhQuizAnswers = {}; enhQuizStep = 0;
+      const modal = document.getElementById('quiz-modal');
+      if (modal) {
+        modal.classList.add('open');
+      }
+      document.body.style.overflow = 'hidden';
       renderEnhQuizStep();
-    }
-  });
+      await fetchExchangeRates();
+      // Re-render budget step with live rates if user is still on it
+      if (ENHANCED_QUESTIONS[enhQuizStep] && ENHANCED_QUESTIONS[enhQuizStep].type === 'budget') {
+        renderEnhQuizStep();
+      }
+    });
+  }
   // Also fix close button
   const closeBtn = document.getElementById('quiz-close');
   if (closeBtn) {
     const newClose = closeBtn.cloneNode(true);
     closeBtn.parentNode.replaceChild(newClose, closeBtn);
     newClose.addEventListener('click', () => {
-      document.getElementById('quiz-modal').classList.remove('open');
+      const modal = document.getElementById('quiz-modal');
+      if (modal) {
+        modal.classList.remove('open');
+      }
       document.body.style.overflow = '';
     });
   }
   // Also fix modal backdrop
   const modal = document.getElementById('quiz-modal');
-  modal.onclick = e => {
-    if (e.target === modal) {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  };
+  if (modal) {
+    modal.onclick = e => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    };
+  }
 })();
 
 // Also override openQuiz to be a no-op so old listener doesn't interfere
