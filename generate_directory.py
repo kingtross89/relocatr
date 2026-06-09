@@ -85,10 +85,19 @@ for origin_city in popular_city_origins:
                     "to_flag": dest_country["flag"]
                 })
 
+# Helper to generate URL-friendly slug
+def make_slug(name):
+    s = name.lower()
+    s = re.sub(r'[^a-z0-9\s-]', '', s)  # remove non-alphanumeric except space/hyphen
+    s = re.sub(r'[\s]+', '-', s)        # replace spaces/commas with hyphens
+    s = re.sub(r'-+', '-', s)          # merge duplicate hyphens
+    return s.strip('-')
+
 # Render Country Cards
 country_cards_html = []
 for pair in country_pairs:
-    url = f"index.html?from={pair['from_code']}&to={pair['to_code']}"
+    slug = f"{pair['from_code'].lower()}-to-{pair['to_code'].lower()}"
+    url = f"routes/{slug}/"
     search_str = f"{pair['from_name']} {pair['to_name']} {pair['from_code']} {pair['to_code']}".replace('"', '&quot;')
     country_cards_html.append(f"""
       <a href="{url}" class="route-card" data-type="country" data-search="{search_str}">
@@ -103,9 +112,10 @@ for pair in country_pairs:
 # Render City Cards
 city_cards_html = []
 for pair in city_pairs:
-    from_quoted = urllib.parse.quote(pair['from_city'])
-    to_quoted = urllib.parse.quote(pair['to_city'])
-    url = f"index.html?from={from_quoted}&to={to_quoted}"
+    from_slug = make_slug(pair['from_city'])
+    to_slug = make_slug(pair['to_city'])
+    slug = f"{from_slug}-to-{to_slug}"
+    url = f"routes/{slug}/"
     search_str = f"{pair['from_city']} {pair['to_city']}".replace('"', '&quot;')
     city_cards_html.append(f"""
       <a href="{url}" class="route-card" data-type="city" data-search="{search_str}">

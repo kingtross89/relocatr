@@ -37,21 +37,42 @@ urls.append((
     "1.0"
 ))
 
-# Generate Country to Country (all combinations)
+# Select Top Origins and Destinations for the directory
+popular_country_origins = ["US", "GB", "CA", "AU", "IN"]
+popular_city_origins = ["New York, NY", "London", "San Francisco, CA", "Los Angeles, CA", "Toronto", "Sydney"]
+
+# Helper to generate URL-friendly slug
+def make_slug(name):
+    s = name.lower()
+    s = re.sub(r'[^a-z0-9\s-]', '', s)  # remove non-alphanumeric except space/hyphen
+    s = re.sub(r'[\s]+', '-', s)        # replace spaces/commas with hyphens
+    s = re.sub(r'-+', '-', s)          # merge duplicate hyphens
+    return s.strip('-')
+
+# Generate Country to Country
 for c1 in supported_countries:
     for c2 in supported_countries:
         if c1 != c2:
-            url = f"https://myrelocatr.com/?from={c1}&amp;to={c2}"
+            if c1 in popular_country_origins:
+                slug = f"{c1.lower()}-to-{c2.lower()}"
+                url = f"https://myrelocatr.com/routes/{slug}/"
+            else:
+                url = f"https://myrelocatr.com/?from={c1}&amp;to={c2}"
             urls.append((url, "weekly", "0.8"))
 
-# Generate City to City (all combinations)
+# Generate City to City
 for city1 in all_cities:
     for city2 in all_cities:
         if city1 != city2:
-            # URL-encode parameters
-            from_param = urllib.parse.quote(city1)
-            to_param = urllib.parse.quote(city2)
-            url = f"https://myrelocatr.com/?from={from_param}&amp;to={to_param}"
+            if city1 in popular_city_origins:
+                from_slug = make_slug(city1)
+                to_slug = make_slug(city2)
+                slug = f"{from_slug}-to-{to_slug}"
+                url = f"https://myrelocatr.com/routes/{slug}/"
+            else:
+                from_param = urllib.parse.quote(city1)
+                to_param = urllib.parse.quote(city2)
+                url = f"https://myrelocatr.com/?from={from_param}&amp;to={to_param}"
             urls.append((url, "weekly", "0.7"))
 
 # Write sitemap.xml

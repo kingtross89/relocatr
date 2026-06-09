@@ -1251,8 +1251,8 @@ window.showResults = function(from, to) {
   document.getElementById('results-panel').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Update URL search parameters for sharing/deep-linking
-  if (!window._isPopStateNavigation) {
+  // Update URL search parameters for sharing/deep-linking (skip if on a clean preloaded URL)
+  if (!window._isPopStateNavigation && !window.PRELOAD_FROM) {
     const fromVal = from.type === 'city' ? from.cityName : from.code;
     const toVal = to.type === 'city' ? to.cityName : to.code;
     const newUrl = `${window.location.pathname}?from=${encodeURIComponent(fromVal)}&to=${encodeURIComponent(toVal)}`;
@@ -3561,6 +3561,31 @@ async function handleContactSubmit(e, form) {
 
 // ── Deep Linking / Initializer ──────────────────────────────────────────────
 function checkUrlParamsAndLoad(isInitialLoad) {
+  if (window.PRELOAD_FROM && window.PRELOAD_TO) {
+    const fromObj = resolveTerm(window.PRELOAD_FROM);
+    const toObj = resolveTerm(window.PRELOAD_TO);
+    if (fromObj && toObj) {
+      fromCountry = fromObj;
+      toCountry = toObj;
+      
+      const fi = document.getElementById('from-input');
+      const ti = document.getElementById('to-input');
+      if (fi) {
+        fi.value = fromObj.type === 'city' ? fromObj.cityName : fromObj.name;
+        fi.dataset.code = fromObj.code;
+      }
+      if (ti) {
+        ti.value = toObj.type === 'city' ? toObj.cityName : toObj.name;
+        ti.dataset.code = toObj.code;
+      }
+      
+      window._isPopStateNavigation = true;
+      showResults(fromObj, toObj);
+      window._isPopStateNavigation = false;
+      return;
+    }
+  }
+
   const params = new URLSearchParams(window.location.search);
   const fromQ = params.get('from');
   const toQ = params.get('to');

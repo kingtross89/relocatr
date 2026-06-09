@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moving from India to United Kingdom | Cost, Visas & Checklist — Relocatr</title>
+  <meta name="description" content="Planning a move from India to United Kingdom? Compare cost of living, check visa requirements, calculate moving budgets, and read expat guides." />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://myrelocatr.com/routes/in-to-gb/" />
+  <meta property="og:title" content="Moving from India to United Kingdom | Cost, Visas & Checklist — Relocatr" />
+  <meta property="og:description" content="Planning a move from India to United Kingdom? Compare cost of living, check visa requirements, calculate moving budgets, and read expat guides." />
+  <meta property="og:image" content="https://myrelocatr.com/globe_hero.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://myrelocatr.com/routes/in-to-gb/" />
+  <meta property="twitter:title" content="Moving from India to United Kingdom | Cost, Visas & Checklist — Relocatr" />
+  <meta property="twitter:description" content="Planning a move from India to United Kingdom? Compare cost of living, check visa requirements, calculate moving budgets, and read expat guides." />
+  <meta property="twitter:image" content="https://myrelocatr.com/globe_hero.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="../../style.css?v=28" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NDCK5NJ9HB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NDCK5NJ9HB');
+  </script>
+</head>
+<body class="page-plan-active results-active">
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="../../index.html" class="logo" style="cursor:pointer; text-decoration: none; color: inherit;">
+        <span class="logo-icon">🌍</span>
+        <span class="logo-text">Relocatr</span>
+      </a>
+      <div class="page-nav">
+        <a href="../../index.html" class="page-nav-btn active" style="text-decoration:none">🗺️ Back to Planner</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE: PLAN MY MOVE -->
+  <div id="page-plan" class="page active">
+    <!-- RESULTS PANEL -->
+    <section id="results-panel">
+      <div class="results-header">
+        <div class="results-route" id="results-route">Loading route comparison...</div>
+        <button class="back-btn" onclick="window.location.href='../../index.html'">← New Search</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="overview" id="tab-overview">📋 Overview</button>
+        <button class="tab" data-tab="visa" id="tab-visa">🛂 Visa &amp; Immigration</button>
+        <button class="tab" data-tab="costs" id="tab-costs">💰 Cost of Living</button>
+        <button class="tab" data-tab="checklist" id="tab-checklist">✅ Checklist</button>
+        <button class="tab" data-tab="culture" id="tab-culture">⛩️ Cultural Norms</button>
+        <button class="tab" data-tab="community" id="tab-community">👥 Expat Community</button>
+        <button class="tab" data-tab="budget" id="tab-budget">💵 Move Budget</button>
+        <button class="tab" data-tab="tips" id="tab-tips">💡 Insider Tips</button>
+      </div>
+      <div class="tab-content" id="tab-content"></div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">🌍</span>
+        <span class="logo-text">Relocatr</span>
+      </div>
+      <p class="footer-sub">Helping people find the perfect city to call home.</p>
+      <div class="footer-links" style="margin: 1rem 0; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.9rem;">
+        <a href="../../directory.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Route Directory</a>
+        <a href="../../index.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Relocation Planner</a>
+      </div>
+      <p class="footer-note">Information is for guidance only. Always verify visa requirements with official government sources.</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../../data.js?v=28"></script>
+  <script>
+    // Preload variables for app.js to immediately show results for this route
+    window.PRELOAD_FROM = "IN";
+    window.PRELOAD_TO = "GB";
+  </script>
+  <script src="../../app.js?v=28"></script>
+  <script src="../../map.js?v=28"></script>
+</body>
+</html>
