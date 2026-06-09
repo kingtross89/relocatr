@@ -59,7 +59,9 @@ const COUNTRY_POPULATIONS = {
   FR: "68.0M", MX: "128.5M", BR: "215.3M", ID: "277.5M", VN: "98.8M",  ZA: "60.4M",
   TR: "85.3M", PH: "117.3M", KR: "51.7M",  CL: "19.6M",  CO: "52.0M",  AR: "46.2M",
   CR: "5.2M",  CN: "1.41B",  IN: "1.43B",  EG: "112.7M", KE: "55.1M",  NG: "223.8M",
-  MA: "37.8M"
+  MA: "37.8M", AT: "9.1M",   BE: "11.7M",  CH: "8.9M",   CZ: "10.9M",  DK: "5.9M",
+  GR: "10.4M", IE: "5.3M",   IT: "58.9M",  NO: "5.5M",   NZ: "5.2M",   PL: "36.8M",
+  SE: "10.5M"
 };
 
 const CITY_POPULATIONS = {
@@ -133,7 +135,47 @@ const CITY_POPULATIONS = {
   // NG
   "Lagos": "15.3M", "Abuja": "1.2M",
   // MA
-  "Casablanca": "3.4M", "Marrakech": "928k", "Rabat": "577k"
+  "Casablanca": "3.4M", "Marrakech": "928k", "Rabat": "577k",
+  // Missing / Accented / Suffixes
+  "Bogotá": "8.0M",
+  "Córdoba": "1.3M",
+  "Edmonton": "1.0M",
+  "Medellín": "2.6M",
+  "Mexico City (CDMX)": "9.2M",
+  "San José": "340k",
+  "São Paulo": "12.3M",
+  "Valparaíso": "296k",
+  "Algarve": "467k",
+  "Antalya": "1.3M",
+  "Bilbao": "345k",
+  "Bordeaux": "260k",
+  "Braga": "193k",
+  "Cartagena": "914k",
+  "Curitiba": "1.8M",
+  "Da Nang": "1.2M",
+  "Dahab": "15k",
+  "Eindhoven": "238k",
+  "Florianópolis": "508k",
+  "Gold Coast": "640k",
+  "Hua Hin": "65k",
+  "Jeju": "490k",
+  "Malaga": "578k",
+  "Mendoza": "115k",
+  "Mérida": "892k",
+  "Nakuru": "575k",
+  "Oaxaca": "300k",
+  "Pattaya": "120k",
+  "Playa del Carmen": "300k",
+  "Port Harcourt": "3.1M",
+  "Puerto Viejo": "3k",
+  "Setúbal": "135k",
+  "Sharjah": "1.8M",
+  "Siargao": "20k",
+  "Tamarindo": "7k",
+  "The Hague": "514k",
+  "Toulouse": "490k",
+  "Viña del Mar": "330k",
+  "Yogyakarta": "420k"
 };
 
 window.getCityPopulation = function(cityName) {
@@ -385,7 +427,7 @@ function goHome() {
 
   // Clear query parameters in URL
   if (window.history.pushState) {
-    window.history.pushState({}, '', window.location.pathname);
+    window.history.pushState({}, '', getAppBasePath());
   }
 
   // Restore default SEO titles/descriptions
@@ -1302,11 +1344,7 @@ window.showResults = function(from, to) {
     const slug = `${fromSlug}-to-${toSlug}`;
     
     let newUrl;
-    let basePath = window.location.pathname;
-    if (basePath.endsWith('index.html')) {
-      basePath = basePath.substring(0, basePath.length - 10);
-    }
-    if (!basePath.endsWith('/')) basePath += '/';
+    const basePath = getAppBasePath();
 
     if (window.location.protocol === 'file:') {
       newUrl = `${basePath}routes/${slug}/index.html`;
@@ -3625,6 +3663,17 @@ async function handleContactSubmit(e, form) {
   }
 }
 
+function getAppBasePath() {
+  const path = window.location.pathname;
+  const idx = path.indexOf('/routes/');
+  let base = idx >= 0 ? path.substring(0, idx) : path;
+  if (base.endsWith('index.html')) {
+    base = base.substring(0, base.length - 10);
+  }
+  if (!base.endsWith('/')) base += '/';
+  return base;
+}
+
 // ── Deep Linking / Initializer ──────────────────────────────────────────────
 function checkUrlParamsAndLoad(isInitialLoad) {
   if (window.PRELOAD_FROM && window.PRELOAD_TO) {
@@ -3681,11 +3730,7 @@ function checkUrlParamsAndLoad(isInitialLoad) {
         window._isPopStateNavigation = false;
         
         let cleanUrl;
-        let basePath = window.location.pathname;
-        if (basePath.endsWith('index.html')) {
-          basePath = basePath.substring(0, basePath.length - 10);
-        }
-        if (!basePath.endsWith('/')) basePath += '/';
+        const basePath = getAppBasePath();
         
         if (window.location.protocol === 'file:') {
           cleanUrl = `${basePath}routes/${fromSlug}-to-${toSlug}/index.html`;
