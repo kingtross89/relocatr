@@ -1297,14 +1297,9 @@ window.showResults = function(from, to) {
 
   // Update URL to clean paths for sharing/deep-linking
   if (!window._isPopStateNavigation && !window.PRELOAD_FROM) {
-    let slug = '';
-    if (from.type === 'city') {
-      const fromSlug = makeSlug(from.cityName);
-      const toSlug = makeSlug(to.cityName);
-      slug = `${fromSlug}-to-${toSlug}`;
-    } else {
-      slug = `${from.code.toLowerCase()}-to-${to.code.toLowerCase()}`;
-    }
+    const fromSlug = from.type === 'city' ? makeSlug(from.cityName) : from.code.toLowerCase();
+    const toSlug = to.type === 'city' ? makeSlug(to.cityName) : to.code.toLowerCase();
+    const slug = `${fromSlug}-to-${toSlug}`;
     
     let newUrl;
     let basePath = window.location.pathname;
@@ -3315,7 +3310,7 @@ function renderCommunitySection(from, to) {
   
   // Pre-initialize city selection if the user searched for a specific city
   if (to.type === 'city') {
-    _commCityKey = to.name;
+    _commCityKey = to.cityName;
   } else {
     _commCityKey = null;
   }
