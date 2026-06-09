@@ -545,7 +545,7 @@ function renderVisa(from, to, d) {
   const deepDive = renderDeepDiveAccordion('visa', to.code);
   if (!d) {
     return `<div class="visa-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem">
-      <h3>Visa Requirements for ${to.name}</h3>
+      <h2>Visa &amp; Immigration Requirements for ${to.name}</h2>
       <p style="color:var(--muted);margin-top:1rem;line-height:1.7">We recommend checking the official immigration or embassy website for ${to.name} to get accurate, up-to-date visa information. Requirements vary significantly by nationality.</p>
       <p style="color:var(--accent);margin-top:1rem;font-size:0.9rem">💡 Tip: Search for "${from.name} citizens visa requirements for ${to.name}" on Google for the most accurate info.</p>
     </div>
@@ -554,13 +554,13 @@ function renderVisa(from, to, d) {
   return `
     <div class="visa-grid" style="margin-bottom:1.5rem">
       <div class="visa-card">
-        <h3>Visa Options</h3>
+        <h2>Visa &amp; Immigration Options for ${to.name}</h2>
         <p style="color:var(--text);font-size:1.05rem;font-weight:600;margin-bottom:0.75rem">${d.visaType}</p>
         <p style="color:var(--muted);font-size:0.88rem;line-height:1.6">The main pathways for ${from.name} citizens moving to ${to.name}. Requirements and eligibility vary by nationality — always verify with the official embassy.</p>
         <div style="margin-top:1rem"><span class="badge ${d.visaDifficulty==='Easy'?'badge-green':d.visaDifficulty==='Medium'?'badge-yellow':'badge-red'}">${d.visaDifficulty} to obtain</span></div>
       </div>
       <div class="visa-card">
-        <h3>Processing Timeline</h3>
+        <h2>Visa Processing Timeline for ${to.name}</h2>
         <div class="timeline-steps">
           <div class="timeline-step"><div class="step-dot"></div><div class="step-text">Gather documents &amp; certifications — 2–8 weeks</div></div>
           <div class="timeline-step"><div class="step-dot"></div><div class="step-text">Submit application — 1–3 days</div></div>
@@ -569,7 +569,7 @@ function renderVisa(from, to, d) {
         </div>
       </div>
       <div class="visa-card">
-        <h3>Typical Documents Required</h3>
+        <h2>Required Relocation Documents for ${to.name}</h2>
         <ul class="doc-list">
           <li>Valid passport (6+ months validity)</li>
           <li>Completed visa application form</li>
@@ -582,7 +582,7 @@ function renderVisa(from, to, d) {
         </ul>
       </div>
       <div class="visa-card">
-        <h3>Important Notes</h3>
+        <h2>Important Visa Notes &amp; Tips</h2>
         <ul class="doc-list">
           <li>Always apply well before your planned move date</li>
           <li>Use a certified translator for non-English documents</li>
@@ -680,7 +680,7 @@ function renderCosts(from, to, fromData, toData) {
   return `
     ${citySelector}
     <div class="cost-section" id="cost-breakdown">
-      <h3>Monthly Cost Breakdown</h3>
+      <h2>Cost of Living Comparison: ${from.name} vs ${to.name}</h2>
       ${rows}
       <div class="cost-legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>${from.name}</div>
@@ -1146,7 +1146,7 @@ window.renderCultureTab = function(from, to, toData) {
   return `
     <div class="culture-tab-container" style="animation: pageFadeIn 0.35s ease;">
       <div style="margin-bottom: 1.5rem;">
-        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">🤝 Cultural Norms &amp; Etiquette</h3>
+        <h2 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">🤝 Cultural Norms &amp; Etiquette in ${toName}</h2>
         <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Adapt smoothly to your new home. Understand the subtle social rules, workplace customs, and taboos of ${toName}.</p>
       </div>
 
@@ -1191,7 +1191,7 @@ window.renderBudgetTab = function() {
   return `
     <div class="budget-tab-container" style="animation: pageFadeIn 0.35s ease;">
       <div style="margin-bottom: 1.5rem;">
-        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">💰 Move Budget Calculator</h3>
+        <h2 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">💰 Relocation Budget Calculator</h2>
         <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Estimate your total one-time moving costs. Adjust each item to match your situation — the total updates live.</p>
       </div>
       <div class="budget-calc-wrap">
@@ -1207,7 +1207,7 @@ window.renderCommunityTab = function(from, to) {
   return `
     <div class="community-tab-container" style="animation: pageFadeIn 0.35s ease;">
       <div style="margin-bottom: 1.5rem;">
-        <h3 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">👥 Expat Community &amp; Networks</h3>
+        <h2 style="margin: 0 0 0.25rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">👥 Expat Community &amp; Networks in ${to.name}</h2>
         <p style="color: var(--muted); margin: 0; font-size: 0.92rem;">Connect with fellow expats from your home country, discover local support groups, and see other major expat populations.</p>
       </div>
       ${communityHtml}
@@ -1218,10 +1218,6 @@ window.renderCommunityTab = function(from, to) {
 // Patch setTab to use window versions
 const _origSetTab = setTab;
 window.setTab = function(tab, from, to) {
-  const content = document.getElementById('tab-content');
-  const toData = COUNTRY_DATA[to.code];
-  const fromData = COUNTRY_DATA[from.code];
-  
   // Track tab clicks in Google Analytics
   if (typeof gtag === 'function') {
     gtag('event', 'tab_click', {
@@ -1231,17 +1227,17 @@ window.setTab = function(tab, from, to) {
     });
   }
 
-  if (tab === 'overview') content.innerHTML = window.renderOverview(from, to, toData);
-  else if (tab === 'visa') content.innerHTML = window.renderVisa(from, to, toData);
-  else if (tab === 'costs') content.innerHTML = window.renderCosts(from, to, fromData, toData);
-  else if (tab === 'checklist') content.innerHTML = renderChecklistWithLinks();
-  else if (tab === 'culture') content.innerHTML = window.renderCultureTab(from, to, toData);
-  else if (tab === 'community') content.innerHTML = window.renderCommunityTab(from, to);
-  else if (tab === 'budget') {
-    content.innerHTML = window.renderBudgetTab();
-    initBudgetCalc();
+  // Hide all panels
+  document.querySelectorAll('#tab-content .tab-panel').forEach(panel => {
+    panel.classList.add('hidden');
+  });
+
+  // Show active panel
+  const activePanel = document.getElementById(`panel-${tab}`);
+  if (activePanel) {
+    activePanel.classList.remove('hidden');
   }
-  else if (tab === 'tips') content.innerHTML = renderTips(to, toData);
+
   if (tab === 'costs') animateBars();
   if (tab === 'checklist') initChecklist();
 };
@@ -1285,6 +1281,27 @@ window.showResults = function(from, to) {
   const routeEl = document.getElementById('results-route');
   routeEl.innerHTML = `${from.flag} ${fromTitleName} <span style="color:var(--accent);margin:0 0.5rem">→</span> ${to.flag} ${toTitleName}`;
   
+  // Render all tabs into the DOM at once for SEO crawlers
+  const toData = COUNTRY_DATA[to.code];
+  const fromData = COUNTRY_DATA[from.code];
+  const tabContent = document.getElementById('tab-content');
+  if (tabContent) {
+    tabContent.innerHTML = `
+      <div id="panel-overview" class="tab-panel">${window.renderOverview(from, to, toData)}</div>
+      <div id="panel-visa" class="tab-panel hidden">${window.renderVisa(from, to, toData)}</div>
+      <div id="panel-costs" class="tab-panel hidden">${window.renderCosts(from, to, fromData, toData)}</div>
+      <div id="panel-checklist" class="tab-panel hidden">${renderChecklistWithLinks()}</div>
+      <div id="panel-culture" class="tab-panel hidden">${window.renderCultureTab(from, to, toData)}</div>
+      <div id="panel-community" class="tab-panel hidden">${window.renderCommunityTab(from, to)}</div>
+      <div id="panel-budget" class="tab-panel hidden">${window.renderBudgetTab()}</div>
+      <div id="panel-tips" class="tab-panel hidden">${renderTips(to, toData)}</div>
+    `;
+    // Initialize budget calculator
+    if (typeof initBudgetCalc === 'function') {
+      initBudgetCalc();
+    }
+  }
+
   // Set default tab to overview and reset active tab highlight styles
   document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
   const overviewTab = document.getElementById('tab-overview');
@@ -2742,7 +2759,9 @@ function renderCityCompare() {
 // ── Checklist: all collapsed by default ───────────────────────────────────────
 function renderChecklistWithLinks() {
   const affiliates = window.renderAffiliateWidget ? window.renderAffiliateWidget() : '';
+  const toName = _currentTo ? _currentTo.name : 'your destination';
   return affiliates + `
+    <h2 style="margin: 0 0 1.5rem 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">📋 Expat Relocation Checklist for ${toName}</h2>
     <div class="print-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: var(--card2); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius-sm);">
       <span style="font-size: 0.88rem; color: var(--muted);">Track and print your moving checklist tasks.</span>
       <button onclick="window.printChecklist()" class="action-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; font-size: 0.85rem; background: rgba(99,102,241,0.15); border: 1px solid var(--accent); border-radius: var(--radius-sm); color: var(--text); cursor: pointer; transition: all 0.2s; font-family:'Inter',sans-serif; font-weight:600; outline: none;">
