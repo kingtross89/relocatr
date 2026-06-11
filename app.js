@@ -1,6 +1,7 @@
 // ── Particles ──────────────────────────────────────────────────────────────
 (function spawnParticles() {
   const container = document.getElementById('particles');
+  if (!container) return;
   for (let i = 0; i < 60; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
@@ -949,6 +950,7 @@ function renderTips(to, d) {
 // ── Destinations Grid ───────────────────────────────────────────────────────
 (function buildDestinations() {
   const grid = document.getElementById('destinations-grid');
+  if (!grid) return;
   TRENDING.forEach(dest => {
     const c = COUNTRIES.find(x => x.code === dest.code);
     if (!c) return;
@@ -962,10 +964,13 @@ function renderTips(to, d) {
     `;
     card.addEventListener('click', () => {
       toCountry = c;
-      document.getElementById('to-input').value = c.name;
-      document.getElementById('to-input').dataset.code = c.code;
+      const toIn = document.getElementById('to-input');
+      if (toIn) {
+        toIn.value = c.name;
+        toIn.dataset.code = c.code;
+        toIn.focus();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.getElementById('to-input').focus();
     });
     grid.appendChild(card);
   });
@@ -974,6 +979,7 @@ function renderTips(to, d) {
 // ── Compare Grid ────────────────────────────────────────────────────────────
 (function buildCompare() {
   const grid = document.getElementById('compare-grid');
+  if (!grid) return;
   COMPARE_COUNTRIES.forEach(code => {
     const c = COUNTRIES.find(x => x.code === code);
     const d = COUNTRY_DATA[code];
@@ -2536,7 +2542,11 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 // ── Destinations with origin filter ──────────────────────────────────────────
 (function buildDestinationsWithFilter() {
   const section = document.getElementById('explore');
+  if (!section) return;
   const sectionInner = section.querySelector('.section-inner');
+  if (!sectionInner) return;
+  const grid = document.getElementById('destinations-grid');
+  if (!grid) return;
 
   // Inject filter bar before the grid
   const filterBar = document.createElement('div');
@@ -2547,7 +2557,6 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       <button class="origin-pill ${f.code==='ALL'?'active':''}" data-code="${f.code}" onclick="setOriginFilter('${f.code}')">
         <span class="pill-flag">${f.flag}</span> ${f.label}
       </button>`).join('')}`;
-  const grid = document.getElementById('destinations-grid');
   sectionInner.insertBefore(filterBar, grid);
 
   // Initial render
@@ -2567,6 +2576,7 @@ function setOriginFilter(code) {
 
 function renderDestinationGrid(originCode) {
   const grid = document.getElementById('destinations-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   const data = TRENDING_BY_ORIGIN[originCode] || TRENDING_BY_ORIGIN['ALL'];
   const originCountry = originCode !== 'ALL' ? COUNTRIES.find(c => c.code === originCode) : null;
@@ -2586,16 +2596,23 @@ function renderDestinationGrid(originCode) {
     `;
     card.addEventListener('click', () => {
       toCountry = { type: 'country', code: c.code, name: c.name, flag: c.flag };
-      document.getElementById('to-input').value = c.name;
-      document.getElementById('to-input').dataset.code = c.code;
+      const toIn = document.getElementById('to-input');
+      if (toIn) {
+        toIn.value = c.name;
+        toIn.dataset.code = c.code;
+      }
       // Also pre-fill from if origin filter is active
       if (originCountry && !fromCountry) {
         fromCountry = { type: 'country', code: originCountry.code, name: originCountry.name, flag: originCountry.flag };
-        document.getElementById('from-input').value = originCountry.name;
-        document.getElementById('from-input').dataset.code = originCountry.code;
+        const fromIn = document.getElementById('from-input');
+        if (fromIn) {
+          fromIn.value = originCountry.name;
+          fromIn.dataset.code = originCountry.code;
+        }
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.getElementById('to-input').focus();
+      const toInFocus = document.getElementById('to-input');
+      if (toInFocus) toInFocus.focus();
     });
     grid.appendChild(card);
   });
@@ -2692,8 +2709,11 @@ function buildCountryChecklist() {
 
 (function buildCompareSection() {
   const section = document.getElementById('compare');
+  if (!section) return;
   const inner = section.querySelector('.section-inner');
+  if (!inner) return;
   const grid = document.getElementById('compare-grid');
+  if (!grid) return;
 
   // Inject controls above grid
   const controls = document.createElement('div');
@@ -2751,8 +2771,10 @@ let _compareMode = 'countries';
 
 function setCompareMode(mode) {
   _compareMode = mode;
-  document.getElementById('cmp-countries-btn').classList.toggle('active', mode === 'countries');
-  document.getElementById('cmp-cities-btn').classList.toggle('active', mode === 'cities');
+  const cbtn = document.getElementById('cmp-countries-btn');
+  const ctbtn = document.getElementById('cmp-cities-btn');
+  if (cbtn) cbtn.classList.toggle('active', mode === 'countries');
+  if (ctbtn) ctbtn.classList.toggle('active', mode === 'cities');
   
   const multiselect = document.getElementById('cmp-countries-multiselect');
   const cityFilter = document.getElementById('cmp-country-filter');
@@ -2765,6 +2787,7 @@ function setCompareMode(mode) {
 
 function renderCountryCompare() {
   const grid = document.getElementById('compare-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
   
@@ -2778,7 +2801,8 @@ function renderCountryCompare() {
         <p style="font-size:0.85rem">Use the checklist above to select which countries you want to compare side-by-side.</p>
       </div>
     `;
-    document.getElementById('cmp-count').textContent = '0 countries';
+    const countEl = document.getElementById('cmp-count');
+    if (countEl) countEl.textContent = '0 countries';
     return;
   }
 
@@ -2814,14 +2838,18 @@ function renderCountryCompare() {
       `;
     grid.appendChild(card);
   });
-  document.getElementById('cmp-count').textContent = `${codes.filter(code=>COUNTRY_DATA[code]).length} countries`;
+  const countEl = document.getElementById('cmp-count');
+  if (countEl) countEl.textContent = `${codes.filter(code=>COUNTRY_DATA[code]).length} countries`;
 }
 
 function renderCityCompare() {
   const grid = document.getElementById('compare-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(220px, 1fr))';
-  const filterCode = document.getElementById('cmp-country-filter').value;
+  
+  const filterEl = document.getElementById('cmp-country-filter');
+  const filterCode = filterEl ? filterEl.value : 'ALL';
 
   // Flatten cities
   const allCities = [];
@@ -2835,7 +2863,8 @@ function renderCityCompare() {
     });
   });
 
-  document.getElementById('cmp-count').textContent = `${allCities.length} cities`;
+  const countEl = document.getElementById('cmp-count');
+  if (countEl) countEl.textContent = `${allCities.length} cities`;
 
   allCities.forEach(({ city, countryCode, countryObj, currency }) => {
     const total = (city.cost.rent||0) + (city.cost.food||0) + (city.cost.transport||0) + (city.cost.utilities||0);
@@ -3223,6 +3252,7 @@ renderDestinationGrid = function(originCode) {
   }
   // Fallback: show global trending with a note
   const grid = document.getElementById('destinations-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   const originCountry = COUNTRIES.find(c => c.code === originCode);
   const data = TRENDING_BY_ORIGIN['ALL'];
@@ -3236,6 +3266,8 @@ renderDestinationGrid = function(originCode) {
   data.forEach(dest => {
     const c = COUNTRIES.find(x => x.code === dest.code);
     if (!c) return;
+    const card = document.createElement('div');
+    card.className = 'dest-card';
     const pop = typeof COUNTRY_POPULATIONS !== 'undefined' ? COUNTRY_POPULATIONS[c.code] || 'N/A' : 'N/A';
     card.innerHTML = `
       <div class="dest-flag">${c.flag}</div>
@@ -3245,12 +3277,18 @@ renderDestinationGrid = function(originCode) {
       <div class="dest-trend">📈 ${dest.trend}</div>`;
     card.addEventListener('click', () => {
       toCountry = { type: 'country', code: c.code, name: c.name, flag: c.flag };
-      document.getElementById('to-input').value = c.name;
-      document.getElementById('to-input').dataset.code = c.code;
+      const toIn = document.getElementById('to-input');
+      if (toIn) {
+        toIn.value = c.name;
+        toIn.dataset.code = c.code;
+      }
       if (originCountry && !fromCountry) {
         fromCountry = { type: 'country', code: originCountry.code, name: originCountry.name, flag: originCountry.flag };
-        document.getElementById('from-input').value = originCountry.name;
-        document.getElementById('from-input').dataset.code = originCountry.code;
+        const fromIn = document.getElementById('from-input');
+        if (fromIn) {
+          fromIn.value = originCountry.name;
+          fromIn.dataset.code = originCountry.code;
+        }
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
