@@ -183,7 +183,7 @@ html_template = """<!DOCTYPE html>
       </div>
       <p class="footer-sub">Helping people find the perfect city to call home.</p>
       <div class="footer-links" style="margin: 1rem 0; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.9rem;">
-        <a href="../../directory.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Route Directory</a>
+        <a href="../../index.html?tab=directory" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Route Directory</a>
         <a href="../../index.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Relocation Planner</a>
       </div>
       <p class="footer-note">Information is for guidance only. Always verify visa requirements with official government sources.</p>

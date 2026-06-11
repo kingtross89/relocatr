@@ -127,251 +127,27 @@ for pair in city_pairs:
         <div class="route-meta">Compare city costs, rent, transit, and local expat community data for moving from {pair['from_city']} to {pair['to_city']}.</div>
       </a>""")
 
-# Write HTML Template
-html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relocation Routes Directory | Relocatr</title>
-  <meta name="description" content="Browse our relocation directories and guides. Compare cost of living, visas, and checklists for moving from one country or city to another." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=35" />
-  <style>
-    .directory-container {{
-      max-width: 1200px;
-      margin: 100px auto 40px auto;
-      padding: 0 1.5rem;
-    }}
-    .directory-header {{
-      text-align: center;
-      margin-bottom: 3.5rem;
-    }}
-    .directory-title {{
-      font-size: 2.75rem;
-      font-weight: 800;
-      font-family: 'Outfit', sans-serif;
-      margin-bottom: 1rem;
-    }}
-    .directory-subtitle {{
-      color: var(--muted);
-      max-width: 650px;
-      margin: 0 auto;
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }}
-    .directory-section {{
-      margin-bottom: 4.5rem;
-    }}
-    .directory-section-title {{
-      font-size: 1.85rem;
-      font-weight: 700;
-      font-family: 'Outfit', sans-serif;
-      margin-bottom: 1.75rem;
-      border-left: 4px solid var(--accent);
-      padding-left: 0.75rem;
-      color: var(--text);
-    }}
-    .route-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }}
-    .route-card {{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s ease;
-      text-decoration: none;
-      color: inherit;
-    }}
-    .route-card:hover {{
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    }}
-    .route-title {{
-      font-weight: 600;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 4px;
-      color: var(--text);
-    }}
-    .route-meta {{
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }}
-    #directory-search:focus {{
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    }}
-    .filter-btn:hover {{
-      border-color: var(--accent);
-      color: var(--text);
-    }}
-    .filter-btn.active {{
-      background: var(--accent) !important;
-      border-color: var(--accent) !important;
-      color: #fff !important;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-    }}
-    .no-results {{
-      text-align: center;
-      padding: 4rem 2rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      display: none;
-      margin-top: 2rem;
-    }}
-  </style>
-</head>
-<body>
-  <!-- NAV -->
-  <nav id="navbar" style="background: rgba(8,11,20,0.95)">
-    <div class="nav-inner">
-      <a href="index.html" class="logo" style="cursor:pointer; text-decoration: none; color: inherit;">
-        <span class="logo-icon">🌍</span>
-        <span class="logo-text">Relocatr</span>
-      </a>
-      <div class="page-nav">
-        <a href="index.html" class="page-nav-btn active" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">🗺️ Back to Planner</a>
-      </div>
-    </div>
-  </nav>
+# Write into index.html
+index_html_path = base_dir / "index.html"
+index_content = index_html_path.read_text(encoding="utf-8")
 
-  <div class="directory-container">
-    <div class="directory-header">
-      <h1 class="directory-title">Relocation <span class="gradient-text">Routes Directory</span></h1>
-      <p class="directory-subtitle">Browse and compare cost of living, visa requirements, relocation checklists, and expat community guides for the world's most popular moving routes.</p>
-    </div>
+# Insert Country Cards
+country_pattern = r"(<!-- DIRECTORY_COUNTRY_CARDS_START -->)(.*?)(<!-- DIRECTORY_COUNTRY_CARDS_END -->)"
+country_replacement = f"\\1\n" + "\n".join(country_cards_html) + "\n\\3"
+index_content = re.sub(country_pattern, country_replacement, index_content, flags=re.DOTALL)
 
-    <!-- SEARCH & FILTERS -->
-    <div class="filter-controls" style="max-width: 600px; margin: 0 auto 3rem auto; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-      <!-- Search Input Wrapper -->
-      <div style="position: relative; width: 100%;">
-        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--muted); pointer-events: none;">🔍</span>
-        <input type="text" id="directory-search" placeholder="Search origin or destination (e.g. Spain, Toronto, Vancouver...)" 
-               style="width: 100%; padding: 14px 16px 14px 44px; background: var(--card); border: 1px solid var(--border); border-radius: 999px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s;" />
-      </div>
-      <!-- Category Filter Buttons -->
-      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
-        <button class="filter-btn active" data-filter="all" style="padding: 8px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s;">All Routes</button>
-        <button class="filter-btn" data-filter="country" style="padding: 8px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s;">Country Comparisons</button>
-        <button class="filter-btn" data-filter="city" style="padding: 8px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s;">City Comparisons</button>
-      </div>
-    </div>
+# Insert City Cards
+city_pattern = r"(<!-- DIRECTORY_CITY_CARDS_START -->)(.*?)(<!-- DIRECTORY_CITY_CARDS_END -->)"
+city_replacement = f"\\1\n" + "\n".join(city_cards_html) + "\n\\3"
+index_content = re.sub(city_pattern, city_replacement, index_content, flags=re.DOTALL)
 
-    <!-- COUNTRY TO COUNTRY -->
-    <div class="directory-section">
-      <h2 class="directory-section-title">Popular Country Comparisons</h2>
-      <div class="route-grid">
-        {"".join(country_cards_html)}
-      </div>
-    </div>
+index_html_path.write_text(index_content, encoding="utf-8")
+print(f"Success: Updated index.html at {index_html_path}")
 
-    <!-- CITY TO CITY -->
-    <div class="directory-section">
-      <h2 class="directory-section-title">Popular City Comparisons</h2>
-      <div class="route-grid" style="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));">
-        {"".join(city_cards_html)}
-      </div>
-    </div>
-  </div>
+# Remove old directory.html if it exists
+if directory_html_path.exists():
+    directory_html_path.unlink()
+    print("Success: Removed old directory.html")
 
-  <!-- FOOTER -->
-  <footer id="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">
-        <span class="logo-icon">🌍</span>
-        <span class="logo-text">Relocatr</span>
-      </div>
-      <p class="footer-sub">Helping people find the perfect city to call home.</p>
-      <p class="footer-note">Information is for guidance only. Always verify visa requirements with official government sources.</p>
-    </div>
-  </footer>
-
-  <script>
-    const searchInput = document.getElementById('directory-search');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const routeCards = document.querySelectorAll('.route-card');
-    const sections = document.querySelectorAll('.directory-section');
-    const noResultsDiv = document.createElement('div');
-    
-    noResultsDiv.className = 'no-results';
-    noResultsDiv.innerHTML = `
-      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
-      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text);">No routes found</h3>
-      <p style="color: var(--muted); font-size: 0.9rem; margin: 0;">Try searching for a different city or country.</p>
-    `;
-    document.querySelector('.directory-container').appendChild(noResultsDiv);
-
-    let activeFilter = 'all';
-
-    function updateFilters() {{
-      const query = searchInput.value.toLowerCase().trim();
-      let visibleCount = 0;
-
-      sections.forEach(section => {{
-        const sectionCards = section.querySelectorAll('.route-card');
-        let sectionVisibleCards = 0;
-
-        sectionCards.forEach(card => {{
-          const searchData = card.getAttribute('data-search').toLowerCase();
-          const type = card.getAttribute('data-type');
-          
-          const matchesSearch = searchData.includes(query);
-          const matchesFilter = activeFilter === 'all' || type === activeFilter;
-
-          if (matchesSearch && matchesFilter) {{
-            card.style.display = 'flex';
-            sectionVisibleCards++;
-            visibleCount++;
-          }} else {{
-            card.style.display = 'none';
-          }}
-        }});
-
-        if (sectionVisibleCards > 0) {{
-          section.style.display = 'block';
-        }} else {{
-          section.style.display = 'none';
-        }}
-      }});
-
-      if (visibleCount === 0) {{
-        noResultsDiv.style.display = 'block';
-      }} else {{
-        noResultsDiv.style.display = 'none';
-      }}
-    }}
-
-    searchInput.addEventListener('input', updateFilters);
-
-    filterButtons.forEach(btn => {{
-      btn.addEventListener('click', () => {{
-        filterButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.getAttribute('data-filter');
-        updateFilters();
-      }});
-    }});
-  </script>
-</body>
-</html>"""
-
-directory_html_path.write_text(html_content, encoding="utf-8")
-print(f"Success: Generated directory.html at {directory_html_path}")
 print(f"Total Country Comparisons: {len(country_pairs)}")
 print(f"Total City Comparisons: {len(city_pairs)}")

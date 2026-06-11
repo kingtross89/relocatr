@@ -3663,11 +3663,13 @@ function switchExploreTab(tabName) {
   const trendSec = document.getElementById('explore');
   const compSec = document.getElementById('compare');
   const quizSec = document.getElementById('quiz-section');
+  const dirSec = document.getElementById('directory-section');
   
   if (mapSec) mapSec.classList.toggle('hidden', tabName !== 'map');
   if (trendSec) trendSec.classList.toggle('hidden', tabName !== 'trending');
   if (compSec) compSec.classList.toggle('hidden', tabName !== 'compare');
   if (quizSec) quizSec.classList.toggle('hidden', tabName !== 'quiz');
+  if (dirSec) dirSec.classList.toggle('hidden', tabName !== 'directory');
   
   if (tabName === 'map' && window.map) {
     setTimeout(() => {
@@ -3781,6 +3783,12 @@ function checkUrlParamsAndLoad(isInitialLoad) {
   }
 
   const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get('tab');
+  if (tabParam === 'directory') {
+    switchPage('explore');
+    switchExploreTab('directory');
+    return;
+  }
   const redirectRoute = params.get('redirect_route');
   if (redirectRoute) {
     const parts = redirectRoute.split('-to-');
@@ -3856,3 +3864,74 @@ function checkUrlParamsAndLoad(isInitialLoad) {
 
 window.addEventListener('DOMContentLoaded', () => checkUrlParamsAndLoad(true));
 window.addEventListener('popstate', () => checkUrlParamsAndLoad(false));
+
+// ── Route Directory Search & Filters ──────────────────────────────────────────
+(function initDirectorySearch() {
+  const searchInput = document.getElementById('directory-search');
+  if (!searchInput) return;
+
+  const filterButtons = document.querySelectorAll('#directory-section .filter-btn');
+  const routeCards = document.querySelectorAll('#directory-section .route-card');
+  const sections = document.querySelectorAll('#directory-section .directory-section');
+  const container = document.querySelector('#directory-section .section-inner');
+
+  const noResultsDiv = document.createElement('div');
+  noResultsDiv.className = 'no-results';
+  noResultsDiv.innerHTML = `
+    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text);">No routes found</h3>
+    <p style="color: var(--muted); font-size: 0.9rem; margin: 0;">Try searching for a different city or country.</p>
+  `;
+  if (container) container.appendChild(noResultsDiv);
+
+  let activeFilter = 'all';
+
+  function updateFilters() {
+    const query = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    sections.forEach(section => {
+      const sectionCards = section.querySelectorAll('.route-card');
+      let sectionVisibleCards = 0;
+
+      sectionCards.forEach(card => {
+        const searchData = card.getAttribute('data-search').toLowerCase();
+        const type = card.getAttribute('data-type');
+        
+        const matchesSearch = searchData.includes(query);
+        const matchesFilter = activeFilter === 'all' || type === activeFilter;
+
+        if (matchesSearch && matchesFilter) {
+          card.style.display = 'flex';
+          sectionVisibleCards++;
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (sectionVisibleCards > 0) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+
+    if (visibleCount === 0) {
+      noResultsDiv.style.display = 'block';
+    } else {
+      noResultsDiv.style.display = 'none';
+    }
+  }
+
+  searchInput.addEventListener('input', updateFilters);
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.getAttribute('data-filter');
+      updateFilters();
+    });
+  });
+})();
