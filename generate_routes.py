@@ -100,6 +100,87 @@ for origin_city in popular_city_origins:
 # Create routes base folder
 routes_dir.mkdir(exist_ok=True)
 
+def generate_schema(from_name, to_name, slug, is_city=False):
+    # Escape quotes
+    from_esc = from_name.replace('"', '\\"')
+    to_esc = to_name.replace('"', '\\"')
+    
+    faq_q1 = f"How to move from {from_esc} to {to_esc}?"
+    faq_a1 = f"To move from {from_esc} to {to_esc}, you need to research visa requirements, compare cost of living metrics, calculate travel and shipping budgets, and follow a detailed relocation checklist."
+    
+    faq_q2 = f"What is the cost of living difference between {from_esc} and {to_esc}?"
+    faq_a2 = f"The cost of living difference depends on your lifestyle and the cities you choose. Use Relocatr's side-by-side comparison tables to review average monthly costs for rent, food, transport, and utilities."
+    
+    faq_q3 = f"Is there a relocation checklist for moving from {from_esc} to {to_esc}?"
+    faq_a3 = f"Yes, a comprehensive moving checklist includes checking visa options, apostilling and translating documents, setting up international health coverage, booking travel, and planning storage or international shipping."
+    
+    json_str = f"""{{
+  "@context": "https://schema.org",
+  "@graph": [
+    {{
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{
+          "@type": "Question",
+          "name": "{faq_q1}",
+          "acceptedAnswer": {{
+            "@type": "Answer",
+            "text": "{faq_a1}"
+          }}
+        }},
+        {{
+          "@type": "Question",
+          "name": "{faq_q2}",
+          "acceptedAnswer": {{
+            "@type": "Answer",
+            "text": "{faq_a2}"
+          }}
+        }},
+        {{
+          "@type": "Question",
+          "name": "{faq_q3}",
+          "acceptedAnswer": {{
+            "@type": "Answer",
+            "text": "{faq_a3}"
+          }}
+        }}
+      ]
+    }},
+    {{
+      "@type": "HowTo",
+      "name": "How to Relocate from {from_esc} to {to_esc}",
+      "description": "Step-by-step instructions to successfully organize, budget, and execute a move from {from_esc} to {to_esc}.",
+      "step": [
+        {{
+          "@type": "HowToStep",
+          "name": "Verify Visa Pathways",
+          "text": "Review immigration categories for {to_esc}, such as work permits, study visas, digital nomad visas, or passive income schemes.",
+          "url": "https://myrelocatr.com/routes/{slug}/"
+        }},
+        {{
+          "@type": "HowToStep",
+          "name": "Compare Cost Profiles",
+          "text": "Analyze differences in rent, groceries, transportation, and dining out costs between {from_esc} and {to_esc}.",
+          "url": "https://myrelocatr.com/routes/{slug}/"
+        }},
+        {{
+          "@type": "HowToStep",
+          "name": "Estimate Move Expenses",
+          "text": "Use the Relocatr calculator to list one-time relocation costs including flights, document prep, shipping, and emergency funds.",
+          "url": "https://myrelocatr.com/routes/{slug}/"
+        }},
+        {{
+          "@type": "HowToStep",
+          "name": "Prepare Documents & Logistics",
+          "text": "Gather birth certificates, background checks, and certifications, translate and apostille them, and arrange travel.",
+          "url": "https://myrelocatr.com/routes/{slug}/"
+        }}
+      ]
+    }}
+  ]
+}}"""
+    return f'<script type="application/ld+json">\n{json_str}\n</script>'
+
 # HTML template for clean URL pages
 html_template = """<!DOCTYPE html>
 <html lang="en">
@@ -136,6 +217,7 @@ html_template = """<!DOCTYPE html>
     gtag('js', new Date());
     gtag('config', 'G-NDCK5NJ9HB');
   </script>
+  {schema_json}
 </head>
 <body class="page-plan-active results-active">
 
@@ -216,7 +298,8 @@ for pair in country_pairs:
         description=description,
         route_slug=pair["slug"],
         from_term=pair["from_term"],
-        to_term=pair["to_term"]
+        to_term=pair["to_term"],
+        schema_json=generate_schema(pair["from_name"], pair["to_name"], pair["slug"])
     )
     
     (route_dir / "index.html").write_text(html, encoding="utf-8")
@@ -235,7 +318,8 @@ for pair in city_pairs:
         description=description,
         route_slug=pair["slug"],
         from_term=pair["from_term"],
-        to_term=pair["to_term"]
+        to_term=pair["to_term"],
+        schema_json=generate_schema(pair["from_city"], pair["to_city"], pair["slug"], is_city=True)
     )
     
     (route_dir / "index.html").write_text(html, encoding="utf-8")
