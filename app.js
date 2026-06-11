@@ -279,9 +279,11 @@ if (swapBtn) {
   swapBtn.addEventListener('click', () => {
     const fi = document.getElementById('from-input');
     const ti = document.getElementById('to-input');
-    [fi.value, ti.value] = [ti.value, fi.value];
-    [fi.dataset.code, ti.dataset.code] = [ti.dataset.code || '', fi.dataset.code || ''];
-    [fromCountry, toCountry] = [toCountry, fromCountry];
+    if (fi && ti) {
+      [fi.value, ti.value] = [ti.value, fi.value];
+      [fi.dataset.code, ti.dataset.code] = [ti.dataset.code || '', fi.dataset.code || ''];
+      [fromCountry, toCountry] = [toCountry, fromCountry];
+    }
   });
 }
 
@@ -291,7 +293,8 @@ if (searchBtn) {
 }
 const navBtn = document.getElementById('nav-cta-btn');
 if (navBtn) navBtn.addEventListener('click', () => {
-  document.getElementById('from-input').focus();
+  const fi = document.getElementById('from-input');
+  if (fi) fi.focus();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
@@ -1339,8 +1342,10 @@ const _origShowResults = showResults;
 window.showResults = function(from, to) {
   _currentFrom = from; _currentTo = to;
   document.body.classList.add('results-active');
-  document.getElementById('page-plan').classList.add('results-active');
-  document.getElementById('results-panel').classList.remove('hidden');
+  const pagePlan = document.getElementById('page-plan');
+  if (pagePlan) pagePlan.classList.add('results-active');
+  const resultsPanel = document.getElementById('results-panel');
+  if (resultsPanel) resultsPanel.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Update URL to clean paths for sharing/deep-linking
@@ -1598,18 +1603,21 @@ if (quizModal) {
 
 function openQuiz() {
   quizAnswers = {}; quizStep = 0;
-  document.getElementById('quiz-modal').classList.add('open');
+  const modal = document.getElementById('quiz-modal');
+  if (modal) modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   renderQuizStep();
 }
 function closeQuiz() {
-  document.getElementById('quiz-modal').classList.remove('open');
+  const modal = document.getElementById('quiz-modal');
+  if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
 }
 
 function renderQuizStep() {
   const q = QUIZ_QUESTIONS[quizStep];
   const content = document.getElementById('quiz-content');
+  if (!content) return;
   const pct = Math.round((quizStep / 10) * 100);
   const selected = quizAnswers[q.id];
   content.innerHTML = `
@@ -1761,13 +1769,17 @@ function pickQuizResult(code) {
   if (!country) return;
   closeQuiz();
   toCountry = country;
-  document.getElementById('to-input').value = country.name;
-  document.getElementById('to-input').dataset.code = country.code;
+  const toIn = document.getElementById('to-input');
+  if (toIn) {
+    toIn.value = country.name;
+    toIn.dataset.code = country.code;
+  }
   if (fromCountry) {
     window.showResults(fromCountry, toCountry);
   } else {
     window.scrollTo({top:0,behavior:'smooth'});
-    document.getElementById('to-input').focus();
+    const toInFocus = document.getElementById('to-input');
+    if (toInFocus) toInFocus.focus();
   }
 }
 
@@ -1985,27 +1997,39 @@ const ENHANCED_QUESTIONS = [
 let enhQuizAnswers = {}, enhQuizStep = 0;
 
 // Override the quiz open button
-document.getElementById('quiz-start-btn').removeEventListener('click', openQuiz);
-document.getElementById('quiz-start-btn').onclick = async () => {
-  enhQuizAnswers = {}; enhQuizStep = 0;
-  document.getElementById('quiz-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  const ratesBadge = document.getElementById('quiz-rates-badge');
-  renderEnhQuizStep();
-  await fetchExchangeRates();
-  renderEnhQuizStep(); // re-render with live rates if budget step visible
-};
+const quizStartBtn = document.getElementById('quiz-start-btn');
+if (quizStartBtn) {
+  quizStartBtn.removeEventListener('click', openQuiz);
+  quizStartBtn.onclick = async () => {
+    enhQuizAnswers = {}; enhQuizStep = 0;
+    const modal = document.getElementById('quiz-modal');
+    if (modal) modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const ratesBadge = document.getElementById('quiz-rates-badge');
+    renderEnhQuizStep();
+    await fetchExchangeRates();
+    renderEnhQuizStep(); // re-render with live rates if budget step visible
+  };
+}
 
-document.getElementById('quiz-close').onclick = () => {
-  document.getElementById('quiz-modal').classList.remove('open');
-  document.body.style.overflow = '';
-};
-document.getElementById('quiz-modal').onclick = e => {
-  if (e.target === e.currentTarget) {
-    document.getElementById('quiz-modal').classList.remove('open');
+const quizCloseBtn = document.getElementById('quiz-close');
+if (quizCloseBtn) {
+  quizCloseBtn.onclick = () => {
+    const modal = document.getElementById('quiz-modal');
+    if (modal) modal.classList.remove('open');
     document.body.style.overflow = '';
-  }
-};
+  };
+}
+
+const quizModalEl = document.getElementById('quiz-modal');
+if (quizModalEl) {
+  quizModalEl.onclick = e => {
+    if (e.target === e.currentTarget) {
+      quizModalEl.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  };
+}
 
 function renderEnhQuizStep() {
   const q = ENHANCED_QUESTIONS[enhQuizStep];
@@ -2144,11 +2168,15 @@ function showCityQuizResults() {
 function pickCityResult(countryCode, cityName) {
   const country = COUNTRIES.find(c => c.code === countryCode);
   if (!country) return;
-  document.getElementById('quiz-modal').classList.remove('open');
+  const modal = document.getElementById('quiz-modal');
+  if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
   toCountry = country;
-  document.getElementById('to-input').value = country.name;
-  document.getElementById('to-input').dataset.code = country.code;
+  const toIn = document.getElementById('to-input');
+  if (toIn) {
+    toIn.value = country.name;
+    toIn.dataset.code = country.code;
+  }
   // Pre-select the city in cost tab when user navigates there
   window._quizCity = cityName;
   if (fromCountry) {
@@ -2171,7 +2199,8 @@ function pickCityResult(countryCode, cityName) {
     }, 400);
   } else {
     window.scrollTo({top:0,behavior:'smooth'});
-    document.getElementById('to-input').focus();
+    const toInFocus = document.getElementById('to-input');
+    if (toInFocus) toInFocus.focus();
   }
 }
 
@@ -2232,6 +2261,7 @@ window._quizOpts = []; // stores current step's option values safely
 function renderEnhQuizStep() {
   const q = ENHANCED_QUESTIONS[enhQuizStep];
   const content = document.getElementById('quiz-content');
+  if (!content) return;
   const pct = Math.round((enhQuizStep / ENHANCED_QUESTIONS.length) * 100);
   const navBack = `<button class="quiz-back-btn" ${enhQuizStep===0?'style="visibility:hidden"':''} onclick="enhBack()">← Back</button>`;
 
@@ -3675,7 +3705,8 @@ function switchContactTab(tab) {
 }
 
 function setRating(val) {
-  document.getElementById('rating-input').value = val;
+  const ratingInput = document.getElementById('rating-input');
+  if (ratingInput) ratingInput.value = val;
   document.querySelectorAll('.star').forEach(star => {
     star.classList.toggle('lit', parseInt(star.dataset.val) <= val);
   });
